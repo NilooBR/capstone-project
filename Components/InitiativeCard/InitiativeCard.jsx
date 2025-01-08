@@ -8,6 +8,8 @@ const Card = styled.div`
   justify-content: center;
   border: 1px solid black;
   border-radius: 10px;
+  height: 150px;
+  width: 100%;
 `;
 
 const Modal = styled.div`
