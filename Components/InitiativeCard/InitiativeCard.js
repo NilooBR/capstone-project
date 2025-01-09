@@ -46,6 +46,12 @@ const StyledLink = styled(Link)`
   color: inherit;
 `;
 
+const DateText = styled.p`
+  text-align: center;
+  margin: 10px;
+  font-size: 11px;
+`;
+
 export default function InitiativeCard({ id, title, tags, deadline }) {
   return (
     <>
@@ -59,7 +65,7 @@ export default function InitiativeCard({ id, title, tags, deadline }) {
               <Tag key={tag}>{tag}</Tag>
             ))}
           </TagList>
-          <p>{deadline}</p>
+          <DateText>{deadline}</DateText>
         </StyledLink>
       </Card>
     </>
