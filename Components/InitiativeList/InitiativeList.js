@@ -2,7 +2,6 @@ import { useState } from "react";
 import InitiativeCard from "../InitiativeCard/InitiativeCard";
 import { initialData } from "@/lib/initialData";
 import styled from "styled-components";
-import Link from "next/link";
 
 const ListContainer = styled.ul`
   display: grid;
@@ -11,11 +10,6 @@ const ListContainer = styled.ul`
   grid-template-columns: 1fr 1fr;
   list-style: none;
 `;
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  color: inherit;
-
-`
 
 export default function InitiativeList() {
   const [initiatives, setInitiatives] = useState(initialData);
@@ -24,13 +18,12 @@ export default function InitiativeList() {
     <ListContainer>
       {initiatives.map((initiative) => (
         <li key={initiative.id}>
-          <StyledLink href={`/initiatives/${initiative.id}`}>
-            <InitiativeCard
-              title={initiative.title}
-              tags={initiative.tags}
-              deadline={initiative.deadline}
-            />
-          </StyledLink>
+          <InitiativeCard
+            id={initiative.id}
+            title={initiative.title}
+            tags={initiative.tags}
+            deadline={initiative.deadline}
+          />
         </li>
       ))}
     </ListContainer>

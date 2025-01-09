@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
+import Link from "next/link";
 
 const Card = styled.div`
   position: relative;
@@ -72,22 +73,28 @@ const Tag = styled.li`
   font-size: 11px;
 `;
 
-export default function InitiativeCard({ title, tags, deadline }) {
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
+`;
+
+export default function InitiativeCard({ id, title, tags, deadline }) {
   const [isModalOpen, setModalOpen] = useState(false);
 
   return (
     <>
       <Card>
         <TopLeftButton onClick={() => setModalOpen(true)}>...</TopLeftButton>
-
-        <h3>{title}</h3>
-        <TagList>
-          {tags.map((tag) => (
-            <Tag key={tag}>{tag}</Tag>
-          ))}
-        </TagList>
-        <p>{deadline}</p>
-
+        
+        <StyledLink href={`/initiatives/${id}`}>
+          <h3>{title}</h3>
+          <TagList>
+            {tags.map((tag) => (
+              <Tag key={tag}>{tag}</Tag>
+            ))}
+          </TagList>
+          <p>{deadline}</p>
+        </StyledLink>
         {isModalOpen && (
           <Modal>
             {/* <Button>Edit</Button>
