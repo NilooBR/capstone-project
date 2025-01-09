@@ -93,7 +93,7 @@ export default function InitiativeDetail({
         </Deadline>
         <TagList>
           {tags.length > 0 ? (
-            tags.map((tag, index) => <Tag key={index}>{tag}</Tag>)
+            tags.map((tag) => <Tag key={tag}>{tag}</Tag>)
           ) : (
             <EmptyMessage>No tags available</EmptyMessage>
           )}
