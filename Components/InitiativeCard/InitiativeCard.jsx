@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 
 const Card = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,12 +13,26 @@ const Card = styled.div`
   width: 100%;
 `;
 
+const TopLeftButton = styled.button`
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+`;
+
 const Modal = styled.div`
   position: absolute;
   background-color: white;
   border: 1px solid gray;
   padding: 16px;
   border-radius: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
 `;
 
 const Button = styled.button`
@@ -38,9 +53,17 @@ const Button = styled.button`
   }
 
   &:nth-child(3) {
-    background-color: transparent;
-    color: white;
+    background-color: #c8c8c8;
+    color: black;
   }
+`;
+
+const Tag = styled.span`
+  background: #a8a8a8;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin: 4px;
+  font-size: 12px;
 `;
 
 export default function InitiativeCard({ title, tags, deadline }) {
@@ -49,20 +72,21 @@ export default function InitiativeCard({ title, tags, deadline }) {
   return (
     <>
       <Card>
-        <h3>Initiative {title}</h3>
+        <TopLeftButton onClick={() => setModalOpen(true)}>...</TopLeftButton>
+
+        <h3>{title}</h3>
         <div>
           {tags.map((tag, index) => (
-            <span key={index}>{tag}</span>
+            <Tag key={index}>{tag}</Tag>
           ))}
         </div>
-        <p>Deadline: {deadline}</p>
-        <button onClick={() => setModalOpen(true)}>...</button>
+        <p>{deadline}</p>
 
         {isModalOpen && (
           <Modal>
             <Button>Update</Button>
             <Button>Delete</Button>
-            <Button onClick={() => setModalOpen(false)}>❌</Button>
+            <Button onClick={() => setModalOpen(false)}>Close</Button>
           </Modal>
         )}
       </Card>
