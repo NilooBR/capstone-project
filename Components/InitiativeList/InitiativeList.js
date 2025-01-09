@@ -16,18 +16,18 @@ export default function InitiativeList() {
   const [initiatives, setInitiatives] = useState(initialData);
 
   return (
-    <>
-      <ListContainer>
-        {initiatives.map((initiative) => (
-          <li key={initiative.id}>
-           <InitiativeCard
+    <ListContainer>
+      {initiatives.map((initiative) => (
+        <li key={initiative.id}>
+          <Link href={`/initiatives/${initiative.id}`} passHref>
+            <InitiativeCard
               title={initiative.title}
               tags={initiative.tags}
               deadline={initiative.deadline}
             />
-          </li>
-        ))}
-      </ListContainer>
-    </>
+          </Link>
+        </li>
+      ))}
+    </ListContainer>
   );
 }
