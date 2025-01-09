@@ -68,7 +68,7 @@ const Button = styled.button`
   border: none;
   border-radius: 5px;
   background-color: #6c757d;
-  color: white;
+  color: black;
   font-weight: bold;
   cursor: pointer;
 
@@ -103,8 +103,6 @@ export default function InitiativeDetail({
         <Link href="/">
           <Button>Back</Button>
         </Link>
-        <Button>Edit</Button>
-        <Button>Delete</Button>
       </Footer>
     </PageContainer>
   );
