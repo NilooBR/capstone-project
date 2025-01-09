@@ -1,4 +1,3 @@
-import { useState } from "react";
 import styled from "styled-components";
 import Link from "next/link";
 
@@ -22,37 +21,6 @@ const TopLeftButton = styled.button`
   border: none;
   font-size: 16px;
   cursor: pointer;
-`;
-
-const Modal = styled.div`
-  position: absolute;
-  background-color: white;
-  border: 1px solid gray;
-  padding: 16px;
-  border-radius: 10px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-`;
-
-const Button = styled.button`
-  margin: 4px;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:nth-child(1),
-  &:nth-child(2) {
-    background-color: #6c757d;
-    color: white;
-  }
-
-  &:nth-child(3) {
-    background-color: #c8c8c8;
-    color: black;
-  }
 `;
 
 const TagList = styled.ul`
@@ -79,13 +47,11 @@ const StyledLink = styled(Link)`
 `;
 
 export default function InitiativeCard({ id, title, tags, deadline }) {
-  const [isModalOpen, setModalOpen] = useState(false);
-
   return (
     <>
       <Card>
-        <TopLeftButton onClick={() => setModalOpen(true)}>...</TopLeftButton>
-        
+        <TopLeftButton>...</TopLeftButton>
+
         <StyledLink href={`/initiatives/${id}`}>
           <h3>{title}</h3>
           <TagList>
@@ -95,13 +61,6 @@ export default function InitiativeCard({ id, title, tags, deadline }) {
           </TagList>
           <p>{deadline}</p>
         </StyledLink>
-        {isModalOpen && (
-          <Modal>
-            {/* <Button>Edit</Button>
-            <Button>Delete</Button> */}
-            <Button onClick={() => setModalOpen(false)}>Close</Button>
-          </Modal>
-        )}
       </Card>
     </>
   );
