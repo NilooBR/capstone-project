@@ -7,12 +7,12 @@ export default function InitiativeDetails() {
   const router = useRouter();
   const { id } = router.query;
 
-  console.log("id:", id);
+  
   const selectedInitiative = initialData.find(
     (initiative) => initiative.id === parseInt(id)
   );
-  console.log("selectedInitiative: ", selectedInitiative);
-  console.log("initialData: ", initialData);
+ 
+  
   if (!selectedInitiative) {
     return <div>Loading...</div>;
   }
