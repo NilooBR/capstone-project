@@ -84,7 +84,7 @@ export default function InitiativeCard({ title, tags, deadline }) {
 
         {isModalOpen && (
           <Modal>
-            <Button>Update</Button>
+            <Button>Edit</Button>
             <Button>Delete</Button>
             <Button onClick={() => setModalOpen(false)}>Close</Button>
           </Modal>
