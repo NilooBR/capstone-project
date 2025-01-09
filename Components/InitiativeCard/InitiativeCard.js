@@ -13,16 +13,6 @@ const Card = styled.div`
   width: 100%;
 `;
 
-const TopLeftButton = styled.button`
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background-color: transparent;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-`;
-
 const TagList = styled.ul`
   padding: 0;
   margin: 0;
@@ -54,20 +44,16 @@ const DateText = styled.p`
 
 export default function InitiativeCard({ id, title, tags, deadline }) {
   return (
-    <>
-      <Card>
-        <TopLeftButton>...</TopLeftButton>
-
-        <StyledLink href={`/initiatives/${id}`}>
-          <h3>{title}</h3>
-          <TagList>
-            {tags.map((tag) => (
-              <Tag key={tag}>{tag}</Tag>
-            ))}
-          </TagList>
-          <DateText>{deadline}</DateText>
-        </StyledLink>
-      </Card>
-    </>
+    <Card>
+      <StyledLink href={`/initiatives/${id}`}>
+        <h3>{title}</h3>
+        <TagList>
+          {tags.map((tag) => (
+            <Tag key={tag}>{tag}</Tag>
+          ))}
+        </TagList>
+        <DateText>{deadline}</DateText>
+      </StyledLink>
+    </Card>
   );
 }
