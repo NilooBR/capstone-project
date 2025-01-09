@@ -2,6 +2,7 @@ import { useState } from "react";
 import InitiativeCard from "../InitiativeCard/InitiativeCard";
 import { initialData } from "@/lib/initialData";
 import styled from "styled-components";
+import Link from "next/link";
 
 const ListContainer = styled.ul`
   display: grid;
@@ -19,7 +20,7 @@ export default function InitiativeList() {
       <ListContainer>
         {initiatives.map((initiative) => (
           <li key={initiative.id}>
-            <InitiativeCard
+           <InitiativeCard
               title={initiative.title}
               tags={initiative.tags}
               deadline={initiative.deadline}
