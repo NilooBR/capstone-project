@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { initialData } from "@/lib/initialData";
-import Link from "next/link";
 import InitiativeDetail from "@/Components/InitiativeDetail/InitiativeDetail";
 
 export default function InitiativeDetails() {
@@ -25,7 +24,9 @@ export default function InitiativeDetails() {
         deadline={selectedInitiative.deadline}
         tags={selectedInitiative.tags}
       />
-      <Link href="/Initiatives" />
+
+      
     </>
   );
 }
+
