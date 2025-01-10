@@ -103,10 +103,12 @@ const StyledLink = styled(Link)`
 `;
 
 export default function InitiativeDetail({
+  id,
   title,
   description,
   tags,
   deadline,
+  onDelete,
 }) {
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
 
@@ -125,21 +127,19 @@ export default function InitiativeDetail({
             <EmptyMessage>No tags available</EmptyMessage>
           )}
         </TagList>
-        {deleteButtonClicked && (
-          <ConfirmationDialog>
+       {/*deleteButtonClicked && (
+        <ConfirmationDialog>
           <p>Are you sure you want to delete this initiative?</p>
           <Button onClick={() => setDeleteButtonClicked(false)}>Cancel</Button>
           <Button onClick={() => {
 
           }}>Yes, delete</Button>
           </ConfirmationDialog>
-        )}
+        )*/}
       </Content>
       <Footer>
         <StyledLink href="/">Back</StyledLink>
-        <Button onClick={() => 
-          setDeleteButtonClicked(true)}>
-            Delete</Button>
+        <Button onClick={onDelete}>Delete</Button>
       </Footer>
     </PageContainer>
   );
