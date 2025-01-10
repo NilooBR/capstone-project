@@ -1,3 +1,4 @@
+import GlobalStyle from "../styles";
 import { useState } from "react";
 import { initialData } from "@/lib/initialData";
 
@@ -14,10 +15,13 @@ export default function App({ Component, pageProps }) {
   }
 
   return (
-    <Component
-      {...pageProps}
-      initiatives={initiatives}
-      onDeleteInitiative={deleteInitiativeById}
-    />
+    <>
+      <GlobalStyle />
+      <Component
+        {...pageProps}
+        initiatives={initiatives}
+        onDeleteInitiative={deleteInitiativeById}
+      />
+    </>
   );
 }
