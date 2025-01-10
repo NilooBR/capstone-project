@@ -11,15 +11,21 @@ const ListContainer = styled.ul`
   list-style: none;
 `;
 
+const Title = styled.h1`
+  margin: 16px;
+`;
+
 export default function InitiativeList() {
   const [initiatives, setInitiatives] = useState(initialData);
 
   return (
     <>
+      <Title>Your Initiatives</Title>
       <ListContainer>
         {initiatives.map((initiative) => (
           <li key={initiative.id}>
             <InitiativeCard
+              id={initiative.id}
               title={initiative.title}
               tags={initiative.tags}
               deadline={initiative.deadline}
