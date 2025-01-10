@@ -61,6 +61,20 @@ const Footer = styled.div`
   justify-content: space-between;
   gap: 10px;
 `;
+const Button = styled.button`
+  display: inline-block;
+  padding: 10px 20px;
+  text-align: center;
+  border-radius: 5px;
+  background-color: #6c757d;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+
+  &:hover {
+    background-color: white;
+  }
+`;
 
 const StyledLink = styled(Link)`
   display: inline-block;
@@ -102,6 +116,7 @@ export default function InitiativeDetail({
       </Content>
       <Footer>
         <StyledLink href="/">Back</StyledLink>
+        <Button>Delete</Button>
       </Footer>
     </PageContainer>
   );
