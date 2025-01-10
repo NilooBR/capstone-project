@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
+import { uid } from "uid";
 
 const Form = styled.form`
   display: flex;
@@ -115,8 +116,15 @@ export default function CreateInitiative({ onSubmit, defaultData, formName }) {
       setErrors(newErrors);
       return;
     }
+    const newInitiative = {
+      id: uid(),
+      title,
+      description,
+      deadline,
+      tags: tagList,
+    };
 
-    onSubmit({ ...formData, tags: tagList });
+    onSubmit(newInitiative);
     router.push("/");
   };
 
