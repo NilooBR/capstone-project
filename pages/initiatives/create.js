@@ -1,6 +1,16 @@
+import styled from "styled-components";
+
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+`;
+
 export default function CreateInitiative() {
   return (
-    <form>
+    <StyledForm>
       <label htmlFor="title">Initiative Title</label>
       <input name="title" type="text" required></input>
       <label htmlFor="description">Description</label>
@@ -9,6 +19,6 @@ export default function CreateInitiative() {
       <input name="deadline" type="date" required></input>
       <label htmlFor="tags">Tags (comma-separated)</label>
       <input name="tags" type="text"></input>
-    </form>
+    </StyledForm>
   );
 }
