@@ -139,7 +139,7 @@ export default function InitiativeDetail({
       </Content>
       <Footer>
         <StyledLink href="/">Back</StyledLink>
-        <Button onClick={onDelete}>Delete</Button>
+        <Button onClick={() => setDeleteButtonClicked(true)}>Delete</Button>
       </Footer>
     </PageContainer>
   );

@@ -20,7 +20,6 @@ export default function InitiativeDetails({ initiatives, onDeleteInitiative }) {
   }
 
   function handleDelete() {
-    console.log("Deleting initiative with ID:", id);
     onDeleteInitiative(parseInt(id));
     router.push("/");
   }

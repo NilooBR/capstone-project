@@ -44,7 +44,7 @@ const DateText = styled.p`
   font-size: 11px;
 `;
 
-export default function InitiativeCard({ id, title, tags, deadline, onDelete }) {
+export default function InitiativeCard({ id, title, tags, deadline}) {
   return (
     <Card>
       <StyledLink href={`/initiatives/${id}`}>
@@ -56,7 +56,6 @@ export default function InitiativeCard({ id, title, tags, deadline, onDelete }) 
         </TagList>
         <DateText>{deadline}</DateText>
       </StyledLink>
-      <button onClick={() => onDelete(id)}>Delete</button>
     </Card>
   );
 }
