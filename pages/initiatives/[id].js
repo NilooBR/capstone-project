@@ -6,10 +6,6 @@ export default function InitiativeDetails() {
   const router = useRouter();
   const { id } = router.query;
 
-  if (!id) {
-    return <div>Loading...</div>;
-  }
-
   const selectedInitiative = initialData.find(
     (initiative) => initiative.id === parseInt(id)
   );

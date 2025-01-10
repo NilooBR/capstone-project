@@ -62,10 +62,11 @@ const Footer = styled.div`
   gap: 10px;
 `;
 
-const Button = styled.button`
-  flex: 1;
+const StyledLink = styled(Link)`
+  display: inline-block;
   padding: 10px 20px;
-  border: none;
+  text-align: center;
+  text-decoration: none;
   border-radius: 5px;
   background-color: #6c757d;
   color: black;
@@ -100,9 +101,7 @@ export default function InitiativeDetail({
         </TagList>
       </Content>
       <Footer>
-        <Link href="/">
-          <Button>Back</Button>
-        </Link>
+        <StyledLink href="/">Back</StyledLink>
       </Footer>
     </PageContainer>
   );

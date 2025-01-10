@@ -34,6 +34,8 @@ const Tag = styled.li`
 const StyledLink = styled(Link)`
   text-decoration: none;
   color: inherit;
+  width: 100%;
+  text-align: center;
 `;
 
 const DateText = styled.p`
