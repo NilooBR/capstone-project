@@ -64,7 +64,7 @@ const ConfirmationDialog = styled.div`
   border-radius: 8px;
   background-color: lightgrey;
   text-align: center;
-`
+`;
 
 const Footer = styled.div`
   display: flex;
@@ -82,7 +82,7 @@ const Button = styled.button`
   cursor: pointer;
 
   &:hover {
-    background-color:  #5a6268;
+    background-color: #5a6268;
   }
 `;
 
@@ -127,15 +127,15 @@ export default function InitiativeDetail({
             <EmptyMessage>No tags available</EmptyMessage>
           )}
         </TagList>
-       {/*deleteButtonClicked && (
-        <ConfirmationDialog>
-          <p>Are you sure you want to delete this initiative?</p>
-          <Button onClick={() => setDeleteButtonClicked(false)}>Cancel</Button>
-          <Button onClick={() => {
-
-          }}>Yes, delete</Button>
+        {deleteButtonClicked && (
+          <ConfirmationDialog>
+            <p>Are you sure you want to delete this initiative?</p>
+            <Button onClick={() => setDeleteButtonClicked(false)}>
+              Cancel
+            </Button>
+            <Button onClick={onDelete}>Yes, delete</Button>
           </ConfirmationDialog>
-        )*/}
+        )}
       </Content>
       <Footer>
         <StyledLink href="/">Back</StyledLink>

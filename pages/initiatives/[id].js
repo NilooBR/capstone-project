@@ -1,21 +1,11 @@
 import { useRouter } from "next/router";
-import { initialData } from "@/lib/initialData";
 import InitiativeDetail from "@/Components/InitiativeDetail/InitiativeDetail";
-import { useState } from "react";
 
-export default function InitiativeDetails() {
+export default function InitiativeDetails({ initiatives, onDeleteInitiative }) {
   const router = useRouter();
   const { id } = router.query;
 
-  function handleDeleteInitiative () {
-    const updatedInitiatives = initialData.filter(
-      (initiative) => initiative.id !== parseInt(id)
-    );
-    setInitiatives(updatedInitiatives);    
- router.push("/"); 
-  };
-
-  const selectedInitiative = initialData.find(
+  const selectedInitiative = initiatives.find(
     (initiative) => initiative.id === parseInt(id)
   );
 
@@ -29,7 +19,11 @@ export default function InitiativeDetails() {
     );
   }
 
-  console.log("selectedInitiative ", selectedInitiative);
+  function handleDelete() {
+    console.log("Deleting initiative with ID:", id);
+    onDeleteInitiative(parseInt(id));
+    router.push("/");
+  }
 
   return (
     <InitiativeDetail
@@ -37,7 +31,7 @@ export default function InitiativeDetails() {
       description={selectedInitiative.description}
       deadline={selectedInitiative.deadline}
       tags={selectedInitiative.tags}
-      onDelete={handleDeleteInitiative}
+      onDelete={handleDelete}
     />
   );
 }
