@@ -44,7 +44,7 @@ const DateText = styled.p`
   font-size: 11px;
 `;
 
-export default function InitiativeCard({ id, title, tags, deadline }) {
+export default function InitiativeCard({ id, title, tags, deadline}) {
   return (
     <Card>
       <StyledLink href={`/initiatives/${id}`}>
