@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { useState } from "react";
 import styled from "styled-components";
 
 const FormContainer = styled.form`
@@ -52,6 +53,18 @@ const Button = styled.div`
 
 export default function CreateInitiative() {
   const router = useRouter();
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    deadline: "",
+    tags: "",
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   function handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
@@ -68,13 +81,32 @@ export default function CreateInitiative() {
     <FormContainer>
       <StyledForm onSubmit={handleSubmit}>
         <Label htmlFor="title">Initiative Title</Label>
-        <input name="title" type="text" required></input>
+        <input
+          name="title"
+          type="text"
+          value={formData.title}
+          onChange={handleChange}
+        ></input>
         <Label htmlFor="description">Description</Label>
-        <textarea name="description" required></textarea>
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+        ></textarea>
         <Label htmlFor="deadline">Deadline</Label>
-        <input name="deadline" type="date" required></input>
+        <input
+          name="deadline"
+          type="date"
+          value={formData.deadline}
+          onChange={handleChange}
+        ></input>
         <Label htmlFor="tags">Tags (comma-separated)</Label>
-        <input name="tags" type="text"></input>
+        <input
+          name="tags"
+          type="text"
+          value={formData.tags}
+          onChange={handleChange}
+        ></input>
       </StyledForm>
       <ButtonGroup>
         <Button onClick={handleCancel}>Cancel</Button>
