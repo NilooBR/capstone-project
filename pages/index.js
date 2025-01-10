@@ -20,11 +20,11 @@ const StyledLink = styled(Link)`
   background-color: lightgrey;
 `;
 
-export default function HomePage() {
+export default function HomePage({ initiatives }) {
   return (
     <div>
       <StyledLink href={"/initiatives/create"}>➕Create Initiative</StyledLink>
-      <InitiativeList />
+      <InitiativeList initiatives={initiatives} />
     </div>
   );
 }
