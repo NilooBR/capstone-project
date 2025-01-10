@@ -13,6 +13,11 @@ const Form = styled.form`
   box-sizing: border-box;
 `;
 
+const Heading = styled.h1`
+  font-size: 20px;
+  text-align: center;
+`;
+
 const Label = styled.label`
   display: flex;
   flex-direction: column;
@@ -134,6 +139,7 @@ export default function CreateInitiative({ onSubmit, defaultData, formName }) {
 
   return (
     <Form aria-labelledby={formName} onSubmit={handleSubmit}>
+      <Heading>Create Initiative</Heading>
       <Label htmlFor="title">
         Initiative Title
         <Input
