@@ -1,12 +1,11 @@
 import { useRouter } from "next/router";
-import { initialData } from "@/lib/initialData";
 import InitiativeDetail from "@/Components/InitiativeDetail/InitiativeDetail";
 
-export default function InitiativeDetails() {
+export default function InitiativeDetails({initiatives}) {
   const router = useRouter();
   const { id } = router.query;
 
-  const selectedInitiative = initialData.find(
+  const selectedInitiative = initiatives.find(
     (initiative) => initiative.id === id
   );
 
