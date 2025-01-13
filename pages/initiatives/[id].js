@@ -1,12 +1,11 @@
 import { useRouter } from "next/router";
-import { initialData } from "@/lib/initialData";
 import InitiativeDetail from "@/Components/InitiativeDetail/InitiativeDetail";
 
-export default function InitiativeDetails() {
+export default function InitiativeDetails({ initiatives, onDeleteInitiative }) {
   const router = useRouter();
   const { id } = router.query;
 
-  const selectedInitiative = initialData.find(
+  const selectedInitiative = initiatives.find(
     (initiative) => initiative.id === parseInt(id)
   );
 
@@ -20,12 +19,18 @@ export default function InitiativeDetails() {
     );
   }
 
+  function handleDelete() {
+    onDeleteInitiative(parseInt(id));
+    router.push("/");
+  }
+
   return (
     <InitiativeDetail
       title={selectedInitiative.title}
       description={selectedInitiative.description}
       deadline={selectedInitiative.deadline}
       tags={selectedInitiative.tags}
+      onDelete={handleDelete}
     />
   );
 }
