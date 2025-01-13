@@ -66,6 +66,17 @@ const ConfirmationDialog = styled.div`
   text-align: center;
 `;
 
+const CompletedContainer = styled.div`
+  display: inline-block;
+  margin: 20px 0;
+  cursor: pointer;
+  background: #a8a8a8;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+`
+
 const Footer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -110,7 +121,11 @@ export default function InitiativeDetail({
   onDelete,
 }) {
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
 
+  function handleToggleCompleted()  {
+    setIsCompleted(!isCompleted);
+  }
   return (
     <PageContainer>
       <Content>
@@ -135,6 +150,13 @@ export default function InitiativeDetail({
             <Button onClick={onDelete}>Yes, delete</Button>
           </ConfirmationDialog>
         )}
+      <CompletedContainer onClick={handleToggleCompleted} >
+        {isCompleted ? (
+          <span>Completed ✔️</span> 
+        ) : (
+          <span>Mark as completed</span>
+        )}
+      </CompletedContainer>
       </Content>
       <Footer>
         <StyledLink href="/">Back</StyledLink>
