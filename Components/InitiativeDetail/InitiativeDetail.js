@@ -114,18 +114,17 @@ const StyledLink = styled(Link)`
 `;
 
 export default function InitiativeDetail({
+  id,
   title,
   description,
   tags,
   deadline,
   onDelete,
+  onMarkAsCompleted,
+  isCompleted
 }) {
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
-
-  function handleToggleCompleted()  {
-    setIsCompleted(!isCompleted);
-  }
+  
   return (
     <PageContainer>
       <Content>
@@ -150,7 +149,7 @@ export default function InitiativeDetail({
             <Button onClick={onDelete}>Yes, delete</Button>
           </ConfirmationDialog>
         )}
-      <CompletedContainer onClick={handleToggleCompleted} >
+      <CompletedContainer onClick={() => onMarkAsCompleted(id)} >
         {isCompleted ? (
           <span>Completed ✔️</span> 
         ) : (

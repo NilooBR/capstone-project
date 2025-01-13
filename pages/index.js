@@ -1,10 +1,14 @@
 import InitiativeList from "@/Components/InitiativeList/InitiativeList";
 
-export default function HomePage({ initiatives, onDeleteInitiative }) {
+export default function HomePage({ initiatives, onDeleteInitiative, onMarkAsCompleted }) {
 
   return (
     <div>
-      <InitiativeList initiatives={initiatives} onDelete={onDeleteInitiative} />
+      <InitiativeList 
+        initiatives={initiatives} 
+        onDelete={onDeleteInitiative}
+        onMarkAsCompleted={onMarkAsCompleted}
+         />
     </div>
   );
 }

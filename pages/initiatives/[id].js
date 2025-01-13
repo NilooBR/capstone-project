@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import InitiativeDetail from "@/Components/InitiativeDetail/InitiativeDetail";
 
-export default function InitiativeDetails({ initiatives, onDeleteInitiative }) {
+export default function InitiativeDetails({ initiatives, onDeleteInitiative, onMarkAsCompleted }) {
   const router = useRouter();
   const { id } = router.query;
 
@@ -26,11 +26,14 @@ export default function InitiativeDetails({ initiatives, onDeleteInitiative }) {
 
   return (
     <InitiativeDetail
+      id={selectedInitiative.id}
       title={selectedInitiative.title}
       description={selectedInitiative.description}
       deadline={selectedInitiative.deadline}
+      isCompleted={selectedInitiative.isCompleted}
       tags={selectedInitiative.tags}
       onDelete={handleDelete}
+      onMarkAsCompleted={onMarkAsCompleted}
     />
   );
 }

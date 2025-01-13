@@ -12,6 +12,15 @@ export default function App({ Component, pageProps }) {
     setInitiatives(updatedInitiatives);
   }
 
+  function handleMarkInitiativeAsCompleted(id) {
+    const updatedInitiatives = initiatives.map(
+      (initiative) => initiative.id === id
+      ? { ...initiative, isCompleted: !initiative.isCompleted}
+      : initiative
+    );
+    setInitiatives(updatedInitiatives);
+  }
+
   return (
     <>
       <GlobalStyle />
@@ -19,6 +28,7 @@ export default function App({ Component, pageProps }) {
         {...pageProps}
         initiatives={initiatives}
         onDeleteInitiative={handleDeleteInitiative}
+        onMarkAsCompleted={handleMarkInitiativeAsCompleted}
       />
     </>
   );
