@@ -11,11 +11,11 @@ export default function App({ Component, pageProps }) {
 
   function handleDeleteInitiative(id) {
     const updatedInitiatives = initiatives.filter(
-      (initiative) => initiative.id !== parseInt(id)
+      (initiative) => initiative.id !== id
     );
     setInitiatives(updatedInitiatives);
   }
-  
+
   function handleEditInitiative(updatedInitiative) {
     const updatedInitiatives = initiatives.map((initiative) =>
       initiative.id === updatedInitiative.id ? updatedInitiative : initiative

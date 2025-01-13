@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import CreateInitiativeForm from "@/Components/CreateInitiative/CreateInitiativeForm";
 
-export default function EditInitiative({ initiatives, onEditInitiative }) {
+export default function EditInitiativePage({ initiatives, onEditInitiative }) {
   const router = useRouter();
   const { id } = router.query;
 
@@ -15,7 +15,6 @@ export default function EditInitiative({ initiatives, onEditInitiative }) {
 
   const handleEditSubmit = (updatedInitiative) => {
     onEditInitiative(updatedInitiative);
-    router.push(`/initiatives/${id}`);
   };
 
   return (
