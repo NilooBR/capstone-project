@@ -150,6 +150,8 @@ export default function CreateInitiativeForm({ onSubmit, defaultData = {} }) {
     router.push("/");
   };
 
+  const currentDate = new Date().toISOString().split("T")[0];
+
   return (
     <Form onSubmit={handleSubmit}>
       <Heading>Create Initiative</Heading>
@@ -183,6 +185,7 @@ export default function CreateInitiativeForm({ onSubmit, defaultData = {} }) {
           id="deadline"
           name="deadline"
           type="date"
+          min={currentDate}
           value={formData.deadline}
           onChange={handleChange}
         />
