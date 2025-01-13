@@ -62,7 +62,6 @@ const Button = styled.button`
   border: 1px solid black;
   font-size: 10px;
 
-
   &:hover {
     background-color: #5a6268;
   }
@@ -75,12 +74,12 @@ const DEFAULT_VALUES = {
   tags: "",
 };
 
-export default function CreateInitiativeForm({
-  onSubmit,
-  defaultData = { DEFAULT_VALUES },
-}) {
+export default function CreateInitiativeForm({ onSubmit, defaultData = {} }) {
   const router = useRouter();
-  const [formData, setFormData] = useState(defaultData);
+  const [formData, setFormData] = useState({
+    ...DEFAULT_VALUES,
+    ...defaultData,
+  });
 
   const [errors, setErrors] = useState({});
 
