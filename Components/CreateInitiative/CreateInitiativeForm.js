@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
-import { uid } from "uid";
 
 const Form = styled.form`
   display: flex;
@@ -66,19 +65,28 @@ const Button = styled.button`
   }
 `;
 
-export default function CreateInitiative({ onSubmit, defaultData, formName }) {
+const DEFAULT_VALUES = {
+  title: "",
+  description: "",
+  deadline: "",
+  tags: "",
+};
+
+export default function CreateInitiativeForm({
+  onSubmit,
+  defaultData = { DEFAULT_VALUES },
+}) {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    title: defaultData?.title || "",
-    description: defaultData?.description || "",
-    deadline: defaultData?.deadline || "",
-    tags: defaultData?.tags || "",
-  });
+  const [formData, setFormData] = useState({ defaultData });
 
   const [errors, setErrors] = useState({});
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+
+    const updatedFormData = { ...formData, [name]: value };
+
+    const newErrors = { ...errors };
 
     if (name === "tags") {
       const tags = value
@@ -87,42 +95,45 @@ export default function CreateInitiative({ onSubmit, defaultData, formName }) {
         .filter((tag) => tag !== "");
 
       if (tags.length > 5) {
-        setErrors((prev) => ({
-          ...prev,
-          tags: "You can add a maximum of 5 tags.",
-        }));
+        newErrors.tags = "You can add a maximum of 5 tags.";
+        setErrors(newErrors);
+        return;
       } else {
-        setErrors((prev) => ({ ...prev, tags: null }));
+        newErrors.tags = null;
       }
+    } else {
+      newErrors[name] = value.trim() ? null : `${name} is required.`;
     }
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setErrors(newErrors);
+    setFormData(updatedFormData);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     const { title, description, deadline, tags } = formData;
+
     const tagList = tags
       .split(",")
       .map((tag) => tag.trim())
       .filter((tag) => tag !== "");
-    const newErrors = {};
 
-    if (!title) newErrors.title = "Title is required.";
-    if (!description) newErrors.description = "Description is required.";
-    if (!deadline) newErrors.deadline = "Deadline is required.";
-    if (tagList.length > 5) newErrors.tags = "You can add a maximum of 5 tags.";
+    const newErrors = {
+      title: title.trim() ? null : "Title is required.",
+      description: description.trim() ? null : "Description is required.",
+      deadline: deadline.trim() ? null : "Deadline is required.",
+      tags: tagList.length > 5 ? "You can add a maximum of 5 tags." : null,
+    };
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    setErrors(newErrors);
+
+    if (Object.values(newErrors).some((error) => error)) {
       return;
     }
+
     const newInitiative = {
-      id: uid(),
+      id: crypto.randomUUID(),
       title,
       description,
       deadline,
@@ -138,9 +149,9 @@ export default function CreateInitiative({ onSubmit, defaultData, formName }) {
   };
 
   return (
-    <Form aria-labelledby={formName} onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit}>
       <Heading>Create Initiative</Heading>
-      <Label htmlFor="title">
+      <Label>
         Initiative Title
         <Input
           id="title"
@@ -152,7 +163,7 @@ export default function CreateInitiative({ onSubmit, defaultData, formName }) {
         {errors.title && <Error>{errors.title}</Error>}
       </Label>
 
-      <Label htmlFor="description">
+      <Label>
         Description
         <Textarea
           id="description"
@@ -164,7 +175,7 @@ export default function CreateInitiative({ onSubmit, defaultData, formName }) {
         {errors.description && <Error>{errors.description}</Error>}
       </Label>
 
-      <Label htmlFor="deadline">
+      <Label>
         Select Deadline
         <Input
           id="deadline"
@@ -176,7 +187,7 @@ export default function CreateInitiative({ onSubmit, defaultData, formName }) {
         {errors.deadline && <Error>{errors.deadline}</Error>}
       </Label>
 
-      <Label htmlFor="tags">
+      <Label>
         Tags (comma-separated)
         <Input
           id="tags"
@@ -192,7 +203,10 @@ export default function CreateInitiative({ onSubmit, defaultData, formName }) {
         <Button type="button" onClick={handleCancel}>
           Cancel
         </Button>
-        <Button type="submit" disabled={!!errors.tags}>
+        <Button
+          type="submit"
+          disabled={Object.values(errors).some((error) => error)}
+        >
           Create
         </Button>
       </ButtonGroup>

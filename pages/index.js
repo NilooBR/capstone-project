@@ -23,7 +23,7 @@ const StyledLink = styled(Link)`
 export default function HomePage({ initiatives }) {
   return (
     <div>
-      <StyledLink href={"/initiatives/create"}>➕Create Initiative</StyledLink>
+      <StyledLink href="/initiatives/create">➕Create Initiative</StyledLink>
       <InitiativeList initiatives={initiatives} />
     </div>
   );

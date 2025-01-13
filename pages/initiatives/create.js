@@ -1,13 +1,12 @@
-import CreateInitiative from "@/Components/CreateInitiative/CreateInitiative";
+import CreateInitiativeForm from "@/Components/CreateInitiative/CreateInitiativeForm";
 
 export default function CreateInitiativePage({
   initiatives,
   onCreateInitiative,
 }) {
   return (
-    <CreateInitiative
+    <CreateInitiativeForm
       onSubmit={onCreateInitiative}
-      formName={"create-initiative"}
       defaultData={initiatives}
     />
   );
