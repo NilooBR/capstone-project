@@ -1,7 +1,13 @@
+import Link from "next/link";
 import { useRouter } from "next/router";
 import InitiativeDetail from "@/Components/InitiativeDetail/InitiativeDetail";
+import styled from "styled-components";
 
-export default function InitiativeDetails({initiatives}) {
+const StyledLink = styled(Link)`
+  text-decoration: none;
+`;
+
+export default function InitiativeDetails({ initiatives }) {
   const router = useRouter();
   const { id } = router.query;
 
@@ -14,7 +20,7 @@ export default function InitiativeDetails({initiatives}) {
       <div>
         <h1>Initiative Not Found</h1>
         <p>We could not find an initiative with the provided ID.</p>
-        <button onClick={() => router.push("/")}>Go Back to List</button>
+        <StyledLink href="/">Go Back to List</StyledLink>
       </div>
     );
   }
