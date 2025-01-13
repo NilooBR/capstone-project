@@ -14,7 +14,7 @@ const TagList = styled.ul`
 `;
 
 const Tag = styled.li`
-  background: #a8a8a8;
+  background: #bcc1c5;
   border-radius: 4px;
   padding: 4px 8px;
   font-size: 11px;
@@ -64,6 +64,9 @@ const ConfirmationDialog = styled.div`
   border-radius: 8px;
   background-color: lightgrey;
   text-align: center;
+  font-weight: bold;
+  font-size: 10px;
+  border: 1px solid black;
 `;
 
 const Footer = styled.div`
@@ -71,15 +74,35 @@ const Footer = styled.div`
   justify-content: space-between;
   gap: 10px;
 `;
+
 const Button = styled.button`
   display: inline-block;
   padding: 10px 20px;
   text-align: center;
   border-radius: 5px;
-  background-color: #6c757d;
+  background-color: #bcc1c5;
+  color: black;
+  cursor: pointer;
+  border: 1px solid black;
+  font-weight: bold;
+  font-size: 10px;
+
+  &:hover {
+    background-color: #5a6268;
+  }
+`;
+
+const ConfirmationDialogButton = styled.button`
+  display: inline-block;
+  padding: 10px 20px;
+  text-align: center;
+  border-radius: 5px;
+  background-color: #bcc1c5;
   color: black;
   font-weight: bold;
+  border: 1px solid black;
   cursor: pointer;
+  margin: 5px;
 
   &:hover {
     background-color: #5a6268;
@@ -92,10 +115,12 @@ const StyledLink = styled(Link)`
   text-align: center;
   text-decoration: none;
   border-radius: 5px;
-  background-color: #6c757d;
+  background-color: #bcc1c5;
   color: black;
   font-weight: bold;
   cursor: pointer;
+  border: 1px solid black;
+  font-size: 10px;
 
   &:hover {
     background-color: #5a6268;
@@ -129,10 +154,14 @@ export default function InitiativeDetail({
         {deleteButtonClicked && (
           <ConfirmationDialog>
             <p>Are you sure you want to delete this initiative?</p>
-            <Button onClick={() => setDeleteButtonClicked(false)}>
+            <ConfirmationDialogButton
+              onClick={() => setDeleteButtonClicked(false)}
+            >
               Cancel
-            </Button>
-            <Button onClick={onDelete}>Yes, delete</Button>
+            </ConfirmationDialogButton>
+            <ConfirmationDialogButton onClick={onDelete}>
+              Yes, delete
+            </ConfirmationDialogButton>
           </ConfirmationDialog>
         )}
       </Content>

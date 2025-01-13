@@ -1,6 +1,5 @@
 import { useState } from "react";
 import InitiativeCard from "../InitiativeCard/InitiativeCard";
-import { initialData } from "@/lib/initialData";
 import styled from "styled-components";
 
 const ListContainer = styled.ul`
@@ -16,7 +15,6 @@ const Title = styled.h1`
 `;
 
 export default function InitiativeList({ initiatives, onDelete }) {
-
 
   return (
     <>
