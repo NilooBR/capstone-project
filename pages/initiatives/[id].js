@@ -7,7 +7,7 @@ const StyledLink = styled(Link)`
   text-decoration: none;
 `;
 
-export default function InitiativeDetails({ initiatives }) {
+export default function InitiativeDetails({ initiatives, onDeleteInitiative }) {
   const router = useRouter();
   const { id } = router.query;
 
@@ -25,12 +25,18 @@ export default function InitiativeDetails({ initiatives }) {
     );
   }
 
+  function handleDelete() {
+    onDeleteInitiative(parseInt(id));
+    router.push("/");
+  }
+
   return (
     <InitiativeDetail
       title={selectedInitiative.title}
       description={selectedInitiative.description}
       deadline={selectedInitiative.deadline}
       tags={selectedInitiative.tags}
+      onDelete={handleDelete}
     />
   );
 }

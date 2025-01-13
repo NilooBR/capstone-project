@@ -5,8 +5,15 @@ import { useState } from "react";
 export default function App({ Component, pageProps }) {
   const [initiatives, setInitiatives] = useState(initialData);
 
+
   function handleCreateInitiative(newInitiative) {
     setInitiatives((prev) => [...prev, newInitiative]);
+
+  function handleDeleteInitiative(id) {
+    const updatedInitiatives = initiatives.filter(
+      (initiative) => initiative.id !== id
+    );
+    setInitiatives(updatedInitiatives);
   }
 
   return (
@@ -16,6 +23,8 @@ export default function App({ Component, pageProps }) {
         {...pageProps}
         initiatives={initiatives}
         onCreateInitiative={handleCreateInitiative}
+        onDeleteInitiative={handleDeleteInitiative}
+
       />
     </>
   );

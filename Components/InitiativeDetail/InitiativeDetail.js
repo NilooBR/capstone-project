@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Link from "next/link";
+import { useState } from "react";
 
 const TagList = styled.ul`
   padding: 0;
@@ -56,10 +57,33 @@ const EmptyMessage = styled.span`
   color: #888;
 `;
 
+const ConfirmationDialog = styled.div`
+  margin: 50px 0;
+  padding: 20px;
+  border: 1px solid grey;
+  border-radius: 8px;
+  background-color: lightgrey;
+  text-align: center;
+`;
+
 const Footer = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 10px;
+`;
+const Button = styled.button`
+  display: inline-block;
+  padding: 10px 20px;
+  text-align: center;
+  border-radius: 5px;
+  background-color: #6c757d;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #5a6268;
+  }
 `;
 
 const StyledLink = styled(Link)`
@@ -83,7 +107,10 @@ export default function InitiativeDetail({
   description,
   tags,
   deadline,
+  onDelete,
 }) {
+  const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
+
   return (
     <PageContainer>
       <Content>
@@ -99,9 +126,19 @@ export default function InitiativeDetail({
             <EmptyMessage>No tags available</EmptyMessage>
           )}
         </TagList>
+        {deleteButtonClicked && (
+          <ConfirmationDialog>
+            <p>Are you sure you want to delete this initiative?</p>
+            <Button onClick={() => setDeleteButtonClicked(false)}>
+              Cancel
+            </Button>
+            <Button onClick={onDelete}>Yes, delete</Button>
+          </ConfirmationDialog>
+        )}
       </Content>
       <Footer>
         <StyledLink href="/">Back</StyledLink>
+        <Button onClick={() => setDeleteButtonClicked(true)}>Delete</Button>
       </Footer>
     </PageContainer>
   );

@@ -20,11 +20,12 @@ const StyledLink = styled(Link)`
   background-color: lightgrey;
 `;
 
-export default function HomePage({ initiatives }) {
+export default function HomePage({ initiatives, onDeleteInitiative }) {
+
   return (
     <div>
       <StyledLink href="/initiatives/create">➕Create Initiative</StyledLink>
-      <InitiativeList initiatives={initiatives} />
+      <InitiativeList initiatives={initiatives} onDelete={onDeleteInitiative} />
     </div>
   );
 }
