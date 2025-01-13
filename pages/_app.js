@@ -8,6 +8,7 @@ export default function App({ Component, pageProps }) {
   function handleCreateInitiative(newInitiative) {
     setInitiatives((prev) => [...prev, newInitiative]);
   }
+  
   function handleDeleteInitiative(id) {
     const updatedInitiatives = initiatives.filter(
       (initiative) => initiative.id !== id

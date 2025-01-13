@@ -55,10 +55,13 @@ const Button = styled.button`
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  background-color: #6c757d;
+  background-color: #bcc1c5;
   color: black;
   font-weight: bold;
   cursor: pointer;
+  border: 1px solid black;
+  font-size: 10px;
+
 
   &:hover {
     background-color: #5a6268;
@@ -77,7 +80,7 @@ export default function CreateInitiativeForm({
   defaultData = { DEFAULT_VALUES },
 }) {
   const router = useRouter();
-  const [formData, setFormData] = useState({ defaultData });
+  const [formData, setFormData] = useState(defaultData);
 
   const [errors, setErrors] = useState({});
 

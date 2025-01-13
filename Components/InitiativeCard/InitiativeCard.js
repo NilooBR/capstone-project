@@ -25,7 +25,7 @@ const TagList = styled.ul`
 `;
 
 const Tag = styled.li`
-  background: #a8a8a8;
+  background: #bcc1c5;
   border-radius: 4px;
   padding: 4px 8px;
   font-size: 11px;

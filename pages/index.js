@@ -20,12 +20,25 @@ const StyledLink = styled(Link)`
   background-color: lightgrey;
 `;
 
-export default function HomePage({ initiatives, onDeleteInitiative }) {
+const NoInitiativesMessage = styled.span`
+  font-size: 20px;
+  color: black;
+  text-align: center;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
+export default function HomePage({ initiatives, onDeleteInitiative }) {
   return (
     <div>
       <StyledLink href="/initiatives/create">➕Create Initiative</StyledLink>
-      <InitiativeList initiatives={initiatives} onDelete={onDeleteInitiative} />
+      {initiatives.length === 0 ? (
+        <NoInitiativesMessage>No initiatives available. Please create initiatives first.👆</NoInitiativesMessage>
+      ) : (
+        <InitiativeList initiatives={initiatives} onDelete={onDeleteInitiative} />
+      )}
     </div>
   );
 }
