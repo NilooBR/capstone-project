@@ -74,11 +74,19 @@ const DEFAULT_VALUES = {
   tags: "",
 };
 
-export default function CreateInitiativeForm({ onSubmit, defaultData = {}, isEditMode = false }) {
+export default function CreateInitiativeForm({
+  onSubmit,
+  defaultData = {},
+  isEditMode = false,
+}) {
   const router = useRouter();
+
   const [formData, setFormData] = useState({
     ...DEFAULT_VALUES,
     ...defaultData,
+    tags: Array.isArray(defaultData.tags)
+      ? defaultData.tags.join(", ")
+      : defaultData.tags || "",
   });
 
   const [errors, setErrors] = useState({});
@@ -87,7 +95,6 @@ export default function CreateInitiativeForm({ onSubmit, defaultData = {}, isEdi
     const { name, value } = event.target;
 
     const updatedFormData = { ...formData, [name]: value };
-
     const newErrors = { ...errors };
 
     if (name === "tags") {
