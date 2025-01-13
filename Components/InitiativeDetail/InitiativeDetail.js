@@ -103,7 +103,6 @@ const StyledLink = styled(Link)`
 `;
 
 export default function InitiativeDetail({
-  id,
   title,
   description,
   tags,

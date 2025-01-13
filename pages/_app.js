@@ -5,7 +5,7 @@ import { initialData } from "@/lib/initialData";
 export default function App({ Component, pageProps }) {
   const [initiatives, setInitiatives] = useState(initialData);
 
-  function deleteInitiativeById(id) {
+  function handleDeleteInitiative(id) {
     const updatedInitiatives = initiatives.filter(
       (initiative) => initiative.id !== id
     );
@@ -18,7 +18,7 @@ export default function App({ Component, pageProps }) {
       <Component
         {...pageProps}
         initiatives={initiatives}
-        onDeleteInitiative={deleteInitiativeById}
+        onDeleteInitiative={handleDeleteInitiative}
       />
     </>
   );
