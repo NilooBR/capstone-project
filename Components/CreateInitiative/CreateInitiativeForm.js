@@ -74,7 +74,7 @@ const DEFAULT_VALUES = {
   tags: "",
 };
 
-export default function CreateInitiativeForm({ onSubmit, defaultData = {} }) {
+export default function CreateInitiativeForm({ onSubmit, defaultData = {}, isEditMode = false }) {
   const router = useRouter();
   const [formData, setFormData] = useState({
     ...DEFAULT_VALUES,
@@ -134,15 +134,13 @@ export default function CreateInitiativeForm({ onSubmit, defaultData = {} }) {
       return;
     }
 
-    const newInitiative = {
-      id: crypto.randomUUID(),
-      title,
-      description,
-      deadline,
+    const updatedInitiative = {
+      ...formData,
       tags: tagList,
+      id: formData.id || crypto.randomUUID(),
     };
 
-    onSubmit(newInitiative);
+    onSubmit(updatedInitiative);
     router.push("/");
   };
 
@@ -154,7 +152,7 @@ export default function CreateInitiativeForm({ onSubmit, defaultData = {} }) {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <Heading>Create Initiative</Heading>
+      <Heading>{isEditMode ? "Edit Initiative" : "Create Initiative"}</Heading>
       <Label>
         Initiative Title
         <Input
@@ -212,7 +210,7 @@ export default function CreateInitiativeForm({ onSubmit, defaultData = {} }) {
           type="submit"
           disabled={Object.values(errors).some((error) => error)}
         >
-          Create
+          {isEditMode ? "Save" : "Create"}
         </Button>
       </ButtonGroup>
     </Form>

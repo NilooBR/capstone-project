@@ -7,7 +7,11 @@ const StyledLink = styled(Link)`
   text-decoration: none;
 `;
 
-export default function InitiativeDetails({ initiatives, onDeleteInitiative }) {
+export default function InitiativeDetails({
+  initiatives,
+  onDeleteInitiative,
+  onEditInitiative,
+}) {
   const router = useRouter();
   const { id } = router.query;
 
@@ -30,13 +34,20 @@ export default function InitiativeDetails({ initiatives, onDeleteInitiative }) {
     router.push("/");
   }
 
+  function handleEdit() {
+    const updatedInitiative = { ...selectedInitiative };
+    onEditInitiative(updatedInitiative);
+  }
+
   return (
     <InitiativeDetail
+      id={selectedInitiative.id}
       title={selectedInitiative.title}
       description={selectedInitiative.description}
       deadline={selectedInitiative.deadline}
       tags={selectedInitiative.tags}
       onDelete={handleDelete}
+      onEdit={handleEdit}
     />
   );
 }

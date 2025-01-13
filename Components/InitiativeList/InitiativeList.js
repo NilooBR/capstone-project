@@ -1,4 +1,3 @@
-import { useState } from "react";
 import InitiativeCard from "../InitiativeCard/InitiativeCard";
 import styled from "styled-components";
 
@@ -14,8 +13,7 @@ const Title = styled.h1`
   margin: 16px;
 `;
 
-export default function InitiativeList({ initiatives, onDelete }) {
-
+export default function InitiativeList({ initiatives, onDeleteInitiative, onEditInitiative }) {
   return (
     <>
       <Title>Your Initiatives</Title>
@@ -27,7 +25,8 @@ export default function InitiativeList({ initiatives, onDelete }) {
               title={initiative.title}
               tags={initiative.tags}
               deadline={initiative.deadline}
-              onDelete={onDelete}
+              onDelete={onDeleteInitiative}
+              onEdit={onEditInitiative}
             />
           </li>
         ))}
