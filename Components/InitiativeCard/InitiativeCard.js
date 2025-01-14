@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Link from "next/link";
+import CompletedInitiative from "../CompletedInitiative/CompletedInitiative";
 
 const Card = styled.div`
   position: relative;
@@ -48,7 +49,7 @@ export default function InitiativeCard({ id, title, tags, deadline, isCompleted 
   return (
     <Card>
       <StyledLink href={`/initiatives/${id}`}>
-        <h3>{title}</h3>
+        <h3>{title} <CompletedInitiative isCompleted={isCompleted} /> </h3>
         <TagList>
           {tags.map((tag) => (
             <Tag key={tag}>{tag}</Tag>

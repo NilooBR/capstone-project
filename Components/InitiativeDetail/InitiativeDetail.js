@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Link from "next/link";
 import { useState } from "react";
+import CompletedInitiative from "../CompletedInitiative/CompletedInitiative";
 
 const TagList = styled.ul`
   padding: 0;
@@ -151,7 +152,7 @@ export default function InitiativeDetail({
         )}
       <CompletedContainer onClick={() => onMarkAsCompleted(id)} >
         {isCompleted ? (
-          <span>Completed ✔️</span> 
+          <span>Completed <CompletedInitiative isCompleted={isCompleted} /></span> 
         ) : (
           <span>Mark as completed</span>
         )}
