@@ -13,7 +13,7 @@ const Title = styled.h1`
   margin: 16px;
 `;
 
-export default function InitiativeList({ initiatives, onDelete, onEdit }) {
+export default function InitiativeList({ initiatives, onDelete }) {
   return (
     <>
       <Title>Your Initiatives</Title>
@@ -25,7 +25,6 @@ export default function InitiativeList({ initiatives, onDelete, onEdit }) {
               title={initiative.title}
               tags={initiative.tags}
               deadline={initiative.deadline}
-              onEdit={onEdit}
               onDelete={onDelete}
             />
           </li>

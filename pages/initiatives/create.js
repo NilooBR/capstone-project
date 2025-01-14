@@ -8,7 +8,6 @@ export default function CreateInitiativePage({
     <CreateInitiativeForm
       onSubmit={onCreateInitiative}
       defaultData={initiatives}
-      isEditMode={false}
     />
   );
 }

@@ -7,10 +7,9 @@ const StyledLink = styled(Link)`
   text-decoration: none;
 `;
 
-export default function InitiativeDetails({
+export default function InitiativeDetailsPage({
   initiatives,
   onDeleteInitiative,
-  onEditInitiative,
 }) {
   const router = useRouter();
   const { id } = router.query;
@@ -34,11 +33,6 @@ export default function InitiativeDetails({
     router.push("/");
   }
 
-  function handleEdit() {
-    const updatedInitiative = { ...selectedInitiative };
-    onEditInitiative(updatedInitiative);
-  }
-
   return (
     <InitiativeDetail
       id={selectedInitiative.id}
@@ -47,7 +41,6 @@ export default function InitiativeDetails({
       deadline={selectedInitiative.deadline}
       tags={selectedInitiative.tags}
       onDelete={handleDelete}
-      onEdit={handleEdit}
     />
   );
 }

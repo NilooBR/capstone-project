@@ -13,13 +13,9 @@ export default function EditInitiativePage({ initiatives, onEditInitiative }) {
     return <h2>Initiative not found</h2>;
   }
 
-  const handleEditSubmit = (updatedInitiative) => {
-    onEditInitiative(updatedInitiative);
-  };
-
   return (
     <CreateInitiativeForm
-      onSubmit={handleEditSubmit}
+      onSubmit={onEditInitiative}
       defaultData={initiativeToEdit}
       isEditMode={true}
     />

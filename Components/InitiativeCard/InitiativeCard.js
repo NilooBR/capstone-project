@@ -55,6 +55,12 @@ const Modal = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
+  background-color: lightgray;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 3px;
+  align-items: center;
 `;
 
 const LinkButton = styled(Link)`
@@ -88,7 +94,7 @@ const Button = styled.button`
   }
 
   &:nth-child(3) {
-    background-color: #f1807e;
+    background-color: #f4a896 ;
     color: black;
   }
 `;
@@ -110,11 +116,11 @@ export default function InitiativeCard({
   deadline,
   onDelete,
 }) {
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <Card>
-      <TopLeftButton onClick={() => setModalOpen(true)}>...</TopLeftButton>
+      <TopLeftButton onClick={() => setIsModalOpen(true)}>...</TopLeftButton>
       <StyledLink href={`/initiatives/${id}`}>
         <h3>{title}</h3>
         <TagList>
@@ -129,7 +135,7 @@ export default function InitiativeCard({
         <Modal>
           <LinkButton href={`/initiatives/${id}/edit`}>Edit</LinkButton>
           <Button onClick={() => onDelete(id)}>Delete</Button>
-          <Button onClick={() => setModalOpen(false)}>Close</Button>
+          <Button onClick={() => setIsModalOpen(false)}>Close</Button>
         </Modal>
       )}
     </Card>
