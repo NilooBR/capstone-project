@@ -1,6 +1,4 @@
-import { useState } from "react";
 import InitiativeCard from "../InitiativeCard/InitiativeCard";
-import { initialData } from "@/lib/initialData";
 import styled from "styled-components";
 
 const ListContainer = styled.ul`
@@ -15,9 +13,11 @@ const Title = styled.h1`
   margin: 16px;
 `;
 
-export default function InitiativeList({ initiatives, onDelete, onMarkAsCompleted }) {
-
-
+export default function InitiativeList({
+  initiatives,
+  onDelete,
+  onMarkAsCompleted,
+}) {
   return (
     <>
       <Title>Your Initiatives</Title>
