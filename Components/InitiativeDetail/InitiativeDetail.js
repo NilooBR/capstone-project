@@ -128,6 +128,7 @@ const StyledLink = styled(Link)`
 `;
 
 export default function InitiativeDetail({
+  id,
   title,
   description,
   tags,
@@ -168,6 +169,7 @@ export default function InitiativeDetail({
       <Footer>
         <StyledLink href="/">Back</StyledLink>
         <Button onClick={() => setDeleteButtonClicked(true)}>Delete</Button>
+        <StyledLink href={`/initiatives/${id}/edit`}>Edit</StyledLink>
       </Footer>
     </PageContainer>
   );
