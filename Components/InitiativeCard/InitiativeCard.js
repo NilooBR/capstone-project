@@ -12,6 +12,7 @@ const Card = styled.div`
   border-radius: 10px;
   height: 150px;
   width: 100%;
+  background-color: ${({ isCompleted }) => (isCompleted ?  "lightgrey" : "white")};
 `;
 
 const TagList = styled.ul`
@@ -46,8 +47,10 @@ const DateText = styled.p`
 `;
 
 export default function InitiativeCard({ id, title, tags, deadline, isCompleted }) {
+
   return (
-    <Card>
+
+   <Card isCompleted={isCompleted} >
       <StyledLink href={`/initiatives/${id}`}>
         <h3>{title} <CompletedInitiative isCompleted={isCompleted} /> </h3>
         <TagList>
