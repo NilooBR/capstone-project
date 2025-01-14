@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
+import CompletedInitiative from "../CompletedInitiative/CompletedInitiative";
 
 const Form = styled.form`
   display: flex;
@@ -44,6 +45,17 @@ const Error = styled.p`
   font-size: 0.9rem;
 `;
 
+const CompletedContainer = styled.div`
+  display: inline-block;
+  margin: 20px 0;
+  cursor: pointer;
+  background: #a8a8a8;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+`;
+
 const ButtonGroup = styled.div`
   display: flex;
   justify-content: space-between;
@@ -77,7 +89,10 @@ const DEFAULT_VALUES = {
 export default function CreateInitiativeForm({
   onSubmit,
   defaultData = {},
-  isEditMode = false,
+  isEditMode,
+  isCompleted,
+  onMarkAsCompleted,
+  id,
 }) {
   const router = useRouter();
 
@@ -88,6 +103,11 @@ export default function CreateInitiativeForm({
       ? defaultData.tags.join(", ")
       : defaultData.tags || "",
   });
+  const [showCompleteToggle, setShowCompleteToggle] = useState(false);
+  function handleCompleteclick() {
+    onMarkAsCompleted(id);
+    setShowCompleteToggle(true);
+  }
 
   const [errors, setErrors] = useState({});
 
@@ -120,7 +140,7 @@ export default function CreateInitiativeForm({
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
+    setShowCompleteToggle(true);
     const { title, description, deadline, tags } = formData;
 
     const tagList = tags
@@ -208,6 +228,18 @@ export default function CreateInitiativeForm({
         />
         {errors.tags && <Error>{errors.tags}</Error>}
       </Label>
+      
+      {isEditMode && showCompleteToggle && (
+        <CompletedContainer onClick={handleCompleteclick}>
+          {isCompleted ? (
+            <span>
+              Completed <CompletedInitiative isCompleted={isCompleted} />
+            </span>
+          ) : (
+            <span>Mark as completed</span>
+          )}
+        </CompletedContainer>
+      )}
 
       <ButtonGroup>
         <Button type="button" onClick={handleCancel}>
