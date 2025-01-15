@@ -56,19 +56,19 @@ const Description = styled.article`
 
 export default function TaskDetailPage() {
   const router = useRouter();
-  const { id, taskNumber } = router.query;
+  const { id: initiativeId, taskId } = router.query;
 
   const [task, setTask] = useState(null);
   const [status, setStatus] = useState("Pending");
 
   useEffect(() => {
-    if (id && taskNumber) {
+    if (initiativeId && taskId) {
       const selectedInitiative = initialData.find(
-        (initiative) => initiative.id === id
+        (initiative) => initiative.id === initiativeId
       );
 
       if (selectedInitiative) {
-        const selectedTask = selectedInitiative.tasks?.[taskNumber - 1] || null;
+        const selectedTask = selectedInitiative.tasks?.[taskId - 1] || null;
 
         if (selectedTask) {
           setTask(selectedTask);
@@ -76,7 +76,7 @@ export default function TaskDetailPage() {
         }
       }
     }
-  }, [id, taskNumber]);
+  }, [initiativeId, taskId]);
 
   if (!task)
     return (
@@ -106,7 +106,7 @@ export default function TaskDetailPage() {
         </label>
       </Content>
       <Footer>
-        <StyledLink href={`/initiatives/${id}`}>Back</StyledLink>
+        <StyledLink href={`/initiatives/${initiativeId}`}>Back</StyledLink>
       </Footer>
     </PageContainer>
   );

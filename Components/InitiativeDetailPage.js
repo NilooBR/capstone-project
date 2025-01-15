@@ -236,8 +236,8 @@ export default function InitiativeDetailPage({
           {tasks?.length > 0 ? (
             tasks.map((task) => (
               <StyledLinkTask
-                key={task.taskNumber}
-                href={`/initiatives/${id}/tasks/${task.taskNumber}`}
+                key={task.id}
+                href={`/initiatives/${id}/tasks/${task.id}`}
               >
                 <TaskCard>
                   <h2>{task.title}</h2>
