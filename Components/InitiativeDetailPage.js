@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Link from "next/link";
 import { useState } from "react";
-import CompletedInitiative from "../CompletedInitiative/CompletedInitiative";
+import CompletedInitiative from "./CompletedInitiative";
 
 const TagList = styled.ul`
   padding: 0;
@@ -169,7 +169,7 @@ const TasksGrid = styled.div`
   gap: 8px;
 `;
 
-export default function InitiativeDetail({
+export default function InitiativeDetailPage({
   id,
   title,
   description,

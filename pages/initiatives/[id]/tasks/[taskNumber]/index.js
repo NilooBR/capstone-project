@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
-import TaskDetail from "@/Components/TaskDetail/TaskDetail";
 import { initialData } from "@/lib/initialData";
 import Link from "next/link";
 import styled from "styled-components";
+import TaskDetailPage from "@/Components/TaskDetailPage";
 
 const StyledLink = styled(Link)`
   text-decoration: none;
@@ -25,9 +25,9 @@ export default function TaskDetails() {
       </div>
     );
   }
-  
+
   return (
-    <TaskDetail
+    <TaskDetailPage
       id={id}
       taskNumber={taskNumber}
       tasks={selectedInitiative.tasks}

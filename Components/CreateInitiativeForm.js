@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
-import CompletedInitiative from "../CompletedInitiative/CompletedInitiative";
+import CompletedInitiative from "./CompletedInitiative";
 
 const Form = styled.form`
   display: flex;

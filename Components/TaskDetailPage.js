@@ -54,7 +54,7 @@ const Description = styled.article`
   background-color: #ffffff;
 `;
 
-export default function TaskDetail() {
+export default function TaskDetailPage() {
   const router = useRouter();
   const { id, taskNumber } = router.query;
 
