@@ -79,7 +79,7 @@ const CompletedContainer = styled.div`
   padding: 4px 8px;
   font-size: 1.1rem;
   font-weight: bold;
-`
+`;
 
 const Footer = styled.div`
   display: flex;
@@ -139,6 +139,23 @@ const StyledLink = styled(Link)`
   }
 `;
 
+const TaskCard = styled.div`
+  border: 1px solid #ccc;
+  padding: 1rem;
+  cursor: pointer;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+`;
+
+const TasksGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 20px 0;
+`;
+
 export default function InitiativeDetail({
   id,
   title,
@@ -147,10 +164,25 @@ export default function InitiativeDetail({
   deadline,
   onDelete,
   onToggleCompleted,
-  isCompleted
+  isCompleted,
+  tasks,
 }) {
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
-  
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Pending":
+        return "gray";
+      case "In Progress":
+        return "blue";
+      case "Completed":
+        return "green";
+      default:
+        return "gray";
+    }
+  };
+
+
   return (
     <PageContainer>
       <Content>
@@ -179,14 +211,37 @@ export default function InitiativeDetail({
             </ConfirmationDialogButton>
           </ConfirmationDialog>
         )}
-      <CompletedContainer onClick={() => onToggleCompleted(id)} >
-        {isCompleted ? (
-          <span>Completed <CompletedInitiative isCompleted={isCompleted} /></span> 
-        ) : (
-          <span>Mark as completed</span>
-        )}
-      </CompletedContainer>
+        <CompletedContainer onClick={() => onToggleCompleted(id)}>
+          {isCompleted ? (
+            <span>
+              Completed <CompletedInitiative isCompleted={isCompleted} />
+            </span>
+          ) : (
+            <span>Mark as completed</span>
+          )}
+        </CompletedContainer>
       </Content>
+
+      <TasksGrid>
+        {tasks?.length > 0 ? (
+          tasks.map((task) => (
+            <Link
+              key={task.taskNumber}
+              href={`/initiatives/${id}/tasks/${task.taskNumber}`}
+            >
+              <TaskCard>
+                <h2>{task.title}</h2>
+                <span style={{ color: getStatusColor(task.status) }}>
+                  {task.status}
+                </span>
+              </TaskCard>
+            </Link>
+          ))
+        ) : (
+          <p>No tasks available for this initiative.</p>
+        )}
+      </TasksGrid>
+
       <Footer>
         <StyledLink href="/">Back</StyledLink>
         <Button onClick={() => setDeleteButtonClicked(true)}>Delete</Button>
