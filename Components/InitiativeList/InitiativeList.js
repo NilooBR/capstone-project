@@ -16,7 +16,6 @@ const Title = styled.h1`
 export default function InitiativeList({
   initiatives,
   onDelete,
-  onMarkAsCompleted,
 }) {
   return (
     <>
@@ -31,7 +30,6 @@ export default function InitiativeList({
               deadline={initiative.deadline}
               isCompleted={initiative?.isCompleted || false}
               onDelete={onDelete}
-              onMarkAsCompleted={onMarkAsCompleted}
             />
           </li>
         ))}

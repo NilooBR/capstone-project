@@ -45,17 +45,6 @@ const Error = styled.p`
   font-size: 0.9rem;
 `;
 
-const CompletedContainer = styled.div`
-  display: inline-block;
-  margin: 20px 0;
-  cursor: pointer;
-  background: #a8a8a8;
-  border-radius: 4px;
-  padding: 4px 8px;
-  font-size: 1.1rem;
-  font-weight: bold;
-`;
-
 const ButtonGroup = styled.div`
   display: flex;
   justify-content: space-between;
@@ -89,10 +78,7 @@ const DEFAULT_VALUES = {
 export default function CreateInitiativeForm({
   onSubmit,
   defaultData = {},
-  isEditMode,
-  isCompleted,
-  onMarkAsCompleted,
-  id,
+  isEditMode = false
 }) {
   const router = useRouter();
 
@@ -104,10 +90,6 @@ export default function CreateInitiativeForm({
       : defaultData.tags || "",
   });
   const [showCompleteToggle, setShowCompleteToggle] = useState(false);
-  function handleCompleteclick() {
-    onMarkAsCompleted(id);
-    setShowCompleteToggle(true);
-  }
 
   const [errors, setErrors] = useState({});
 
@@ -228,18 +210,6 @@ export default function CreateInitiativeForm({
         />
         {errors.tags && <Error>{errors.tags}</Error>}
       </Label>
-      
-      {isEditMode && showCompleteToggle && (
-        <CompletedContainer onClick={handleCompleteclick}>
-          {isCompleted ? (
-            <span>
-              Completed <CompletedInitiative isCompleted={isCompleted} />
-            </span>
-          ) : (
-            <span>Mark as completed</span>
-          )}
-        </CompletedContainer>
-      )}
 
       <ButtonGroup>
         <Button type="button" onClick={handleCancel}>

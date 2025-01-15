@@ -1,7 +1,10 @@
 import { useRouter } from "next/router";
 import CreateInitiativeForm from "@/Components/CreateInitiative/CreateInitiativeForm";
 
-export default function EditInitiativePage({ initiatives, onEditInitiative, isCompleted, onMarkAsCompleted }) {
+export default function EditInitiativePage({
+  initiatives,
+  onEditInitiative,
+}) {
   const router = useRouter();
   const { id } = router.query;
 
@@ -14,20 +17,10 @@ export default function EditInitiativePage({ initiatives, onEditInitiative, isCo
   }
 
   return (
-        <ul>
-          {initiatives.map((initiative) => (
-            <li key={initiative.id}>
-              <CreateInitiativeForm
-                onSubmit={onEditInitiative}
-                defaultData={initiativeToEdit}
-                isCompleted={isCompleted}
-                onMarkAsCompleted={onMarkAsCompleted}
-                id={initiative.id}
-                isEditMode={true}
-              />
-            </li>
-          ))}
-        </ul>
-
+    <CreateInitiativeForm
+      onSubmit={onEditInitiative}
+      defaultData={initiativeToEdit}
+      isEditMode={true}
+    />
   );
 }
