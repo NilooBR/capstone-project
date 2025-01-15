@@ -72,13 +72,13 @@ const ConfirmationDialog = styled.div`
 
 const CompletedContainer = styled.div`
   display: inline-block;
-  margin: 20px 0;
   cursor: pointer;
   background: #a8a8a8;
   border-radius: 4px;
   padding: 4px 8px;
   font-size: 1.1rem;
   font-weight: bold;
+  margin: 10px 0;
 `;
 
 const Footer = styled.div`
@@ -167,7 +167,6 @@ const TasksGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin: 20px 0;
 `;
 
 export default function InitiativeDetail({
@@ -233,9 +232,7 @@ export default function InitiativeDetail({
             <span>Mark as completed</span>
           )}
         </CompletedContainer>
-      </Content>
-
-      <TasksGrid>
+        <TasksGrid>
         {tasks?.length > 0 ? (
           tasks.map((task) => (
             <StyledLinkTask
@@ -254,6 +251,9 @@ export default function InitiativeDetail({
           <p>No tasks available for this initiative.</p>
         )}
       </TasksGrid>
+      </Content>
+
+     
 
       <Footer>
         <StyledLink href="/">Back</StyledLink>
