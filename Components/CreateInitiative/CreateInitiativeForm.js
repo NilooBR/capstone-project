@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
+import CompletedInitiative from "../CompletedInitiative/CompletedInitiative";
 
 const Form = styled.form`
   display: flex;
@@ -77,7 +78,7 @@ const DEFAULT_VALUES = {
 export default function CreateInitiativeForm({
   onSubmit,
   defaultData = {},
-  isEditMode = false,
+  isEditMode = false
 }) {
   const router = useRouter();
 

@@ -7,9 +7,10 @@ const StyledLink = styled(Link)`
   text-decoration: none;
 `;
 
-export default function InitiativeDetailsPage({
+export default function InitiativeDetails({
   initiatives,
   onDeleteInitiative,
+  onToggleCompleted,
 }) {
   const router = useRouter();
   const { id } = router.query;
@@ -39,8 +40,10 @@ export default function InitiativeDetailsPage({
       title={selectedInitiative.title}
       description={selectedInitiative.description}
       deadline={selectedInitiative.deadline}
+      isCompleted={selectedInitiative.isCompleted}
       tags={selectedInitiative.tags}
       onDelete={handleDelete}
+      onToggleCompleted={onToggleCompleted}
     />
   );
 }

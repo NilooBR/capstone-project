@@ -16,6 +16,15 @@ export default function App({ Component, pageProps }) {
     setInitiatives(updatedInitiatives);
   }
 
+  function handleToggleCompleted(id) {
+    const updatedInitiatives = initiatives.map((initiative) =>
+      initiative.id === id
+        ? { ...initiative, isCompleted: !initiative.isCompleted ??true }
+        : initiative
+    );
+    setInitiatives(updatedInitiatives);
+  }
+
   function handleEditInitiative(updatedInitiative) {
     const updatedInitiatives = initiatives.map((initiative) =>
       initiative.id === updatedInitiative.id ? updatedInitiative : initiative
@@ -31,6 +40,7 @@ export default function App({ Component, pageProps }) {
         initiatives={initiatives}
         onCreateInitiative={handleCreateInitiative}
         onDeleteInitiative={handleDeleteInitiative}
+        onToggleCompleted={handleToggleCompleted}
         onEditInitiative={handleEditInitiative}
       />
     </>

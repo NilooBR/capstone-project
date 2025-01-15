@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Link from "next/link";
 import { useState } from "react";
+import CompletedInitiative from "../CompletedInitiative/CompletedInitiative";
 
 const TagList = styled.ul`
   padding: 0;
@@ -69,6 +70,17 @@ const ConfirmationDialog = styled.div`
   border: 1px solid black;
 `;
 
+const CompletedContainer = styled.div`
+  display: inline-block;
+  margin: 20px 0;
+  cursor: pointer;
+  background: #a8a8a8;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+`
+
 const Footer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -134,9 +146,11 @@ export default function InitiativeDetail({
   tags,
   deadline,
   onDelete,
+  onToggleCompleted,
+  isCompleted
 }) {
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
-
+  
   return (
     <PageContainer>
       <Content>
@@ -165,6 +179,13 @@ export default function InitiativeDetail({
             </ConfirmationDialogButton>
           </ConfirmationDialog>
         )}
+      <CompletedContainer onClick={() => onToggleCompleted(id)} >
+        {isCompleted ? (
+          <span>Completed <CompletedInitiative isCompleted={isCompleted} /></span> 
+        ) : (
+          <span>Mark as completed</span>
+        )}
+      </CompletedContainer>
       </Content>
       <Footer>
         <StyledLink href="/">Back</StyledLink>

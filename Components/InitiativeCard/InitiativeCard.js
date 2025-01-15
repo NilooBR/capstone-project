@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Link from "next/link";
+import CompletedInitiative from "../CompletedInitiative/CompletedInitiative";
 import { useState } from "react";
 
 const Card = styled.div`
@@ -12,6 +13,8 @@ const Card = styled.div`
   border-radius: 10px;
   height: 150px;
   width: 100%;
+  background-color: ${({ isCompleted }) =>
+    isCompleted ? "lightgrey" : "white"};
 `;
 
 const TagList = styled.ul`
@@ -94,7 +97,7 @@ const Button = styled.button`
   }
 
   &:nth-child(3) {
-    background-color: #f4a896 ;
+    background-color: #f4a896;
     color: black;
   }
 `;
@@ -115,14 +118,17 @@ export default function InitiativeCard({
   tags,
   deadline,
   onDelete,
+  isCompleted,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <Card>
+    <Card isCompleted={isCompleted}>
       <TopLeftButton onClick={() => setIsModalOpen(true)}>...</TopLeftButton>
       <StyledLink href={`/initiatives/${id}`}>
-        <h3>{title}</h3>
+        <h3>
+          {title} <CompletedInitiative isCompleted={isCompleted} />{" "}
+        </h3>
         <TagList>
           {tags.map((tag) => (
             <Tag key={tag}>{tag}</Tag>

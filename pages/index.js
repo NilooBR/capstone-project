@@ -30,14 +30,24 @@ const NoInitiativesMessage = styled.span`
   justify-content: center;
 `;
 
-export default function HomePage({ initiatives, onDeleteInitiative }) {
+export default function HomePage({
+  initiatives,
+  onDeleteInitiative,
+  onToggleCompleted,
+}) {
   return (
     <div>
       <StyledLink href="/initiatives/create">➕Create Initiative</StyledLink>
       {initiatives.length === 0 ? (
-        <NoInitiativesMessage>No initiatives available. Please create initiatives first.👆</NoInitiativesMessage>
+        <NoInitiativesMessage>
+          No initiatives available. Please create initiatives first.👆
+        </NoInitiativesMessage>
       ) : (
-        <InitiativeList initiatives={initiatives} onDelete={onDeleteInitiative} />
+        <InitiativeList
+          initiatives={initiatives}
+          onDelete={onDeleteInitiative}
+          onToggleCompleted={onToggleCompleted}
+        />
       )}
     </div>
   );
