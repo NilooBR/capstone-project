@@ -10,7 +10,7 @@ const StyledLink = styled(Link)`
 export default function InitiativeDetails({
   initiatives,
   onDeleteInitiative,
-  onMarkAsCompleted,
+  onToggleCompleted,
 }) {
   const router = useRouter();
   const { id } = router.query;
@@ -43,7 +43,7 @@ export default function InitiativeDetails({
       isCompleted={selectedInitiative.isCompleted}
       tags={selectedInitiative.tags}
       onDelete={handleDelete}
-      onMarkAsCompleted={onMarkAsCompleted}
+      onToggleCompleted={onToggleCompleted}
     />
   );
 }

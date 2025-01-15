@@ -89,7 +89,6 @@ export default function CreateInitiativeForm({
       ? defaultData.tags.join(", ")
       : defaultData.tags || "",
   });
-  const [showCompleteToggle, setShowCompleteToggle] = useState(false);
 
   const [errors, setErrors] = useState({});
 
@@ -122,7 +121,7 @@ export default function CreateInitiativeForm({
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setShowCompleteToggle(true);
+
     const { title, description, deadline, tags } = formData;
 
     const tagList = tags

@@ -33,7 +33,7 @@ const NoInitiativesMessage = styled.span`
 export default function HomePage({
   initiatives,
   onDeleteInitiative,
-  onMarkAsCompleted,
+  onToggleCompleted,
 }) {
   return (
     <div>
@@ -46,7 +46,7 @@ export default function HomePage({
         <InitiativeList
           initiatives={initiatives}
           onDelete={onDeleteInitiative}
-          onMarkAsCompleted={onMarkAsCompleted}
+          onToggleCompleted={onToggleCompleted}
         />
       )}
     </div>

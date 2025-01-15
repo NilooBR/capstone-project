@@ -146,7 +146,7 @@ export default function InitiativeDetail({
   tags,
   deadline,
   onDelete,
-  onMarkAsCompleted,
+  onToggleCompleted,
   isCompleted
 }) {
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
@@ -179,7 +179,7 @@ export default function InitiativeDetail({
             </ConfirmationDialogButton>
           </ConfirmationDialog>
         )}
-      <CompletedContainer onClick={() => onMarkAsCompleted(id)} >
+      <CompletedContainer onClick={() => onToggleCompleted(id)} >
         {isCompleted ? (
           <span>Completed <CompletedInitiative isCompleted={isCompleted} /></span> 
         ) : (
