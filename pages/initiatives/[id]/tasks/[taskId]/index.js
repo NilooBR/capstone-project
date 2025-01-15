@@ -68,7 +68,7 @@ export default function TaskDetailPage() {
       );
 
       if (selectedInitiative) {
-        const selectedTask = selectedInitiative.tasks?.[taskId - 1] || null;
+        const selectedTask = selectedInitiative.tasks?.find((item) => item.id == taskId);
 
         if (selectedTask) {
           setTask(selectedTask);
