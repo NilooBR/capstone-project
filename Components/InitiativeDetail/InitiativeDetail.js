@@ -169,7 +169,7 @@ export default function InitiativeDetail({
 }) {
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
 
-  const getStatusColor = (status) => {
+  function getStatusColor(status){
     switch (status) {
       case "Pending":
         return "gray";
