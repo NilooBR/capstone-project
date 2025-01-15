@@ -139,14 +139,28 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const TaskCard = styled.div`
-  border: 1px solid #ccc;
-  padding: 1rem;
+const StyledLinkTask = styled(Link)`
+  display: inline-block;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  background-color: #ebebeb;
+  color: black;
+  font-weight: bold;
   cursor: pointer;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  margin: 20px;
+  border: 0.5px solid black;
+  font-size: 7px;
+
+  &:hover {
+    background-color: #bcc1c5;
+  }
+`;
+
+const TaskCard = styled.div`
+  padding: 2px;
+  cursor: pointer;
+  margin: 2px;
 `;
 
 const TasksGrid = styled.div`
@@ -169,7 +183,7 @@ export default function InitiativeDetail({
 }) {
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
 
-  function getStatusColor(status){
+  function getStatusColor(status) {
     switch (status) {
       case "Pending":
         return "gray";
@@ -180,8 +194,7 @@ export default function InitiativeDetail({
       default:
         return "gray";
     }
-  };
-
+  }
 
   return (
     <PageContainer>
@@ -225,7 +238,7 @@ export default function InitiativeDetail({
       <TasksGrid>
         {tasks?.length > 0 ? (
           tasks.map((task) => (
-            <Link
+            <StyledLinkTask
               key={task.taskNumber}
               href={`/initiatives/${id}/tasks/${task.taskNumber}`}
             >
@@ -235,7 +248,7 @@ export default function InitiativeDetail({
                   {task.status}
                 </span>
               </TaskCard>
-            </Link>
+            </StyledLinkTask>
           ))
         ) : (
           <p>No tasks available for this initiative.</p>
