@@ -233,28 +233,25 @@ export default function InitiativeDetail({
           )}
         </CompletedContainer>
         <TasksGrid>
-        {tasks?.length > 0 ? (
-          tasks.map((task) => (
-            <StyledLinkTask
-              key={task.taskNumber}
-              href={`/initiatives/${id}/tasks/${task.taskNumber}`}
-            >
-              <TaskCard>
-                <h2>{task.title}</h2>
-                <span style={{ color: getStatusColor(task.status) }}>
-                  {task.status}
-                </span>
-              </TaskCard>
-            </StyledLinkTask>
-          ))
-        ) : (
-          <p>No tasks available for this initiative.</p>
-        )}
-      </TasksGrid>
+          {tasks?.length > 0 ? (
+            tasks.map((task) => (
+              <StyledLinkTask
+                key={task.taskNumber}
+                href={`/initiatives/${id}/tasks/${task.taskNumber}`}
+              >
+                <TaskCard>
+                  <h2>{task.title}</h2>
+                  <span style={{ color: getStatusColor(task.status) }}>
+                    {task.status}
+                  </span>
+                </TaskCard>
+              </StyledLinkTask>
+            ))
+          ) : (
+            <p>No tasks available for this initiative.</p>
+          )}
+        </TasksGrid>
       </Content>
-
-     
-
       <Footer>
         <StyledLink href="/">Back</StyledLink>
         <Button onClick={() => setDeleteButtonClicked(true)}>Delete</Button>
