@@ -1,5 +1,5 @@
-import InitiativeCard from "../InitiativeCard/InitiativeCard";
 import styled from "styled-components";
+import InitiativeCard from "./InitiativeCard";
 
 const ListContainer = styled.ul`
   display: grid;

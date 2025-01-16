@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Link from "next/link";
-import CompletedInitiative from "../CompletedInitiative/CompletedInitiative";
+import CompletedInitiative from "./CompletedInitiative";
 import { useState } from "react";
 
 const Card = styled.div`
