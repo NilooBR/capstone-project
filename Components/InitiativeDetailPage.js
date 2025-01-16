@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Link from "next/link";
 import { useState } from "react";
-import CompletedInitiative from "../CompletedInitiative/CompletedInitiative";
+import CompletedInitiative from "./CompletedInitiative";
 
 const TagList = styled.ul`
   padding: 0;
@@ -72,14 +72,14 @@ const ConfirmationDialog = styled.div`
 
 const CompletedContainer = styled.div`
   display: inline-block;
-  margin: 20px 0;
   cursor: pointer;
   background: #a8a8a8;
   border-radius: 4px;
   padding: 4px 8px;
   font-size: 1.1rem;
   font-weight: bold;
-`
+  margin: 10px 0;
+`;
 
 const Footer = styled.div`
   display: flex;
@@ -139,7 +139,37 @@ const StyledLink = styled(Link)`
   }
 `;
 
-export default function InitiativeDetail({
+const StyledLinkTask = styled(Link)`
+  display: inline-block;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  background-color: #ebebeb;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  border: 0.5px solid black;
+  font-size: 7px;
+
+  &:hover {
+    background-color: #bcc1c5;
+  }
+`;
+
+const TaskCard = styled.div`
+  padding: 2px;
+  cursor: pointer;
+  margin: 2px;
+`;
+
+const TasksGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+`;
+
+export default function InitiativeDetailPage({
   id,
   title,
   description,
@@ -147,10 +177,24 @@ export default function InitiativeDetail({
   deadline,
   onDelete,
   onToggleCompleted,
-  isCompleted
+  isCompleted,
+  tasks,
 }) {
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
-  
+
+  function getStatusColor(status) {
+    switch (status) {
+      case "Pending":
+        return "gray";
+      case "In Progress":
+        return "blue";
+      case "Completed":
+        return "green";
+      default:
+        return "gray";
+    }
+  }
+
   return (
     <PageContainer>
       <Content>
@@ -179,13 +223,34 @@ export default function InitiativeDetail({
             </ConfirmationDialogButton>
           </ConfirmationDialog>
         )}
-      <CompletedContainer onClick={() => onToggleCompleted(id)} >
-        {isCompleted ? (
-          <span>Completed <CompletedInitiative isCompleted={isCompleted} /></span> 
-        ) : (
-          <span>Mark as completed</span>
-        )}
-      </CompletedContainer>
+        <CompletedContainer onClick={() => onToggleCompleted(id)}>
+          {isCompleted ? (
+            <span>
+              Completed <CompletedInitiative isCompleted={isCompleted} />
+            </span>
+          ) : (
+            <span>Mark as completed</span>
+          )}
+        </CompletedContainer>
+        <TasksGrid>
+          {tasks?.length > 0 ? (
+            tasks.map((task) => (
+              <StyledLinkTask
+                key={task.id}
+                href={`/initiatives/${id}/tasks/${task.id}`}
+              >
+                <TaskCard>
+                  <h2>{task.title}</h2>
+                  <span style={{ color: getStatusColor(task.status) }}>
+                    {task.status}
+                  </span>
+                </TaskCard>
+              </StyledLinkTask>
+            ))
+          ) : (
+            <p>No tasks available for this initiative.</p>
+          )}
+        </TasksGrid>
       </Content>
       <Footer>
         <StyledLink href="/">Back</StyledLink>

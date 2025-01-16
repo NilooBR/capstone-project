@@ -1,4 +1,4 @@
-import InitiativeList from "@/Components/InitiativeList/InitiativeList";
+import InitiativeList from "@/Components/InitiativeList";
 import Link from "next/link";
 import styled from "styled-components";
 

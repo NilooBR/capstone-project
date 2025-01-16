@@ -1,13 +1,13 @@
+import InitiativeDetailPage from "@/Components/InitiativeDetailPage";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import InitiativeDetail from "@/Components/InitiativeDetail/InitiativeDetail";
 import styled from "styled-components";
 
 const StyledLink = styled(Link)`
   text-decoration: none;
 `;
 
-export default function InitiativeDetails({
+export default function InitiativeDetailsPage({
   initiatives,
   onDeleteInitiative,
   onToggleCompleted,
@@ -35,7 +35,7 @@ export default function InitiativeDetails({
   }
 
   return (
-    <InitiativeDetail
+    <InitiativeDetailPage
       id={selectedInitiative.id}
       title={selectedInitiative.title}
       description={selectedInitiative.description}
@@ -44,6 +44,7 @@ export default function InitiativeDetails({
       tags={selectedInitiative.tags}
       onDelete={handleDelete}
       onToggleCompleted={onToggleCompleted}
+      tasks={selectedInitiative.tasks} 
     />
   );
 }

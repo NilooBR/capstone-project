@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import CreateInitiativeForm from "@/Components/CreateInitiative/CreateInitiativeForm";
+import CreateInitiativeForm from "@/Components/CreateInitiativeForm";
 
 export default function EditInitiativePage({
   initiatives,
