@@ -107,7 +107,7 @@ const Label = styled.label`
   margin-top: 20px;
 `;
 
-export default function TaskDetailPage({ onDelete }) {
+export default function TaskDetailPage() {
   const router = useRouter();
   const { id: initiativeId, taskId } = router.query;
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
