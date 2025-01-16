@@ -54,10 +54,63 @@ const Description = styled.article`
   background-color: #ffffff;
 `;
 
-export default function TaskDetailPage() {
+const ConfirmationDialog = styled.div`
+  margin: 50px 0;
+  padding: 20px;
+  border: 1px solid grey;
+  border-radius: 8px;
+  background-color: lightgrey;
+  text-align: center;
+  font-weight: bold;
+  font-size: 10px;
+  border: 1px solid black;
+`;
+
+const ConfirmationDialogButton = styled.button`
+  display: inline-block;
+  padding: 10px 20px;
+  text-align: center;
+  border-radius: 5px;
+  background-color: #bcc1c5;
+  color: black;
+  font-weight: bold;
+  border: 1px solid black;
+  cursor: pointer;
+  margin: 5px;
+
+  &:hover {
+    background-color: #5a6268;
+  }
+`;
+
+const Button = styled.button`
+  display: inline-block;
+  padding: 10px 20px;
+  text-align: center;
+  border-radius: 5px;
+  background-color: #bcc1c5;
+  color: black;
+  cursor: pointer;
+  border: 1px solid black;
+  font-weight: bold;
+  font-size: 10px;
+
+  &:hover {
+    background-color: #5a6268;
+  }
+`;
+
+const Label = styled.label`
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  margin-top: 20px;
+`;
+
+export default function TaskDetailPage({ onDelete }) {
   const router = useRouter();
   const { id: initiativeId, taskId } = router.query;
-
+  const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
   const [task, setTask] = useState(null);
   const [status, setStatus] = useState("Pending");
 
@@ -68,7 +121,9 @@ export default function TaskDetailPage() {
       );
 
       if (selectedInitiative) {
-        const selectedTask = selectedInitiative.tasks?.find((item) => item.id == taskId);
+        const selectedTask = selectedInitiative.tasks?.find(
+          (item) => item.id == taskId
+        );
 
         if (selectedTask) {
           setTask(selectedTask);
@@ -91,22 +146,52 @@ export default function TaskDetailPage() {
     setStatus(event.target.value);
   }
 
+  function handleDelete() {
+    const initiativeIndex = initialData.findIndex(
+      (initiative) => initiative.id === initiativeId
+    );
+
+    if (initiativeIndex !== -1) {
+      const updatedTasks = initialData[initiativeIndex].tasks.filter(
+        (item) => item.id !== taskId
+      );
+
+      initialData[initiativeIndex].tasks = updatedTasks;
+
+      router.push(`/initiatives/${initiativeId}`);
+    }
+  }
+
   return (
     <PageContainer>
       <Content>
         <Title>{task.title}</Title>
         <Description>{task.description}</Description>
-        <label>
+        <Label>
           Status:
           <select value={status} onChange={handleStatusChange}>
             <option value="Pending">Pending</option>
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
           </select>
-        </label>
+        </Label>
+        {deleteButtonClicked && (
+          <ConfirmationDialog>
+            <p>Are you sure you want to delete this task?</p>
+            <ConfirmationDialogButton
+              onClick={() => setDeleteButtonClicked(false)}
+            >
+              Cancel
+            </ConfirmationDialogButton>
+            <ConfirmationDialogButton onClick={handleDelete}>
+              Yes, delete
+            </ConfirmationDialogButton>
+          </ConfirmationDialog>
+        )}
       </Content>
       <Footer>
         <StyledLink href={`/initiatives/${initiativeId}`}>Back</StyledLink>
+        <Button onClick={() => setDeleteButtonClicked(true)}>Delete</Button>
       </Footer>
     </PageContainer>
   );
