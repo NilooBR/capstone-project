@@ -23,24 +23,6 @@ const Footer = styled.div`
   gap: 10px;
 `;
 
-const StyledLink = styled(Link)`
-  display: inline-block;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  border-radius: 5px;
-  background-color: #bcc1c5;
-  color: black;
-  font-weight: bold;
-  cursor: pointer;
-  border: 1px solid black;
-  font-size: 10px;
-
-  &:hover {
-    background-color: #5a6268;
-  }
-`;
-
 const Title = styled.h1`
   margin: 20px 0;
   font-size: 1.8rem;
@@ -85,6 +67,11 @@ const Button = styled.button`
 
 const ConfirmationDialogButton = styled(Button)`
   margin: 5px;
+`;
+
+const StyledLink = styled(Button).attrs({ as: Link })`
+  text-decoration: none;
+  text-align: center;
 `;
 
 const Label = styled.label`
