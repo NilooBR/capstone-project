@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Link from "next/link";
 import CompletedInitiative from "./CompletedInitiative";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const Card = styled.div`
   position: relative;
@@ -121,6 +121,22 @@ export default function InitiativeCard({
   isCompleted,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const modalRef = useRef(null);
+
+  const handleOutsideClick = (event) => {
+    if (modalRef.current && !modalRef.current.contains(event.target)) {
+      setIsModalOpen(false);
+    }
+  }
+
+  useEffect(() => {
+    if (isModalOpen) {
+      document.addEventListener("mousedown", handleOutsideClick)
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick)
+    };
+  }, [isModalOpen]);
 
   return (
     <Card isCompleted={isCompleted}>
@@ -138,7 +154,7 @@ export default function InitiativeCard({
       </StyledLink>
 
       {isModalOpen && (
-        <Modal>
+        <Modal ref={modalRef} >
           <LinkButton href={`/initiatives/${id}/edit`}>Edit</LinkButton>
           <Button onClick={() => onDelete(id)}>Delete</Button>
           <Button onClick={() => setIsModalOpen(false)}>Close</Button>
