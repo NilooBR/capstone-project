@@ -73,9 +73,19 @@ export default function CreateTaskForm({
     defaultDataTask = {},
 }) {
     const router = useRouter();
+    const { id: initiativeId } = router.query;
 
+  function handleCancelTask() {
+    router.push(`/initiatives/${initiativeId}`);
+  }
 
+  function handleChangeTask() {
 
+  }
+
+  function handleSubmitTask() {
+
+  }
 
     return (
      <Form onSubmitTask={handleSubmitTask}>
@@ -87,8 +97,8 @@ export default function CreateTaskForm({
             id="title"
             name="title"
             type="text"
-            value={title}
-            onChange={handleChange}
+            value=""
+            onChange={handleChangeTask}
         />
 
         <Label>
@@ -97,8 +107,8 @@ export default function CreateTaskForm({
             id="description"
             name="description"
             rows="4"
-            value="description"
-            onChange={handleChange}
+            value=""
+            onChange={handleChangeTask}
         /> 
         </Label>
 
@@ -110,6 +120,17 @@ export default function CreateTaskForm({
             <option value="completed">Completed</option>
         </select>
         </Label>
+
+        <ButtonGroup>
+        <Button type="button" onClick={handleCancelTask}>
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+        >
+          Create
+        </Button>
+      </ButtonGroup>
      </Form>
 
     )

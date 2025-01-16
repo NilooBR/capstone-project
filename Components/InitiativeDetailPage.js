@@ -161,6 +161,7 @@ const AddTaskCard = styled.div`
   padding: 2px;
   cursor: pointer;
   margin: 2px;
+  background-color: white;
 `
 
 const TaskCard = styled.div`
@@ -238,14 +239,14 @@ export default function InitiativeDetailPage({
             <span>Mark as completed</span>
           )}
         </CompletedContainer>
-         <StyledLinkTask>
-          <TaskCard>
-              <p>➕</p>
-              <p>Add task</p>
-          </TaskCard>
-          </StyledLinkTask> 
+ 
         <TasksGrid>
-
+        <StyledLinkTask href={`/initiatives/${id}/tasks/createTask`}>
+          <AddTaskCard>
+              <p>➕</p>
+              <h2>Add task</h2>
+          </AddTaskCard>
+          </StyledLinkTask>
           {tasks?.length > 0 ? (
             tasks.map((task) => (
               <StyledLinkTask
