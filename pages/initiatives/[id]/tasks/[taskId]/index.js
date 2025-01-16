@@ -137,13 +137,28 @@ export default function TaskDetailPage() {
     return (
       <div>
         <h1>Task Not Found</h1>
-        <p>We could not find an task with the provided ID.</p>
+        <p>We could not find a task with the provided ID.</p>
         <StyledLink href="/">Go Back to List</StyledLink>
       </div>
     );
 
   function handleStatusChange(event) {
-    setStatus(event.target.value);
+    const newStatus = event.target.value;
+    setStatus(newStatus);
+
+    const initiativeIndex = initialData.findIndex(
+      (initiative) => initiative.id === initiativeId
+    );
+
+    if (initiativeIndex !== -1) {
+      const taskIndex = initialData[initiativeIndex].tasks.findIndex(
+        (item) => item.id == taskId
+      );
+
+      if (taskIndex !== -1) {
+        initialData[initiativeIndex].tasks[taskIndex].status = newStatus;
+      }
+    }
   }
 
   function handleDelete() {
