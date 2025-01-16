@@ -66,23 +66,6 @@ const ConfirmationDialog = styled.div`
   border: 1px solid black;
 `;
 
-const ConfirmationDialogButton = styled.button`
-  display: inline-block;
-  padding: 10px 20px;
-  text-align: center;
-  border-radius: 5px;
-  background-color: #bcc1c5;
-  color: black;
-  font-weight: bold;
-  border: 1px solid black;
-  cursor: pointer;
-  margin: 5px;
-
-  &:hover {
-    background-color: #5a6268;
-  }
-`;
-
 const Button = styled.button`
   display: inline-block;
   padding: 10px 20px;
@@ -98,6 +81,10 @@ const Button = styled.button`
   &:hover {
     background-color: #5a6268;
   }
+`;
+
+const ConfirmationDialogButton = styled(Button)`
+  margin: 5px;
 `;
 
 const Label = styled.label`
