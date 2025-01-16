@@ -67,28 +67,54 @@ const Button = styled.button`
   }
 `;
 
+const DEFAULT_VALUES = {
+  title: "",
+  description: "",
+  status: "Pending",
+}
 
 export default function CreateTaskForm({
-    onSubmitTask,
+
     defaultDataTask = {},
 }) {
     const router = useRouter();
     const { id: initiativeId } = router.query;
 
+    const [formData, setFormData] = useState({
+      ...DEFAULT_VALUES,
+      ...defaultDataTask,
+    })
+
   function handleCancelTask() {
     router.push(`/initiatives/${initiativeId}`);
   }
 
-  function handleChangeTask() {
+  function handleChangeTask(event) {
+    const { name, value } = event.target;
 
+    const updatedFormData = { ...formData, [name]: value};
+    setFormData(updatedFormData);
+    console.log("formData: ", updatedFormData );
   }
 
-  function handleSubmitTask() {
+  function handleSubmitTask(event) {
+    event.preventDefault();
 
+    const { title, description, status } = formData;
+
+    const updatedTask = {
+      id: crypto.randomUUID(),
+      ...formData,
+    }
+    console.log("Submitted formData: ", updatedTask);
+
+
+
+  //  onSubmitTask(updatedFormData); // Pass the form data to the parent
   }
 
     return (
-     <Form onSubmitTask={handleSubmitTask}>
+     <Form onSubmit={handleSubmitTask}>
         <Heading>Create Task</Heading>
         <Label>
             Task Title
@@ -97,7 +123,7 @@ export default function CreateTaskForm({
             id="title"
             name="title"
             type="text"
-            value=""
+            value={formData.title}
             onChange={handleChangeTask}
         />
 
@@ -106,18 +132,24 @@ export default function CreateTaskForm({
           <Textarea
             id="description"
             name="description"
+            type="text"
             rows="4"
-            value=""
+            value={formData.description}
             onChange={handleChangeTask}
         /> 
         </Label>
 
         <Label for="status">
             Status
-        <select name="status" id="status">
-            <option value="pending">Pending</option>
-            <option value="progress">In progress</option>
-            <option value="completed">Completed</option>
+        <select 
+          name="status" 
+          id="status"
+          value={formData.status}
+          onChange={handleChangeTask}
+          >
+            <option value="Pending">Pending</option>
+            <option value="In progress">In progress</option>
+            <option value="Completed">Completed</option>
         </select>
         </Label>
 
