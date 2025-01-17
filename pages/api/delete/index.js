@@ -13,7 +13,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { public_id } = JSON.parse(req.body);
+    const { public_id } = req.body;
 
     if (!public_id) {
       res.status(400).json({ message: "Missing file ID" });
@@ -21,6 +21,10 @@ export default async function handler(req, res) {
     }
 
     const result = await cloudinary.v2.uploader.destroy(public_id);
+
+    if (result.result !== "ok") {
+      throw new Error("Cloudinary deletion failed");
+    }
 
     res.status(200).json({ message: "File deleted successfully", result });
   } catch (error) {
