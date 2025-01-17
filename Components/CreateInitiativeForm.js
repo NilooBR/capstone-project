@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
-import CompletedInitiative from "./CompletedInitiative";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format } from "date-fns";
+import { de } from "date-fns/locale";
+
 
 const Form = styled.form`
   display: flex;
@@ -38,6 +42,14 @@ const Textarea = styled.textarea`
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+`;
+
+const StyledDatePicker = styled(DatePicker)`
+  width: 100%; 
+  padding: 10px; 
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
 `;
 
 const Error = styled.p`
@@ -91,6 +103,11 @@ export default function CreateInitiativeForm({
   });
 
   const [errors, setErrors] = useState({});
+
+  const handleDateChange = (date) => {
+    const germanDate = format(date, "dd.MM.yyyy");
+    setFormData({ ...formData, deadline: germanDate });
+  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -156,7 +173,6 @@ export default function CreateInitiativeForm({
     router.push("/");
   };
 
-  const currentDate = new Date().toISOString().split("T")[0];
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -187,13 +203,21 @@ export default function CreateInitiativeForm({
 
       <Label>
         Select Deadline
-        <Input
-          id="deadline"
-          name="deadline"
-          type="date"
-          min={currentDate}
-          value={formData.deadline}
-          onChange={handleChange}
+        <StyledDatePicker
+          selected={
+            formData.deadline
+              ? new Date(
+                  formData.deadline.split(".")[2],
+                  formData.deadline.split(".")[1] - 1,
+                  formData.deadline.split(".")[0]
+                )
+              : null
+          }
+          onChange={handleDateChange}
+          dateFormat="dd.MM.yyyy" 
+          locale={de} 
+          minDate={new Date()}
+          placeholderText="dd.mm.yyyy"
         />
         {errors.deadline && <Error>{errors.deadline}</Error>}
       </Label>
