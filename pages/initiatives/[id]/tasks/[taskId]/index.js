@@ -80,6 +80,45 @@ const Label = styled.label`
   margin-top: 20px;
 `;
 
+const FileUploadContainer = styled.div`
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid grey;
+  border-radius: 8px;
+  background-color: #ffffff;
+`;
+
+const FileList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+`;
+
+const FileItem = styled.li`
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  a {
+    text-decoration: none;
+    color: #0070f3;
+  }
+
+  button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #d63031;
+    }
+  }
+`;
+
 export default function TaskDetailPage({
   onDeleteTask,
   initiatives,
@@ -90,6 +129,8 @@ export default function TaskDetailPage({
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
   const [task, setTask] = useState(null);
   const [status, setStatus] = useState("Pending");
+  const [attachments, setAttachments] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (initiativeId && taskId) {
@@ -105,17 +146,28 @@ export default function TaskDetailPage({
         if (selectedTask) {
           setTask(selectedTask);
           setStatus(selectedTask.status);
+          setAttachments(selectedTask.attachments || []);
         }
       }
     }
   }, [initiativeId, taskId, initiatives]);
+
+  async function handleFileUpload(event) {
+    
+  }
+
+  async function handleDeleteAttachment(publicId) {
+   
+  }
 
   if (!task)
     return (
       <div>
         <h1>Task Not Found</h1>
         <p>We could not find a task with the provided ID.</p>
-        <StyledLink href="/">Go Back to List</StyledLink>
+        <StyledLink href={`/initiatives/${initiativeId}`}>
+          Go Back to List
+        </StyledLink>
       </div>
     );
 
@@ -156,6 +208,34 @@ export default function TaskDetailPage({
             <option value="Completed">Completed</option>
           </select>
         </Label>
+        <FileUploadContainer>
+          <h2>Attachments</h2>
+          <input
+            type="file"
+            multiple
+            onChange={handleFileUpload}
+            disabled={isUploading}
+          />
+          {isUploading && <p>Uploading...</p>}
+          <FileList>
+            {attachments.map((attachment) => (
+              <FileItem key={attachment.public_id}>
+                <a
+                  href={attachment.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {attachment.original_filename}
+                </a>
+                <button
+                  onClick={() => handleDeleteAttachment(attachment.public_id)}
+                >
+                  Delete
+                </button>
+              </FileItem>
+            ))}
+          </FileList>
+        </FileUploadContainer>
         {deleteButtonClicked && (
           <ConfirmationDialog>
             <p>Are you sure you want to delete this task?</p>
