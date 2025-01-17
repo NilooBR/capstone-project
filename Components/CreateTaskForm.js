@@ -104,7 +104,7 @@ export default function CreateTaskForm({
 
     const updatedFormData = { ...formData, [name]: value};
 
-
+    setErrors({});
     setFormData(updatedFormData);
   }
 
