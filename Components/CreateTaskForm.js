@@ -78,7 +78,7 @@ export default function CreateTaskForm({
     defaultData = {}
 }) {
     const router = useRouter();
-    const { id: initiativeId, taskId } = router.query;
+    const { id: initiativeId } = router.query;
 
 
     const selectedInitiative =  defaultData.find(
@@ -131,22 +131,15 @@ export default function CreateTaskForm({
     }
 
     const updatedTaskArray =  [newTask, ...selectedTasksArray];
-    console.log("updatedTaskArray: ", updatedTaskArray);
 
     const updatedInitiative = {
       ...selectedInitiative,
       tasks: updatedTaskArray,
     }
-    console.log("updatedInitiative: ", updatedInitiative);
-    console.log("initiativeId: ", initiativeId);
-    console.log("newTask.id: ", newTask.id);
 
-    onSubmitTask(updatedInitiative); // Pass the updatedInititave data to the parent
-    
-    setTimeout(() => {
-      router.push(`/initiatives/${initiativeId}`);
-    }, 500);
-    
+    onSubmitTask(updatedInitiative); 
+    router.push(`/initiatives/${initiativeId}/tasks/${newTask.id}`)
+
   }
 
     return (
@@ -185,7 +178,7 @@ export default function CreateTaskForm({
           onChange={handleChangeTask}
           >
             <option value="Pending">Pending</option>
-            <option value="In progress">In progress</option>
+            <option value="In Progress">In progress</option>
             <option value="Completed">Completed</option>
         </select>
         </Label>

@@ -9,6 +9,7 @@ export default function App({ Component, pageProps }) {
     setInitiatives((prev) => [...prev, newInitiative]);
   }
 
+
   function handleDeleteInitiative(id) {
     const updatedInitiatives = initiatives.filter(
       (initiative) => initiative.id !== id
@@ -29,7 +30,6 @@ export default function App({ Component, pageProps }) {
     const updatedInitiatives = initiatives.map((initiative) =>
       initiative.id === updatedInitiative.id ? updatedInitiative : initiative
     );
-    console.log("updatedInitiatives: ", updatedInitiatives);
     setInitiatives(updatedInitiatives);
   }
 
@@ -61,6 +61,7 @@ export default function App({ Component, pageProps }) {
         onEditInitiative={handleEditInitiative}
         onDeleteTask={handleDeleteTask}
         onUpdateInitiatives={handleUpdateInitiatives}
+        onCreateTask={handleEditInitiative}
       />
     </>
   );

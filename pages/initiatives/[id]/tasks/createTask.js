@@ -2,11 +2,11 @@ import CreateTaskForm from "@/Components/CreateTaskForm";
 
 export default function CreateTaskPage({
   initiatives,
-  onEditInitiative,
+  onCreateTask,
 }) {
   return (
     <CreateTaskForm 
-      onSubmitTask={onEditInitiative}
+      onSubmitTask={onCreateTask}
       defaultData={initiatives}
     />
   );
