@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { initialData } from "@/lib/initialData";
 import styled from "styled-components";
 
 const PageContainer = styled.div`
@@ -81,7 +80,11 @@ const Label = styled.label`
   margin-top: 20px;
 `;
 
-export default function TaskDetailPage() {
+export default function TaskDetailPage({
+  onDeleteTask,
+  initiatives,
+  onUpdateInitiatives,
+}) {
   const router = useRouter();
   const { id: initiativeId, taskId } = router.query;
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
@@ -90,7 +93,7 @@ export default function TaskDetailPage() {
 
   useEffect(() => {
     if (initiativeId && taskId) {
-      const selectedInitiative = initialData.find(
+      const selectedInitiative = initiatives.find(
         (initiative) => initiative.id === initiativeId
       );
 
@@ -105,7 +108,7 @@ export default function TaskDetailPage() {
         }
       }
     }
-  }, [initiativeId, taskId]);
+  }, [initiativeId, taskId, initiatives]);
 
   if (!task)
     return (
@@ -120,35 +123,24 @@ export default function TaskDetailPage() {
     const newStatus = event.target.value;
     setStatus(newStatus);
 
-    const initiativeIndex = initialData.findIndex(
-      (initiative) => initiative.id === initiativeId
-    );
-
-    if (initiativeIndex !== -1) {
-      const taskIndex = initialData[initiativeIndex].tasks.findIndex(
-        (item) => item.id == taskId
-      );
-
-      if (taskIndex !== -1) {
-        initialData[initiativeIndex].tasks[taskIndex].status = newStatus;
+    const updatedInitiatives = initiatives.map((initiative) => {
+      if (initiative.id === initiativeId) {
+        return {
+          ...initiative,
+          tasks: initiative.tasks.map((task) =>
+            task.id == taskId ? { ...task, status: newStatus } : task
+          ),
+        };
       }
-    }
+      return initiative;
+    });
+
+    onUpdateInitiatives(updatedInitiatives);
   }
 
   function handleDelete() {
-    const initiativeIndex = initialData.findIndex(
-      (initiative) => initiative.id === initiativeId
-    );
-
-    if (initiativeIndex !== -1) {
-      const updatedTasks = initialData[initiativeIndex].tasks.filter(
-        (item) => item.id !== taskId
-      );
-
-      initialData[initiativeIndex].tasks = updatedTasks;
-
-      router.push(`/initiatives/${initiativeId}`);
-    }
+    onDeleteTask(initiativeId, task.id);
+    router.push(`/initiatives/${initiativeId}`);
   }
 
   return (
