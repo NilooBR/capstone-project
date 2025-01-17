@@ -74,24 +74,20 @@ const DEFAULT_VALUES = {
 }
 
 export default function CreateTaskForm({
-    onSubmitTask,
-    defaultData = {}
+    onEditInitiative,
+    initiatives
 }) {
     const router = useRouter();
     const { id: initiativeId } = router.query;
 
 
-    const selectedInitiative =  defaultData.find(
+    const selectedInitiative =  initiatives.find(
       (initiative) => initiative.id === initiativeId
     );
 
-    const selectedTasksArray = selectedInitiative 
-    ? selectedInitiative.tasks  ?? []
-    : [];
+    const selectedTasksArray =  selectedInitiative.tasks ?? [];
 
-    const [formData, setFormData] = useState({
-      ...DEFAULT_VALUES,
-    })
+    const [formData, setFormData] = useState({ DEFAULT_VALUES })
 
    const [errors, setErrors] = useState({});
 
@@ -137,7 +133,7 @@ export default function CreateTaskForm({
       tasks: updatedTaskArray,
     }
 
-    onSubmitTask(updatedInitiative); 
+    onEditInitiative(updatedInitiative); 
     router.push(`/initiatives/${initiativeId}/tasks/${newTask.id}`)
 
   }
@@ -147,15 +143,15 @@ export default function CreateTaskForm({
         <Heading>Create Task</Heading>
         <Label>
             Task Title
-        </Label>
           <Input
-              id="title"
               name="title"
               type="text"
               value={formData.title}
               onChange={handleChangeTask}
           />
           {errors.title && <Error>{errors.title}</Error>}
+          </Label>
+
         <Label>
             Description
           <Textarea

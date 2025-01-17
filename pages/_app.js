@@ -61,7 +61,6 @@ export default function App({ Component, pageProps }) {
         onEditInitiative={handleEditInitiative}
         onDeleteTask={handleDeleteTask}
         onUpdateInitiatives={handleUpdateInitiatives}
-        onCreateTask={handleEditInitiative}
       />
     </>
   );
