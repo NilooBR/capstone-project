@@ -29,6 +29,7 @@ export default function App({ Component, pageProps }) {
     const updatedInitiatives = initiatives.map((initiative) =>
       initiative.id === updatedInitiative.id ? updatedInitiative : initiative
     );
+    console.log("updatedInitiatives: ", updatedInitiatives);
     setInitiatives(updatedInitiatives);
   }
 

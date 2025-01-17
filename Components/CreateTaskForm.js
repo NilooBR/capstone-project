@@ -74,15 +74,23 @@ const DEFAULT_VALUES = {
 }
 
 export default function CreateTaskForm({
-
-    defaultDataTask = {},
+    onSubmitTask,
+    defaultData = {}
 }) {
     const router = useRouter();
-    const { id: initiativeId } = router.query;
+    const { id: initiativeId, taskId } = router.query;
+
+
+    const selectedInitiative =  defaultData.find(
+      (initiative) => initiative.id === initiativeId
+    );
+
+    const selectedTasksArray = selectedInitiative 
+    ? selectedInitiative.tasks  ?? []
+    : [];
 
     const [formData, setFormData] = useState({
       ...DEFAULT_VALUES,
-      ...defaultDataTask,
     })
 
    const [errors, setErrors] = useState({});
@@ -103,11 +111,11 @@ export default function CreateTaskForm({
   function handleSubmitTask(event) {
     event.preventDefault();
 
-    const { title, description, status } = formData;
+    const { title, description } = formData;
 
     const newErrors = {
       title: title.trim() ? null : "Title is required.",
-      description: description.trim() ? null : "Title is required.",
+      description: description.trim() ? null : "Description is required.",
     }
 
     setErrors(newErrors);
@@ -117,14 +125,28 @@ export default function CreateTaskForm({
     }
 
 
-    const updatedTask = {
+    const newTask = {
       id: crypto.randomUUID(),
       ...formData,
     }
 
+    const updatedTaskArray =  [newTask, ...selectedTasksArray];
+    console.log("updatedTaskArray: ", updatedTaskArray);
 
+    const updatedInitiative = {
+      ...selectedInitiative,
+      tasks: updatedTaskArray,
+    }
+    console.log("updatedInitiative: ", updatedInitiative);
+    console.log("initiativeId: ", initiativeId);
+    console.log("newTask.id: ", newTask.id);
 
-  //  onSubmitTask(updatedTask); // Pass the updatedTask data to the parent
+    onSubmitTask(updatedInitiative); // Pass the updatedInititave data to the parent
+    
+    setTimeout(() => {
+      router.push(`/initiatives/${initiativeId}`);
+    }, 500);
+    
   }
 
     return (
@@ -173,7 +195,7 @@ export default function CreateTaskForm({
           Cancel
         </Button>
         <Button
-          type="submit"
+          type="submit"     
         >
           Create
         </Button>

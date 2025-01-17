@@ -186,6 +186,7 @@ export default function InitiativeDetailPage({
   onToggleCompleted,
   isCompleted,
   tasks,
+
 }) {
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
 
