@@ -13,54 +13,27 @@ export const config = {
   },
 };
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    res.status(405).json({ message: "Method not allowed" });
+export default async function handler(request, response) {
+  if (request.method !== "POST") {
+    response.status(400).json({ message: "Method not allowed" });
     return;
   }
 
-  const form = formidable({
-    multiples: true,
-    maxFileSize: 2 * 1024 * 1024,
-    filter: ({ mimetype }) =>
-      [
-        "image/jpeg",
-        "image/png",
-        "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      ].includes(mimetype),
-  });
+  const form = formidable({});
 
-  try {
-    const [fields, files] = await new Promise((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
-        if (err) return reject(err);
-        resolve([fields, files]);
-      });
+  const [fields, files] = await form.parse(request);
+
+  const images = [];
+  for (const file of files.cover) {
+    const { filepath, newFilename } = file;
+
+    const result = await cloudinary.v2.uploader.upload(filepath, {
+      public_id: newFilename,
+      folder: "nf",
     });
 
-    const uploadedFiles = [];
-    for (const fileKey in files) {
-      const file = files[fileKey];
-      const { filepath } = file;
-
-      const result = await cloudinary.v2.uploader.upload(filepath, {
-        folder: "tasks",
-        resource_type: "auto",
-      });
-
-      uploadedFiles.push({
-        url: result.secure_url,
-        public_id: result.public_id,
-        original_filename: result.original_filename,
-      });
-    }
-
-    res.status(201).json({ uploadedFiles });
-  } catch (error) {
-    console.error("Error uploading file:", error);
-    res.status(500).json({ message: "File upload failed", error });
+    images.push(result);
   }
+
+  response.status(201).json({ images });
 }
