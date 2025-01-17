@@ -105,16 +105,19 @@ const FileItem = styled.li`
   }
 
   button {
-    margin-left: 10px;
-    padding: 5px 10px;
-    background-color: #ff4d4f;
-    color: white;
-    border: none;
+    display: inline-block;
+    padding: 10px 20px;
+    text-align: center;
     border-radius: 5px;
+    background-color: #bcc1c5;
+    color: black;
     cursor: pointer;
+    border: 1px solid black;
+    font-weight: bold;
+    font-size: 10px;
 
     &:hover {
-      background-color: #d63031;
+      background-color: #5a6268;
     }
   }
 `;
@@ -129,8 +132,9 @@ export default function TaskDetailPage({
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
   const [task, setTask] = useState(null);
   const [status, setStatus] = useState("Pending");
-  const [attachments, setAttachments] = useState([]);
-  const [isUploading, setIsUploading] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploadedImages, setUploadedImages] = useState([]);
+  const [uploadMessage, setUploadMessage] = useState("");
 
   useEffect(() => {
     if (initiativeId && taskId) {
@@ -146,19 +150,10 @@ export default function TaskDetailPage({
         if (selectedTask) {
           setTask(selectedTask);
           setStatus(selectedTask.status);
-          setAttachments(selectedTask.attachments || []);
         }
       }
     }
   }, [initiativeId, taskId, initiatives]);
-
-  async function handleFileUpload(event) {
-    
-  }
-
-  async function handleDeleteAttachment(publicId) {
-   
-  }
 
   if (!task)
     return (
@@ -190,6 +185,63 @@ export default function TaskDetailPage({
     onUpdateInitiatives(updatedInitiatives);
   }
 
+  async function handleFileUpload(e) {
+    e.preventDefault();
+
+    if (selectedFiles.length === 0) {
+      setUploadMessage("No files selected.");
+      return;
+    }
+
+    const formData = new FormData();
+    selectedFiles.forEach((file) => {
+      formData.append("cover", file);
+    });
+
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("File upload failed.");
+      }
+
+      const data = await response.json();
+      setUploadedImages((prev) => [...prev, ...data.images]);
+      setUploadMessage("Files uploaded successfully.");
+      setSelectedFiles([]);
+    } catch (error) {
+      console.error("Upload error:", error);
+      setUploadMessage("An error occurred during the upload.");
+    }
+  }
+
+  async function handleDeleteImage(publicId) {
+    try {
+      const response = await fetch(`/api/delete`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ public_id: publicId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete image.");
+      }
+      
+      setUploadedImages((prev) =>
+        prev.filter((image) => image.public_id !== publicId)
+      );
+      setUploadMessage("Image deleted successfully.");
+    } catch (error) {
+      console.error("Delete error:", error);
+      setUploadMessage("An error occurred while deleting the image.");
+    }
+  }
+
   function handleDelete() {
     onDeleteTask(initiativeId, task.id);
     router.push(`/initiatives/${initiativeId}`);
@@ -208,34 +260,35 @@ export default function TaskDetailPage({
             <option value="Completed">Completed</option>
           </select>
         </Label>
+
         <FileUploadContainer>
-          <h2>Attachments</h2>
-          <input
-            type="file"
-            multiple
-            onChange={handleFileUpload}
-            disabled={isUploading}
-          />
-          {isUploading && <p>Uploading...</p>}
+          <form onSubmit={handleFileUpload}>
+            <label>
+              Upload Images:
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={(e) => setSelectedFiles(Array.from(e.target.files))}
+              />
+            </label>
+            <Button type="submit">Upload</Button>
+          </form>
+          {uploadMessage && <p>{uploadMessage}</p>}
           <FileList>
-            {attachments.map((attachment) => (
-              <FileItem key={attachment.public_id}>
-                <a
-                  href={attachment.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {attachment.original_filename}
+            {uploadedImages.map((image) => (
+              <FileItem key={image.public_id}>
+                <a href={image.url} target="_blank" rel="noopener noreferrer">
+                  {image.original_filename}
                 </a>
-                <button
-                  onClick={() => handleDeleteAttachment(attachment.public_id)}
-                >
+                <button onClick={() => handleDeleteImage(image.public_id)}>
                   Delete
                 </button>
               </FileItem>
             ))}
           </FileList>
         </FileUploadContainer>
+
         {deleteButtonClicked && (
           <ConfirmationDialog>
             <p>Are you sure you want to delete this task?</p>
