@@ -19,7 +19,7 @@ export default function App({ Component, pageProps }) {
   function handleToggleCompleted(id) {
     const updatedInitiatives = initiatives.map((initiative) =>
       initiative.id === id
-        ? { ...initiative, isCompleted: !initiative.isCompleted ??true }
+        ? { ...initiative, isCompleted: !initiative.isCompleted ?? true }
         : initiative
     );
     setInitiatives(updatedInitiatives);
@@ -33,6 +33,22 @@ export default function App({ Component, pageProps }) {
     setInitiatives(updatedInitiatives);
   }
 
+  function handleDeleteTask(initiativeId, taskId) {
+    const updatedInitiatives = initiatives.map((initiative) =>
+      initiative.id === initiativeId
+        ? {
+            ...initiative,
+            tasks: initiative.tasks.filter((item) => item.id !== taskId),
+          }
+        : initiative
+    );
+    setInitiatives(updatedInitiatives);
+  }
+
+  function handleUpdateInitiatives(newInitiatives) {
+    setInitiatives(newInitiatives);
+  }
+
   return (
     <>
       <GlobalStyle />
@@ -43,6 +59,8 @@ export default function App({ Component, pageProps }) {
         onDeleteInitiative={handleDeleteInitiative}
         onToggleCompleted={handleToggleCompleted}
         onEditInitiative={handleEditInitiative}
+        onDeleteTask={handleDeleteTask}
+        onUpdateInitiatives={handleUpdateInitiatives}
       />
     </>
   );
