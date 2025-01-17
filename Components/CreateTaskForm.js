@@ -85,6 +85,8 @@ export default function CreateTaskForm({
       ...defaultDataTask,
     })
 
+   const [errors, setErrors] = useState({});
+
   function handleCancelTask() {
     router.push(`/initiatives/${initiativeId}`);
   }
@@ -93,8 +95,9 @@ export default function CreateTaskForm({
     const { name, value } = event.target;
 
     const updatedFormData = { ...formData, [name]: value};
+
+
     setFormData(updatedFormData);
-    console.log("formData: ", updatedFormData );
   }
 
   function handleSubmitTask(event) {
@@ -102,15 +105,26 @@ export default function CreateTaskForm({
 
     const { title, description, status } = formData;
 
+    const newErrors = {
+      title: title.trim() ? null : "Title is required.",
+      description: description.trim() ? null : "Title is required.",
+    }
+
+    setErrors(newErrors);
+
+    if (Object.values(newErrors).some((error) => error)) {
+      return;
+    }
+
+
     const updatedTask = {
       id: crypto.randomUUID(),
       ...formData,
     }
-    console.log("Submitted formData: ", updatedTask);
 
 
 
-  //  onSubmitTask(updatedFormData); // Pass the form data to the parent
+  //  onSubmitTask(updatedTask); // Pass the updatedTask data to the parent
   }
 
     return (
@@ -119,14 +133,14 @@ export default function CreateTaskForm({
         <Label>
             Task Title
         </Label>
-        <Input
-            id="title"
-            name="title"
-            type="text"
-            value={formData.title}
-            onChange={handleChangeTask}
-        />
-
+          <Input
+              id="title"
+              name="title"
+              type="text"
+              value={formData.title}
+              onChange={handleChangeTask}
+          />
+          {errors.title && <Error>{errors.title}</Error>}
         <Label>
             Description
           <Textarea
@@ -136,7 +150,8 @@ export default function CreateTaskForm({
             rows="4"
             value={formData.description}
             onChange={handleChangeTask}
-        /> 
+          /> 
+          {errors.description && <Error>{errors.description}</Error> }
         </Label>
 
         <Label for="status">
