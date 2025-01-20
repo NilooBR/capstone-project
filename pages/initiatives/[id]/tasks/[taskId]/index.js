@@ -173,6 +173,7 @@ export default function TaskDetailPage({
       <Footer>
         <StyledLink href={`/initiatives/${initiativeId}`}>Back</StyledLink>
         <Button onClick={() => setDeleteButtonClicked(true)}>Delete</Button>
+        <StyledLink href={`/initiatives/${initiativeId}/tasks/${taskId}/editTask`}>Edit</StyledLink>
       </Footer>
     </PageContainer>
   );

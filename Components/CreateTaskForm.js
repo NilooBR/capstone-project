@@ -75,7 +75,9 @@ const DEFAULT_VALUES = {
 
 export default function CreateTaskForm({
     onEditInitiative,
-    initiatives
+    initiatives,
+    taskToEdit,
+    isEditMode = false
 }) {
     const router = useRouter();
     const { id: initiativeId } = router.query;
@@ -86,7 +88,10 @@ export default function CreateTaskForm({
     );
 
     const selectedTasksArray =  selectedInitiative?.tasks ?? [];
-    const [formData, setFormData] = useState({ DEFAULT_VALUES })
+    const [formData, setFormData] = useState({ 
+      ...DEFAULT_VALUES,
+      ...taskToEdit
+    })
 
    const [errors, setErrors] = useState({});
 
@@ -140,7 +145,7 @@ export default function CreateTaskForm({
 
     return (
      <Form onSubmit={handleSubmitTask}>
-        <Heading>Create Task</Heading>
+        <Heading>{isEditMode ? "Edit Task" : "Create Task"}</Heading>
         <Label>
             Task Title
           <Input
@@ -186,7 +191,7 @@ export default function CreateTaskForm({
         <Button
           type="submit"     
         >
-          Create
+          {isEditMode ? "Save" :  "Create"}
         </Button>
       </ButtonGroup>
      </Form>
