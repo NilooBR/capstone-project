@@ -119,9 +119,10 @@ export default function CreateTaskForm({
       return;
     }
 
-
+    const status = event.target.elements.status.value;
     const newTask = {
       id: crypto.randomUUID(),
+      status,
       ...formData,
     }
 
