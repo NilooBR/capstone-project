@@ -85,8 +85,7 @@ export default function CreateTaskForm({
       (initiative) => initiative.id === initiativeId
     );
 
-    const selectedTasksArray =  selectedInitiative.tasks ?? [];
-
+    const selectedTasksArray =  selectedInitiative?.tasks ?? [];
     const [formData, setFormData] = useState({ DEFAULT_VALUES })
 
    const [errors, setErrors] = useState({});
