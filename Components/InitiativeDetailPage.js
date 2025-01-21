@@ -161,7 +161,7 @@ const AddTaskCard = styled.div`
   padding: 2px;
   cursor: pointer;
   margin: 2px;
-  background-color: white;
+  background-color: transparent;
 `
 
 const TaskCard = styled.div`
