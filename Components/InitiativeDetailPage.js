@@ -270,26 +270,40 @@ export default function InitiativeDetailPage({
         </TasksGrid>
         <div>
           <h3>Uploaded Files</h3>
-          <FileList>
-            {tasks
-              .reduce(
-                (accumulatedFiles, currentTask) => [
-                  ...accumulatedFiles,
-                  ...(currentTask.uploadedFiles || []),
-                ],
-                []
-              )
-              .sort((fileA, fileB) =>
-                fileA.original_filename.localeCompare(fileB.original_filename)
-              )
-              .map((file) => (
-                <FileItem key={file.public_id}>
-                  <a href={file.url} target="_blank" rel="noopener noreferrer">
-                    {file.original_filename}
-                  </a>
-                </FileItem>
-              ))}
-          </FileList>
+          {tasks.reduce(
+            (accumulatedFiles, currentTask) => [
+              ...accumulatedFiles,
+              ...(currentTask.uploadedFiles || []),
+            ],
+            []
+          ).length === 0 ? (
+            <p>No attachment available for this initiative.</p>
+          ) : (
+            <FileList>
+              {tasks
+                .reduce(
+                  (accumulatedFiles, currentTask) => [
+                    ...accumulatedFiles,
+                    ...(currentTask.uploadedFiles || []),
+                  ],
+                  []
+                )
+                .sort((fileA, fileB) =>
+                  fileA.original_filename.localeCompare(fileB.original_filename)
+                )
+                .map((file) => (
+                  <FileItem key={file.public_id}>
+                    <a
+                      href={file.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {file.original_filename}
+                    </a>
+                  </FileItem>
+                ))}
+            </FileList>
+          )}
         </div>
       </Content>
       <Footer>

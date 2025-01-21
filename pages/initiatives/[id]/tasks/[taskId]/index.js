@@ -133,6 +133,7 @@ export default function TaskDetailPage({
   initiatives,
   onUpdateInitiatives,
   onUpdateInitiativeFiles,
+  onDeleteInitiativeFiles,
 }) {
   const router = useRouter();
   const { id: initiativeId, taskId } = router.query;
@@ -248,6 +249,11 @@ export default function TaskDetailPage({
         prev.filter((file) => file.public_id !== publicId)
       );
       setUploadMessage("File deleted successfully.");
+
+      onDeleteInitiativeFiles({
+        taskId: task.id,
+        publicId: publicId,
+      });
     } catch (error) {
       console.error("Delete error:", error);
       setUploadMessage("An error occurred while deleting the file.");
