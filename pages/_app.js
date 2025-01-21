@@ -48,6 +48,24 @@ export default function App({ Component, pageProps }) {
     setInitiatives(newInitiatives);
   }
 
+  function handleUpdateInitiativeFiles(updatedFiles) {
+    const updatedInitiatives = initiatives.map((initiative) => {
+      return {
+        ...initiative,
+        tasks: initiative.tasks.map((task) =>
+          task.id === updatedFiles.taskId
+            ? {
+                ...task,
+                uploadedFiles: [...task.uploadedFiles, ...updatedFiles.files],
+              }
+            : task
+        ),
+      };
+    });
+
+    setInitiatives(updatedInitiatives);
+  }
+
   return (
     <>
       <GlobalStyle />
@@ -60,6 +78,7 @@ export default function App({ Component, pageProps }) {
         onEditInitiative={handleEditInitiative}
         onDeleteTask={handleDeleteTask}
         onUpdateInitiatives={handleUpdateInitiatives}
+        onUpdateInitiativeFiles={handleUpdateInitiativeFiles}
       />
     </>
   );

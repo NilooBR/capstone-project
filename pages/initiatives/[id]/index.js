@@ -44,7 +44,7 @@ export default function InitiativeDetailsPage({
       tags={selectedInitiative.tags}
       onDelete={handleDelete}
       onToggleCompleted={onToggleCompleted}
-      tasks={selectedInitiative.tasks} 
+      tasks={selectedInitiative.tasks}
     />
   );
 }

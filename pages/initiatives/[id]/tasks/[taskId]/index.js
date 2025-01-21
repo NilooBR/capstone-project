@@ -132,6 +132,7 @@ export default function TaskDetailPage({
   onDeleteTask,
   initiatives,
   onUpdateInitiatives,
+  onUpdateInitiativeFiles,
 }) {
   const router = useRouter();
   const { id: initiativeId, taskId } = router.query;
@@ -156,6 +157,7 @@ export default function TaskDetailPage({
         if (selectedTask) {
           setTask(selectedTask);
           setStatus(selectedTask.status);
+          setUploadedFiles(selectedTask.uploadedFiles || []);
         }
       }
     }
@@ -218,6 +220,10 @@ export default function TaskDetailPage({
       setUploadedFiles((prev) => [...prev, ...data.files]);
       setUploadMessage("Files uploaded successfully.");
       setSelectedFiles([]);
+      onUpdateInitiativeFiles({
+        taskId: task.id,
+        files: data.files,
+      });
     } catch (error) {
       console.error("Upload error:", error);
       setUploadMessage("An error occurred during the upload.");

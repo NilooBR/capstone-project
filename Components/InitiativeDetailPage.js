@@ -169,6 +169,23 @@ const TasksGrid = styled.div`
   gap: 8px;
 `;
 
+const FileList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  margin: 20px 0;
+`;
+
+const FileItem = styled.li`
+  margin: 5px 0;
+  display: flex;
+  justify-content: space-between;
+
+  a {
+    text-decoration: none;
+    color: #0070f3;
+  }
+`;
+
 export default function InitiativeDetailPage({
   id,
   title,
@@ -251,6 +268,29 @@ export default function InitiativeDetailPage({
             <p>No tasks available for this initiative.</p>
           )}
         </TasksGrid>
+        <div>
+          <h3>Uploaded Files</h3>
+          <FileList>
+            {tasks
+              .reduce(
+                (accumulatedFiles, currentTask) => [
+                  ...accumulatedFiles,
+                  ...(currentTask.uploadedFiles || []),
+                ],
+                []
+              )
+              .sort((fileA, fileB) =>
+                fileA.original_filename.localeCompare(fileB.original_filename)
+              )
+              .map((file) => (
+                <FileItem key={file.public_id}>
+                  <a href={file.url} target="_blank" rel="noopener noreferrer">
+                    {file.original_filename}
+                  </a>
+                </FileItem>
+              ))}
+          </FileList>
+        </div>
       </Content>
       <Footer>
         <StyledLink href="/">Back</StyledLink>
