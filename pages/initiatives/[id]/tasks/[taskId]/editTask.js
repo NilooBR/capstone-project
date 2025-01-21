@@ -15,7 +15,6 @@ export default function EditTaskPage({
   const taskToEdit = initiativeToEdit.tasks.find(
     (task) => task.id === taskId
   );
-  console.log("taskToEdit: ", taskToEdit);
 
   if (!initiativeToEdit) {
     return <h2>Initiative not found</h2>;

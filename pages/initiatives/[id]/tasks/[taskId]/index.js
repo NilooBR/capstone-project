@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import styled from "styled-components";
 
 const PageContainer = styled.div`
@@ -86,10 +87,20 @@ export default function TaskDetailPage({
   onUpdateInitiatives,
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { id: initiativeId, taskId } = router.query;
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
   const [task, setTask] = useState(null);
   const [status, setStatus] = useState("Pending");
+  const [showEditSuccess, setShowEditSuccess] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      setShowEditSuccess(true);
+      const timeout = setTimeout(() => setShowEditSuccess(false), 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [searchParams]); 
 
   useEffect(() => {
     if (initiativeId && taskId) {
@@ -167,6 +178,12 @@ export default function TaskDetailPage({
             <ConfirmationDialogButton onClick={handleDelete}>
               Yes, delete
             </ConfirmationDialogButton>
+          </ConfirmationDialog>
+        )}
+        {showEditSuccess && (
+          <ConfirmationDialog>
+            <h2>✔️</h2>
+            <p>Your tasks updated successfully!</p>
           </ConfirmationDialog>
         )}
       </Content>

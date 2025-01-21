@@ -113,9 +113,7 @@ export default function CreateTaskForm({
    const [isDialogVisible, setIsDialogVisible] = useState(false);
 
   function handleCancelTask() {
-  /*  isEditMode 
-    ?  router.push(`/initiatives/${initiativeId}/tasks/${taskToEdit.id}`)
-    : */ router.push(`/initiatives/${initiativeId}`);
+    router.push(`/initiatives/${initiativeId}`);
   }
 
   function handleChangeTask(event) {
@@ -147,7 +145,6 @@ export default function CreateTaskForm({
       setIsDialogVisible(true);
     } else {
       saveChanges();
-     // router.push(`/initiatives/${initiativeId}/tasks`)
     }
   }
 
@@ -171,13 +168,15 @@ export default function CreateTaskForm({
     }
 
     onEditInitiative(updatedInitiative); 
-    router.push(`/initiatives/${initiativeId}/tasks/${newTask.id}`)
+    router.push({
+      pathname: `/initiatives/${initiativeId}/tasks/${newTask.id}`,
+      query: { success: "true"},
+    });
 
   }
 
   function handleSaveAndContinue() {
     saveChanges();
-   // router.push(`/initiatives/${initiativeId}/tasks/${taskToEdit.id}`);
   }
 
   function handleContinueWithoutSaving() {
