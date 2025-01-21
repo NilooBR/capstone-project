@@ -20,20 +20,36 @@ export default async function handler(request, response) {
   }
 
   const form = formidable({});
+  try {
+    const [fields, files] = await form.parse(request);
 
-  const [fields, files] = await form.parse(request);
+    const allowedMimeTypes = [
+      "image/png",
+      "image/jpeg",
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ];
 
-  const images = [];
-  for (const file of files.cover) {
-    const { filepath, newFilename } = file;
+    const uploadedFiles = [];
+    for (const file of files.uploadedFiles) {
+      if (!allowedMimeTypes.includes(file.mimetype)) {
+        throw new Error(`Unsupported file type: ${file.mimetype}`);
+      }
 
-    const result = await cloudinary.v2.uploader.upload(filepath, {
-      public_id: newFilename,
-      folder: "nf",
-    });
+      const result = await cloudinary.v2.uploader.upload(file.filepath, {
+        resource_type: "raw",
+        public_id: file.newFilename,
+        folder: "nf",
+      });
+      uploadedFiles.push(result);
+    }
 
-    images.push(result);
+    response.status(201).json({ files: uploadedFiles });
+  } catch (error) {
+    console.error("File upload error:", error);
+    response
+      .status(500)
+      .json({ message: "File upload failed", error: error.message });
   }
-
-  response.status(201).json({ images });
 }

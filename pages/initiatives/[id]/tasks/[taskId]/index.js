@@ -75,7 +75,7 @@ const StyledLink = styled(Button).attrs({ as: Link })`
 
 const Label = styled.label`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 5px;
   margin-top: 20px;
 `;
@@ -86,6 +86,12 @@ const FileUploadContainer = styled.div`
   border: 1px solid grey;
   border-radius: 8px;
   background-color: #ffffff;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 `;
 
 const FileList = styled.ul`
@@ -133,7 +139,7 @@ export default function TaskDetailPage({
   const [task, setTask] = useState(null);
   const [status, setStatus] = useState("Pending");
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [uploadedImages, setUploadedImages] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const [uploadMessage, setUploadMessage] = useState("");
 
   useEffect(() => {
@@ -195,7 +201,7 @@ export default function TaskDetailPage({
 
     const formData = new FormData();
     selectedFiles.forEach((file) => {
-      formData.append("cover", file);
+      formData.append("uploadedFiles", file);
     });
 
     try {
@@ -209,7 +215,7 @@ export default function TaskDetailPage({
       }
 
       const data = await response.json();
-      setUploadedImages((prev) => [...prev, ...data.images]);
+      setUploadedFiles((prev) => [...prev, ...data.files]);
       setUploadMessage("Files uploaded successfully.");
       setSelectedFiles([]);
     } catch (error) {
@@ -218,7 +224,7 @@ export default function TaskDetailPage({
     }
   }
 
-  async function handleDeleteImage(publicId) {
+  async function handleDeleteFile(publicId) {
     try {
       const response = await fetch(`/api/delete`, {
         method: "DELETE",
@@ -229,16 +235,16 @@ export default function TaskDetailPage({
       });
 
       if (!response.ok) {
-        throw new Error("Failed to delete image.");
+        throw new Error("Failed to delete file.");
       }
-      
-      setUploadedImages((prev) =>
-        prev.filter((image) => image.public_id !== publicId)
+
+      setUploadedFiles((prev) =>
+        prev.filter((file) => file.public_id !== publicId)
       );
-      setUploadMessage("Image deleted successfully.");
+      setUploadMessage("File deleted successfully.");
     } catch (error) {
       console.error("Delete error:", error);
-      setUploadMessage("An error occurred while deleting the image.");
+      setUploadMessage("An error occurred while deleting the file.");
     }
   }
 
@@ -263,25 +269,25 @@ export default function TaskDetailPage({
 
         <FileUploadContainer>
           <form onSubmit={handleFileUpload}>
-            <label>
-              Upload Images:
+            <Label>
+              Upload PDF, DOCX, XLSX, PNG, and JPG:
               <input
                 type="file"
                 multiple
-                accept="image/*"
+                accept=".png,.jpg,.jpeg,.pdf,.docx,.xlsx"
                 onChange={(e) => setSelectedFiles(Array.from(e.target.files))}
               />
-            </label>
+            </Label>
             <Button type="submit">Upload</Button>
           </form>
           {uploadMessage && <p>{uploadMessage}</p>}
           <FileList>
-            {uploadedImages.map((image) => (
-              <FileItem key={image.public_id}>
-                <a href={image.url} target="_blank" rel="noopener noreferrer">
-                  {image.original_filename}
+            {uploadedFiles.map((file) => (
+              <FileItem key={file.public_id}>
+                <a href={file.url} target="_blank" rel="noopener noreferrer">
+                  {file.original_filename}
                 </a>
-                <button onClick={() => handleDeleteImage(image.public_id)}>
+                <button onClick={() => handleDeleteFile(file.public_id)}>
                   Delete
                 </button>
               </FileItem>

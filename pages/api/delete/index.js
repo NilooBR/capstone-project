@@ -20,10 +20,12 @@ export default async function handler(req, res) {
       return;
     }
 
-    const result = await cloudinary.v2.uploader.destroy(public_id);
+    const result = await cloudinary.v2.uploader.destroy(public_id, {
+      resource_type: "raw",
+    });
 
     if (result.result !== "ok") {
-      throw new Error("Cloudinary deletion failed");
+      throw new Error(`Cloudinary deletion failed: ${result.result}`);
     }
 
     res.status(200).json({ message: "File deleted successfully", result });
