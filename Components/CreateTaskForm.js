@@ -96,7 +96,9 @@ export default function CreateTaskForm({
    const [errors, setErrors] = useState({});
 
   function handleCancelTask() {
-    router.push(`/initiatives/${initiativeId}`);
+    isEditMode 
+    ?  router.push(`/initiatives/${initiativeId}/tasks/${taskToEdit.id}`)
+    :  router.push(`/initiatives/${initiativeId}`);
   }
 
   function handleChangeTask(event) {
