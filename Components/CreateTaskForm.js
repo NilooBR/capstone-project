@@ -44,6 +44,18 @@ const Error = styled.p`
   font-size: 0.9rem;
 `;
 
+const ConfirmationDialog = styled.div`
+  margin: 50px 0;
+  padding: 20px;
+  border: 1px solid grey;
+  border-radius: 8px;
+  background-color: lightgrey;
+  text-align: center;
+  font-weight: bold;
+  font-size: 10px;
+  border: 1px solid black;
+`;
+
 const ButtonGroup = styled.div`
   display: flex;
   justify-content: space-between;
@@ -65,6 +77,10 @@ const Button = styled.button`
   &:hover {
     background-color: #5a6268;
   }
+`;
+
+const ConfirmationDialogButton = styled(Button)`
+  margin: 5px;
 `;
 
 const DEFAULT_VALUES = {
@@ -94,11 +110,12 @@ export default function CreateTaskForm({
     })
 
    const [errors, setErrors] = useState({});
+   const [isDialogVisible, setIsDialogVisible] = useState(false);
 
   function handleCancelTask() {
-    isEditMode 
+  /*  isEditMode 
     ?  router.push(`/initiatives/${initiativeId}/tasks/${taskToEdit.id}`)
-    :  router.push(`/initiatives/${initiativeId}`);
+    : */ router.push(`/initiatives/${initiativeId}`);
   }
 
   function handleChangeTask(event) {
@@ -126,7 +143,16 @@ export default function CreateTaskForm({
       return;
     }
 
-    const status = event.target.elements.status.value;
+    if (isEditMode) {
+      setIsDialogVisible(true);
+    } else {
+      saveChanges();
+     // router.push(`/initiatives/${initiativeId}/tasks`)
+    }
+  }
+
+  function saveChanges() {
+    const status = formData.status;
     const newTask = {
       id: taskToEdit?.id || crypto.randomUUID(),
       status,
@@ -147,6 +173,19 @@ export default function CreateTaskForm({
     onEditInitiative(updatedInitiative); 
     router.push(`/initiatives/${initiativeId}/tasks/${newTask.id}`)
 
+  }
+
+  function handleSaveAndContinue() {
+    saveChanges();
+   // router.push(`/initiatives/${initiativeId}/tasks/${taskToEdit.id}`);
+  }
+
+  function handleContinueWithoutSaving() {
+    router.push(`/initiatives/${initiativeId}`);
+  }
+
+  function handleCancel() {
+    setIsDialogVisible(false);
   }
 
     return (
@@ -175,6 +214,24 @@ export default function CreateTaskForm({
           /> 
           {errors.description && <Error>{errors.description}</Error> }
         </Label>
+
+        {isDialogVisible && (
+          <ConfirmationDialog>
+            <p>You have unsaved changes. Would you like to save your edits before moving to the next task?</p>
+            <ConfirmationDialogButton onClick={handleSaveAndContinue}>
+              Save & Continue
+            </ConfirmationDialogButton>
+            <ConfirmationDialogButton onClick={handleContinueWithoutSaving}>
+              Continue without saving
+            </ConfirmationDialogButton>
+            <ConfirmationDialogButton
+              onClick={handleCancel}
+            >
+              Cancel
+            </ConfirmationDialogButton>
+
+          </ConfirmationDialog>
+        )}
 
         <Label for="status">
             Status
