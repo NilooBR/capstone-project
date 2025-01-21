@@ -126,12 +126,16 @@ export default function CreateTaskForm({
 
     const status = event.target.elements.status.value;
     const newTask = {
-      id: crypto.randomUUID(),
+      id: taskToEdit?.id || crypto.randomUUID(),
       status,
       ...formData,
     }
-
-    const updatedTaskArray =  [newTask, ...selectedTasksArray];
+    
+    const updatedTaskArray = isEditMode
+      ? selectedTasksArray.map((task) =>
+          task.id === newTask.id ? newTask : task
+        )
+      :   [newTask, ...selectedTasksArray];
 
     const updatedInitiative = {
       ...selectedInitiative,
@@ -189,7 +193,8 @@ export default function CreateTaskForm({
           Cancel
         </Button>
         <Button
-          type="submit"     
+          type="submit"
+          disabled={Object.values(errors).some((error) => error)}     
         >
           {isEditMode ? "Save" :  "Create"}
         </Button>

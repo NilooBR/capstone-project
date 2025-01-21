@@ -27,9 +27,11 @@ export default function App({ Component, pageProps }) {
   }
 
   function handleEditInitiative(updatedInitiative) {
+    console.log("initiatives before new or edited Task: ", initiatives);
     const updatedInitiatives = initiatives.map((initiative) =>
       initiative.id === updatedInitiative.id ? updatedInitiative : initiative
     );
+    console.log("updatedInitiatives after new or edited Task: ", updatedInitiatives);
     setInitiatives(updatedInitiatives);
   }
 
