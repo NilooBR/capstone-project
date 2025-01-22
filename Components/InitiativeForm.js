@@ -13,7 +13,7 @@ const DEFAULT_VALUES = {
   tags: "",
 };
 
-export default function CreateInitiativeForm({
+export default function InitiativeForm({
   onSubmit,
   defaultData = {},
   isEditMode = false,
@@ -30,12 +30,15 @@ export default function CreateInitiativeForm({
 
   const [errors, setErrors] = useState({});
 
-  const handleDateChange = (date) => {
-    const germanDate = format(date, "dd.MM.yyyy");
-    setFormData({ ...formData, deadline: germanDate });
+  function handleDateChange(date) {
+    if (date) {
+      const germanDate = format(date, "dd.MM.yyyy");
+      setFormData({ ...formData, deadline: germanDate });
+      setErrors((prevErrors) => ({ ...prevErrors, deadline: null }));
+    }
   };
 
-  const handleChange = (event) => {
+  function handleChange(event) {
     const { name, value } = event.target;
 
     const updatedFormData = { ...formData, [name]: value };
@@ -60,9 +63,9 @@ export default function CreateInitiativeForm({
 
     setErrors(newErrors);
     setFormData(updatedFormData);
-  };
+  }
 
-  const handleSubmit = (event) => {
+  function handleSubmit(event) {
     event.preventDefault();
 
     const { title, description, deadline, tags } = formData;
@@ -92,12 +95,12 @@ export default function CreateInitiativeForm({
     };
 
     onSubmit(updatedInitiative);
-    router.push("/");
-  };
+    router.push(`/initiatives/${updatedInitiative.id}`);
+  }
 
-  const handleCancel = () => {
-    router.push("/");
-  };
+  function handleCancel() {
+    router.push(`/initiatives/${formData.id}`);
+  }
 
   return (
     <Form onSubmit={handleSubmit}>

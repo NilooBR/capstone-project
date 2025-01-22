@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import CreateInitiativeForm from "@/Components/CreateInitiativeForm";
+import InitiativeForm from "@/Components/InitiativeForm";
 
 export default function EditInitiativePage({ initiatives, onEditInitiative }) {
   const router = useRouter();
@@ -14,7 +14,7 @@ export default function EditInitiativePage({ initiatives, onEditInitiative }) {
   }
 
   return (
-    <CreateInitiativeForm
+    <InitiativeForm
       onSubmit={onEditInitiative}
       defaultData={initiativeToEdit}
       isEditMode={true}
