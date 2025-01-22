@@ -3,7 +3,8 @@ import Link from "next/link";
 import { useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import { useTaskState } from "./useTaskState";
+import { useTaskState } from "@/Components/useTaskState";
+
 
 export default function TaskDetailPage({
   onDeleteTask,
