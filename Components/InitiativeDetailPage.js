@@ -271,6 +271,13 @@ const StyledLinkTask = styled(Link)`
   }
 `;
 
+const AddTaskCard = styled.div`
+  padding: 2px;
+  cursor: pointer;
+  margin: 2px;
+  background-color: white;
+`
+
 const TaskCard = styled.div`
   padding: 2px;
   cursor: pointer;
