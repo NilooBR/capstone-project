@@ -1,13 +1,9 @@
-import CreateTaskForm from "@/Components/CreateTaskForm";
+import TaskForm from "@/Components/TaskForm";
 
-export default function CreateTaskPage({
-  initiatives,
-  onEditInitiative,
-}) {
-  return (
-    <CreateTaskForm 
-      onEditInitiative={onEditInitiative}
-      initiatives={initiatives}
-    />
-  );
+export default function CreateTaskPage({ initiatives, onEditInitiative }) {
+  function handleCreateTask(updatedInitiative) {
+    onEditInitiative(updatedInitiative);
+  }
+
+  return <TaskForm onSubmit={handleCreateTask} initiatives={initiatives} />;
 }

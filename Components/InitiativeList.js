@@ -1,18 +1,6 @@
 import styled from "styled-components";
 import InitiativeCard from "./InitiativeCard";
 
-const ListContainer = styled.ul`
-  display: grid;
-  gap: 16px;
-  padding: 16px;
-  grid-template-columns: 1fr 1fr;
-  list-style: none;
-`;
-
-const Title = styled.h1`
-  margin: 16px;
-`;
-
 export default function InitiativeList({
   initiatives,
   onDelete,
@@ -37,3 +25,18 @@ export default function InitiativeList({
     </>
   );
 }
+
+// Styled Components
+
+const ListContainer = styled.ul`
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+  grid-template-columns: 1fr 1fr;
+  list-style: none;
+`;
+
+const Title = styled.h1`
+  margin: 16px;
+`;
+

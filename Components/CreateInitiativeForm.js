@@ -6,80 +6,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-  min-height: 100vh;
-  padding: 20px;
-  box-sizing: border-box;
-`;
-
-const Heading = styled.h1`
-  font-size: 20px;
-  text-align: center;
-`;
-
-const Label = styled.label`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-weight: bold;
-  font-size: 1rem;
-`;
-
-const Input = styled.input`
-  padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-`;
-
-const Textarea = styled.textarea`
-  padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-`;
-
-const StyledDatePicker = styled(DatePicker)`
-  width: 100%; 
-  padding: 10px; 
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-`;
-
-const Error = styled.p`
-  color: red;
-  font-size: 0.9rem;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: auto;
-`;
-
-const Button = styled.button`
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: #bcc1c5;
-  color: black;
-  font-weight: bold;
-  cursor: pointer;
-  border: 1px solid black;
-  font-size: 10px;
-
-  &:hover {
-    background-color: #5a6268;
-  }
-`;
-
 const DEFAULT_VALUES = {
   title: "",
   description: "",
@@ -90,7 +16,7 @@ const DEFAULT_VALUES = {
 export default function CreateInitiativeForm({
   onSubmit,
   defaultData = {},
-  isEditMode = false
+  isEditMode = false,
 }) {
   const router = useRouter();
 
@@ -173,7 +99,6 @@ export default function CreateInitiativeForm({
     router.push("/");
   };
 
-
   return (
     <Form onSubmit={handleSubmit}>
       <Heading>{isEditMode ? "Edit Initiative" : "Create Initiative"}</Heading>
@@ -214,8 +139,8 @@ export default function CreateInitiativeForm({
               : null
           }
           onChange={handleDateChange}
-          dateFormat="dd.MM.yyyy" 
-          locale={de} 
+          dateFormat="dd.MM.yyyy"
+          locale={de}
           minDate={new Date()}
           placeholderText="dd.mm.yyyy"
         />
@@ -248,3 +173,78 @@ export default function CreateInitiativeForm({
     </Form>
   );
 }
+
+// Styled Components
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+`;
+
+const Heading = styled.h1`
+  font-size: 20px;
+  text-align: center;
+`;
+
+const Label = styled.label`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+`;
+
+const Input = styled.input`
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
+const Textarea = styled.textarea`
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
+const StyledDatePicker = styled(DatePicker)`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+`;
+
+const Error = styled.p`
+  color: red;
+  font-size: 0.9rem;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+`;
+
+const Button = styled.button`
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #bcc1c5;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  border: 1px solid black;
+  font-size: 10px;
+
+  &:hover {
+    background-color: #5a6268;
+  }
+`;

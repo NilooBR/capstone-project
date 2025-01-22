@@ -2,6 +2,31 @@ import InitiativeList from "@/Components/InitiativeList";
 import Link from "next/link";
 import styled from "styled-components";
 
+export default function HomePage({
+  initiatives,
+  onDeleteInitiative,
+  onToggleCompleted,
+}) {
+  return (
+    <div>
+      <StyledLink href="/initiatives/create">➕Create Initiative</StyledLink>
+      {initiatives.length === 0 ? (
+        <NoInitiativesMessage>
+          No initiatives available. Please create initiatives first.👆
+        </NoInitiativesMessage>
+      ) : (
+        <InitiativeList
+          initiatives={initiatives}
+          onDelete={onDeleteInitiative}
+          onToggleCompleted={onToggleCompleted}
+        />
+      )}
+    </div>
+  );
+}
+
+// Styled Components
+
 const StyledLink = styled(Link)`
   text-decoration: none;
   color: inherit;
@@ -29,26 +54,3 @@ const NoInitiativesMessage = styled.span`
   align-items: center;
   justify-content: center;
 `;
-
-export default function HomePage({
-  initiatives,
-  onDeleteInitiative,
-  onToggleCompleted,
-}) {
-  return (
-    <div>
-      <StyledLink href="/initiatives/create">➕Create Initiative</StyledLink>
-      {initiatives.length === 0 ? (
-        <NoInitiativesMessage>
-          No initiatives available. Please create initiatives first.👆
-        </NoInitiativesMessage>
-      ) : (
-        <InitiativeList
-          initiatives={initiatives}
-          onDelete={onDeleteInitiative}
-          onToggleCompleted={onToggleCompleted}
-        />
-      )}
-    </div>
-  );
-}
