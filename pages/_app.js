@@ -44,46 +44,31 @@ export default function App({ Component, pageProps }) {
     setInitiatives(updatedInitiatives);
   }
 
+  function handleUpdateUploadedImages(initiativeId, taskId, newImages) {
+    const updatedInitiatives = initiatives.map((initiative) =>
+      initiative.id === initiativeId
+        ? {
+            ...initiative,
+            tasks: initiative.tasks.map((task) =>
+              task.id === taskId
+                ? {
+                    ...task,
+                    uploadedImages: [
+                      ...(task.uploadedImages || []),
+                      ...newImages,
+                    ],
+                  }
+                : task
+            ),
+          }
+        : initiative
+    );
+
+    setInitiatives(updatedInitiatives);
+  }
+
   function handleUpdateInitiatives(newInitiatives) {
     setInitiatives(newInitiatives);
-  }
-
-  function handleUpdateInitiativeFiles(updatedFiles) {
-    const updatedInitiatives = initiatives.map((initiative) => {
-      return {
-        ...initiative,
-        tasks: initiative.tasks.map((task) =>
-          task.id === updatedFiles.taskId
-            ? {
-                ...task,
-                uploadedFiles: [...task.uploadedFiles, ...updatedFiles.files],
-              }
-            : task
-        ),
-      };
-    });
-
-    setInitiatives(updatedInitiatives);
-  }
-
-  function handleDeleteInitiativeFiles({ taskId, publicId }) {
-    const updatedInitiatives = initiatives.map((initiative) => {
-      return {
-        ...initiative,
-        tasks: initiative.tasks.map((task) =>
-          task.id === taskId
-            ? {
-                ...task,
-                uploadedFiles: task.uploadedFiles.filter(
-                  (file) => file.public_id !== publicId
-                ),
-              }
-            : task
-        ),
-      };
-    });
-
-    setInitiatives(updatedInitiatives);
   }
 
   return (
@@ -97,9 +82,8 @@ export default function App({ Component, pageProps }) {
         onToggleCompleted={handleToggleCompleted}
         onEditInitiative={handleEditInitiative}
         onDeleteTask={handleDeleteTask}
+        onUpdateUploadedImages={handleUpdateUploadedImages}
         onUpdateInitiatives={handleUpdateInitiatives}
-        onUpdateInitiativeFiles={handleUpdateInitiativeFiles}
-        onDeleteInitiativeFiles={handleDeleteInitiativeFiles}
       />
     </>
   );
