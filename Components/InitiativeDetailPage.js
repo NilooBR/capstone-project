@@ -29,6 +29,13 @@ export default function InitiativeDetailPage({
     }
   }
 
+  function truncateText(text, maxLength) {
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength) + "...";
+    }
+    return text;
+  }
+
   return (
     <PageContainer>
       <Content>
@@ -85,7 +92,7 @@ export default function InitiativeDetailPage({
                 href={`/initiatives/${id}/tasks/${task.id}`}
               >
                 <TaskCard>
-                  <h2>{task.title}</h2>
+                  <h2>{truncateText(task.title, 10)}</h2>
                   <span style={{ color: getStatusColor(task.status) }}>
                     {task.status}
                   </span>
@@ -93,7 +100,10 @@ export default function InitiativeDetailPage({
               </StyledLinkTask>
             ))
           ) : (
-            <NoTasksMessage>No tasks available for this initiative. Please create initiatives first. 👈</NoTasksMessage>
+            <NoTasksMessage>
+              No tasks available for this initiative. Please create initiatives
+              first. 👈
+            </NoTasksMessage>
           )}
         </TasksGrid>
       </Content>
@@ -142,6 +152,13 @@ const Content = styled.div`
 const Title = styled.h1`
   margin: 20px 0;
   font-size: 1.8rem;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+  text-align: left;
+  max-width: 100%;
+  overflow: hidden;
 `;
 
 const Description = styled.article`

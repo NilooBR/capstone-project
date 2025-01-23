@@ -29,12 +29,20 @@ export default function InitiativeCard({
     };
   }, [isModalOpen]);
 
+  function truncateText(text, maxLength) {
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength) + "...";
+    }
+    return text;
+  }
+
   return (
     <Card isCompleted={isCompleted}>
       <TopLeftButton onClick={() => setIsModalOpen(true)}>...</TopLeftButton>
       <StyledLink href={`/initiatives/${id}`}>
         <h3>
-          {title} <CompletedInitiative isCompleted={isCompleted} />{" "}
+          {truncateText(title, 10)}
+          <CompletedInitiative isCompleted={isCompleted} />{" "}
         </h3>
         <TagList>
           {tags.map((tag) => (

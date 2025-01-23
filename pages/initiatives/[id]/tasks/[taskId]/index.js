@@ -153,6 +153,13 @@ const Footer = styled.div`
 const Title = styled.h1`
   margin: 20px 0;
   font-size: 1.8rem;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+  text-align: left;
+  max-width: 100%;
+  overflow: hidden;
 `;
 
 const Description = styled.article`
