@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CompletedInitiative from "./CompletedInitiative";
+import { useSearchParams } from "next/navigation";
 
 export default function InitiativeDetailPage({
   id,
@@ -15,6 +16,16 @@ export default function InitiativeDetailPage({
   tasks,
 }) {
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
+  const searchParams = useSearchParams();
+  const [showEditSuccess, setShowEditSuccess] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      setShowEditSuccess(true);
+      const timeout = setTimeout(() => setShowEditSuccess(false), 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [searchParams]);
 
   const allUploadedImages = (tasks || [])
     .filter((task) => task.uploadedImages?.length > 0)
@@ -74,6 +85,14 @@ export default function InitiativeDetailPage({
                   Yes, delete
                 </ConfirmationDialogButton>
               </ButtonGroup>
+            </ConfirmationDialog>
+          </DialogOverlay>
+        )}
+        {showEditSuccess && (
+          <DialogOverlay>
+            <ConfirmationDialog>
+              <h2>✔️</h2>
+              <p>Your Initiative has been updated successfully!</p>
             </ConfirmationDialog>
           </DialogOverlay>
         )}

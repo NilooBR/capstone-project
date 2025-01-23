@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
-import { useSearchParams } from "next/navigation";
 
 const DEFAULT_VALUES = {
   title: "",
@@ -31,16 +30,6 @@ export default function InitiativeForm({
 
   const [errors, setErrors] = useState({});
   const [isDialogVisible, setIsDialogVisible] = useState(false);
-  const [showEditSuccess, setShowEditSuccess] = useState(false);
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    if (searchParams.get("success") === "true") {
-      setShowEditSuccess(true);
-      const timeout = setTimeout(() => setShowEditSuccess(false), 3000);
-      return () => clearTimeout(timeout);
-    }
-  }, [searchParams]);
 
   function handleDateChange(date) {
     if (date) {
@@ -80,6 +69,14 @@ export default function InitiativeForm({
   function handleSubmit(event) {
     event.preventDefault();
 
+    if (isEditMode) {
+      setIsDialogVisible(true);
+    } else {
+      saveChanges();
+    }
+  }
+
+  function saveChanges() {
     const { title, description, deadline, tags } = formData;
 
     const tagList = tags
@@ -94,9 +91,8 @@ export default function InitiativeForm({
       tags: tagList.length > 5 ? "You can add a maximum of 5 tags." : null,
     };
 
-    setErrors(newErrors);
-
     if (Object.values(newErrors).some((error) => error)) {
+      setErrors(newErrors);
       return;
     }
 
@@ -106,37 +102,19 @@ export default function InitiativeForm({
       id: formData.id || crypto.randomUUID(),
     };
 
-    if (isEditMode) {
-      setIsDialogVisible(true);
-    } else {
-      saveChanges();
-    }
-
     onSubmit(updatedInitiative);
-    router.push(`/initiatives/${updatedInitiative.id}`);
-  }
-
-  function saveChanges() {
-    const tagList = formData.tags
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter((tag) => tag !== "");
-
-    const updatedInitiative = {
-      ...formData,
-      tags: tagList,
-      id: formData.id || crypto.randomUUID(),
-    };
-
-    onSubmit(updatedInitiative);
-
-    router.push({
+    router.replace({
       pathname: `/initiatives/${updatedInitiative.id}`,
       query: { success: "true" },
     });
   }
+
   function handleCancel() {
-    router.push("/");
+    if (isEditMode) {
+      router.push(`/initiatives/${formData.id}`);
+    } else {
+      router.push("/");
+    }
   }
 
   return (
@@ -198,7 +176,7 @@ export default function InitiativeForm({
         />
         {errors.tags && <Error>{errors.tags}</Error>}
       </Label>
-      {isDialogVisible ? (
+      {isDialogVisible && (
         <DialogOverlay>
           <ConfirmationDialog>
             <p>You have unsaved changes. Would you like to save your edits?</p>
@@ -206,15 +184,6 @@ export default function InitiativeForm({
             <DialogButton onClick={handleCancel}>Cancel</DialogButton>
           </ConfirmationDialog>
         </DialogOverlay>
-      ) : (
-        showEditSuccess && (
-          <DialogOverlay>
-            <ConfirmationDialog>
-              <h2>✔️</h2>
-              <p>Your task has been updated successfully!</p>
-            </ConfirmationDialog>
-          </DialogOverlay>
-        )
       )}
       <ButtonGroup>
         <Button type="button" onClick={handleCancel}>
