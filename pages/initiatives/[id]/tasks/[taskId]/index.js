@@ -1,9 +1,10 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import { useTaskState } from "@/utils/useTaskState";
+import { useSearchParams } from "next/navigation";
 
 export default function TaskDetailPage({
   onDeleteTask,
@@ -12,16 +13,26 @@ export default function TaskDetailPage({
   onUpdateUploadedImages,
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { id: initiativeId, taskId } = router.query;
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showEditSuccess, setShowEditSuccess] = useState(false);
 
   const { task, status, updateTaskStatus } = useTaskState(
     initiativeId,
     taskId,
     initiatives
   );
+
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      setShowEditSuccess(true);
+      const timeout = setTimeout(() => setShowEditSuccess(false), 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [searchParams]);
 
   if (!task)
     return (
@@ -184,7 +195,6 @@ export default function TaskDetailPage({
             </ConfirmationDialog>
           </DialogOverlay>
         )}
-
         {showEditSuccess && (
           <DialogOverlay>
             <ConfirmationDialog>
@@ -231,6 +241,13 @@ const Footer = styled.div`
 const Title = styled.h1`
   margin: 20px 0;
   font-size: 1.8rem;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+  text-align: left;
+  max-width: 100%;
+  overflow: hidden;
 `;
 
 const Description = styled.article`

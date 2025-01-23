@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
+import { useSearchParams } from "next/navigation";
 
 const DEFAULT_VALUES = {
   title: "",
@@ -29,6 +30,17 @@ export default function InitiativeForm({
   });
 
   const [errors, setErrors] = useState({});
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const [showEditSuccess, setShowEditSuccess] = useState(false);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      setShowEditSuccess(true);
+      const timeout = setTimeout(() => setShowEditSuccess(false), 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [searchParams]);
 
   function handleDateChange(date) {
     if (date) {
@@ -36,7 +48,7 @@ export default function InitiativeForm({
       setFormData({ ...formData, deadline: germanDate });
       setErrors((prevErrors) => ({ ...prevErrors, deadline: null }));
     }
-  };
+  }
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -94,10 +106,35 @@ export default function InitiativeForm({
       id: formData.id || crypto.randomUUID(),
     };
 
+    if (isEditMode) {
+      setIsDialogVisible(true);
+    } else {
+      saveChanges();
+    }
+
     onSubmit(updatedInitiative);
     router.push(`/initiatives/${updatedInitiative.id}`);
   }
 
+  function saveChanges() {
+    const tagList = formData.tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag !== "");
+
+    const updatedInitiative = {
+      ...formData,
+      tags: tagList,
+      id: formData.id || crypto.randomUUID(),
+    };
+
+    onSubmit(updatedInitiative);
+
+    router.push({
+      pathname: `/initiatives/${updatedInitiative.id}`,
+      query: { success: "true" },
+    });
+  }
   function handleCancel() {
     router.push("/");
   }
@@ -161,7 +198,24 @@ export default function InitiativeForm({
         />
         {errors.tags && <Error>{errors.tags}</Error>}
       </Label>
-
+      {isDialogVisible ? (
+        <DialogOverlay>
+          <ConfirmationDialog>
+            <p>You have unsaved changes. Would you like to save your edits?</p>
+            <DialogButton onClick={saveChanges}>Save</DialogButton>
+            <DialogButton onClick={handleCancel}>Cancel</DialogButton>
+          </ConfirmationDialog>
+        </DialogOverlay>
+      ) : (
+        showEditSuccess && (
+          <DialogOverlay>
+            <ConfirmationDialog>
+              <h2>✔️</h2>
+              <p>Your task has been updated successfully!</p>
+            </ConfirmationDialog>
+          </DialogOverlay>
+        )
+      )}
       <ButtonGroup>
         <Button type="button" onClick={handleCancel}>
           Cancel
@@ -229,13 +283,6 @@ const Error = styled.p`
   font-size: 0.9rem;
 `;
 
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: auto;
-`;
-
 const Button = styled.button`
   padding: 10px 20px;
   border: none;
@@ -250,4 +297,36 @@ const Button = styled.button`
   &:hover {
     background-color: #5a6268;
   }
+`;
+
+const DialogOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+`;
+
+const ConfirmationDialog = styled.div`
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  text-align: center;
+`;
+
+const DialogButton = styled(Button)`
+  margin: 5px;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
 `;

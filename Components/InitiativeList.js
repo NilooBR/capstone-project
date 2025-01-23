@@ -10,7 +10,7 @@ export default function InitiativeList({ initiatives, onDelete }) {
         <StyledLink href="/initiatives/create">➕ Create Initiative</StyledLink>
         {initiatives.length === 0 ? (
           <NoInitiativesMessage>
-            No initiatives available. Please create initiatives first.
+            No initiatives available. Please create initiatives first.👆
           </NoInitiativesMessage>
         ) : (
           initiatives.map((initiative) => (
@@ -46,7 +46,8 @@ const Title = styled.h1`
 `;
 
 const NoInitiativesMessage = styled.span`
-  font-size: 20px;
+  font-size: 10px;
+  font-weight: bold;
   color: black;
   text-align: center;
   margin-top: 20px;

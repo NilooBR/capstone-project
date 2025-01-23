@@ -16,7 +16,7 @@ export default function InitiativeDetailPage({
 }) {
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
 
-  const allUploadedImages = tasks
+  const allUploadedImages = (tasks || [])
     .filter((task) => task.uploadedImages?.length > 0)
     .flatMap((task) =>
       task.uploadedImages.map((file) => ({
@@ -87,6 +87,12 @@ export default function InitiativeDetailPage({
           )}
         </CompletedContainer>
         <TasksGrid>
+          <StyledLinkTask href={`/initiatives/${id}/tasks/createTask`}>
+            <AddTaskCard>
+              <p>➕</p>
+              <h2>Add task</h2>
+            </AddTaskCard>
+          </StyledLinkTask>
           {tasks?.length > 0 ? (
             tasks.map((task) => (
               <StyledLinkTask
@@ -332,7 +338,8 @@ const ConfirmationDialogButton = styled(Button)`
 `;
 
 const NoTasksMessage = styled.span`
-  font-size: 20px;
+  font-size: 10px;
+  font-weight: bold;
   color: black;
   text-align: center;
   margin-top: 20px;
