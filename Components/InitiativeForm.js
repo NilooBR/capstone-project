@@ -99,7 +99,7 @@ export default function InitiativeForm({
   }
 
   function handleCancel() {
-    router.push(`/initiatives/${formData.id}`);
+    router.push("/");
   }
 
   return (
