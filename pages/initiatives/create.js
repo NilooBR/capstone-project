@@ -1,4 +1,4 @@
-import CreateInitiativeForm from "@/Components/CreateInitiativeForm";
+import CreateInitiativeForm from "@/Components/InitiativeForm";
 
 export default function CreateInitiativePage({
   initiatives,

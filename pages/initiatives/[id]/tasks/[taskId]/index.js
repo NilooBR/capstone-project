@@ -1,9 +1,10 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import { useTaskState } from "@/utils/useTaskState";
+import { useSearchParams } from "next/navigation";
 
 export default function TaskDetailPage({
   onDeleteTask,
@@ -12,16 +13,26 @@ export default function TaskDetailPage({
   onUpdateUploadedImages,
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { id: initiativeId, taskId } = router.query;
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showEditSuccess, setShowEditSuccess] = useState(false);
 
   const { task, status, updateTaskStatus } = useTaskState(
     initiativeId,
     taskId,
     initiatives
   );
+
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      setShowEditSuccess(true);
+      const timeout = setTimeout(() => setShowEditSuccess(false), 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [searchParams]);
 
   if (!task)
     return (
@@ -168,18 +179,39 @@ export default function TaskDetailPage({
         </FileUploadContainer>
 
         {deleteButtonClicked && (
-          <div>
-            <p>Are you sure you want to delete this task?</p>
-            <button onClick={() => setDeleteButtonClicked(false)}>
-              Cancel
-            </button>
-            <button onClick={handleDelete}>Yes, delete</button>
-          </div>
+          <DialogOverlay>
+            <ConfirmationDialog>
+              <p>Are you sure you want to delete this task?</p>
+              <ButtonGroup>
+                <ConfirmationDialogButton
+                  onClick={() => setDeleteButtonClicked(false)}
+                >
+                  Cancel
+                </ConfirmationDialogButton>
+                <ConfirmationDialogButton onClick={handleDelete}>
+                  Yes, delete
+                </ConfirmationDialogButton>
+              </ButtonGroup>
+            </ConfirmationDialog>
+          </DialogOverlay>
+        )}
+        {showEditSuccess && (
+          <DialogOverlay>
+            <ConfirmationDialog>
+              <h2>✔️</h2>
+              <p>Your task has been updated successfully!</p>
+            </ConfirmationDialog>
+          </DialogOverlay>
         )}
       </Content>
       <Footer>
         <StyledLink href={`/initiatives/${initiativeId}`}>Back</StyledLink>
         <Button onClick={() => setDeleteButtonClicked(true)}>Delete</Button>
+        <StyledLink
+          href={`/initiatives/${initiativeId}/tasks/${taskId}/editTask`}
+        >
+          Edit
+        </StyledLink>
       </Footer>
     </PageContainer>
   );
@@ -209,6 +241,13 @@ const Footer = styled.div`
 const Title = styled.h1`
   margin: 20px 0;
   font-size: 1.8rem;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+  text-align: left;
+  max-width: 100%;
+  overflow: hidden;
 `;
 
 const Description = styled.article`
@@ -291,4 +330,38 @@ const Button = styled.button`
 const StyledLink = styled(Button).attrs({ as: Link })`
   text-decoration: none;
   text-align: center;
+`;
+
+const DialogOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+`;
+
+const ConfirmationDialog = styled.div`
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 400px;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+`;
+
+const ConfirmationDialogButton = styled(Button)`
+  flex: 1;
 `;

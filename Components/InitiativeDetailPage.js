@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CompletedInitiative from "./CompletedInitiative";
+import { useSearchParams } from "next/navigation";
 
 export default function InitiativeDetailPage({
   id,
@@ -15,8 +16,18 @@ export default function InitiativeDetailPage({
   tasks,
 }) {
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
+  const searchParams = useSearchParams();
+  const [showEditSuccess, setShowEditSuccess] = useState(false);
 
-  const allUploadedImages = tasks
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      setShowEditSuccess(true);
+      const timeout = setTimeout(() => setShowEditSuccess(false), 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [searchParams]);
+
+  const allUploadedImages = (tasks || [])
     .filter((task) => task.uploadedImages?.length > 0)
     .flatMap((task) =>
       task.uploadedImages.map((file) => ({
@@ -38,6 +49,13 @@ export default function InitiativeDetailPage({
     }
   }
 
+  function truncateText(text, maxLength) {
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength) + "...";
+    }
+    return text;
+  }
+
   return (
     <PageContainer>
       <Content>
@@ -54,17 +72,29 @@ export default function InitiativeDetailPage({
           )}
         </TagList>
         {deleteButtonClicked && (
-          <ConfirmationDialog>
-            <p>Are you sure you want to delete this initiative?</p>
-            <ConfirmationDialogButton
-              onClick={() => setDeleteButtonClicked(false)}
-            >
-              Cancel
-            </ConfirmationDialogButton>
-            <ConfirmationDialogButton onClick={onDelete}>
-              Yes, delete
-            </ConfirmationDialogButton>
-          </ConfirmationDialog>
+          <DialogOverlay>
+            <ConfirmationDialog>
+              <p>Are you sure you want to delete this initiative?</p>
+              <ButtonGroup>
+                <ConfirmationDialogButton
+                  onClick={() => setDeleteButtonClicked(false)}
+                >
+                  Cancel
+                </ConfirmationDialogButton>
+                <ConfirmationDialogButton onClick={onDelete}>
+                  Yes, delete
+                </ConfirmationDialogButton>
+              </ButtonGroup>
+            </ConfirmationDialog>
+          </DialogOverlay>
+        )}
+        {showEditSuccess && (
+          <DialogOverlay>
+            <ConfirmationDialog>
+              <h2>✔️</h2>
+              <p>Your Initiative has been updated successfully!</p>
+            </ConfirmationDialog>
+          </DialogOverlay>
         )}
         <CompletedContainer>
           <button onClick={() => onToggleCompleted(id)}>
@@ -78,6 +108,12 @@ export default function InitiativeDetailPage({
           </button>
         </CompletedContainer>
         <TasksGrid>
+          <StyledLinkTask href={`/initiatives/${id}/tasks/createTask`}>
+            <AddTaskCard>
+              <p>➕</p>
+              <h2>Add task</h2>
+            </AddTaskCard>
+          </StyledLinkTask>
           {tasks?.length > 0 ? (
             tasks.map((task) => (
               <StyledLinkTask
@@ -85,7 +121,7 @@ export default function InitiativeDetailPage({
                 href={`/initiatives/${id}/tasks/${task.id}`}
               >
                 <TaskCard>
-                  <h2>{task.title}</h2>
+                  <h2>{truncateText(task.title, 10)}</h2>
                   <span style={{ color: getStatusColor(task.status) }}>
                     {task.status}
                   </span>
@@ -93,7 +129,10 @@ export default function InitiativeDetailPage({
               </StyledLinkTask>
             ))
           ) : (
-            <p>No tasks available for this initiative.</p>
+            <NoTasksMessage>
+              No tasks available for this initiative. Please create initiatives
+              first. 👈
+            </NoTasksMessage>
           )}
         </TasksGrid>
         <AttachmentSection>
@@ -158,6 +197,13 @@ const Content = styled.div`
 const Title = styled.h1`
   margin: 20px 0;
   font-size: 1.8rem;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+  text-align: left;
+  max-width: 100%;
+  overflow: hidden;
 `;
 
 const Description = styled.article`
@@ -177,18 +223,6 @@ const Deadline = styled.p`
 const EmptyMessage = styled.span`
   font-size: 0.9rem;
   color: #888;
-`;
-
-const ConfirmationDialog = styled.div`
-  margin: 50px 0;
-  padding: 20px;
-  border: 1px solid grey;
-  border-radius: 8px;
-  background-color: lightgrey;
-  text-align: center;
-  font-weight: bold;
-  font-size: 10px;
-  border: 1px solid black;
 `;
 
 const CompletedContainer = styled.div`
@@ -235,23 +269,6 @@ const Button = styled.button`
   }
 `;
 
-const ConfirmationDialogButton = styled.button`
-  display: inline-block;
-  padding: 10px 20px;
-  text-align: center;
-  border-radius: 5px;
-  background-color: #bcc1c5;
-  color: black;
-  font-weight: bold;
-  border: 1px solid black;
-  cursor: pointer;
-  margin: 5px;
-
-  &:hover {
-    background-color: #5a6268;
-  }
-`;
-
 const StyledLink = styled(Link)`
   display: inline-block;
   padding: 10px 20px;
@@ -292,7 +309,7 @@ const AddTaskCard = styled.div`
   padding: 2px;
   cursor: pointer;
   margin: 2px;
-  background-color: white;
+  background-color: transparent;
 `;
 
 const TaskCard = styled.div`
@@ -305,6 +322,51 @@ const TasksGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
+`;
+
+const DialogOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+`;
+
+const ConfirmationDialog = styled.div`
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 400px;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+`;
+
+const ConfirmationDialogButton = styled(Button)`
+  flex: 1;
+`;
+
+const NoTasksMessage = styled.span`
+  font-size: 10px;
+  font-weight: bold;
+  color: black;
+  text-align: center;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const AttachmentSection = styled.div`
