@@ -15,6 +15,7 @@ export default function TaskDetailPage({
   const { id: initiativeId, taskId } = router.query;
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { task, status, updateTaskStatus } = useTaskState(
     initiativeId,
@@ -39,6 +40,9 @@ export default function TaskDetailPage({
       return;
     }
 
+    setLoading(true);
+    setUploadMessage("");
+
     const formData = new FormData();
     files.forEach((file) => {
       formData.append("uploadedImages", file);
@@ -62,6 +66,8 @@ export default function TaskDetailPage({
     } catch (error) {
       console.error("Upload error:", error);
       setUploadMessage(`An error occurred during the upload: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -139,6 +145,7 @@ export default function TaskDetailPage({
               onChange={(e) => handleImageUpload(Array.from(e.target.files))}
             />
           </label>
+          {loading && <p>Uploading... Please wait.</p>}
           {uploadMessage && <p>{uploadMessage}</p>}
           <ImagePreviewContainer>
             {task.uploadedImages?.map((image) => (

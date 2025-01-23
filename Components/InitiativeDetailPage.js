@@ -18,7 +18,12 @@ export default function InitiativeDetailPage({
 
   const allUploadedImages = tasks
     .filter((task) => task.uploadedImages?.length > 0)
-    .flatMap((task) => task.uploadedImages.map((file) => file.url));
+    .flatMap((task) =>
+      task.uploadedImages.map((file) => ({
+        url: file.url,
+        name: file.original_filename,
+      }))
+    );
 
   function getStatusColor(status) {
     switch (status) {
@@ -95,10 +100,10 @@ export default function InitiativeDetailPage({
           <h2>All Uploaded Images</h2>
           {allUploadedImages.length > 0 ? (
             <AttachmentList>
-              {allUploadedImages.map((url) => (
-                <li key={url}>
-                  <a href={url} target="_blank">
-                    {url}
+              {allUploadedImages.map((file) => (
+                <li key={file.url}>
+                  <a href={file.url} target="_blank">
+                    {file.name}
                   </a>
                 </li>
               ))}
