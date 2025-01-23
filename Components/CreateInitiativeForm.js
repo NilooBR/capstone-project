@@ -6,7 +6,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
-
 const Form = styled.form`
   display: flex;
   flex-direction: column;
@@ -45,8 +44,8 @@ const Textarea = styled.textarea`
 `;
 
 const StyledDatePicker = styled(DatePicker)`
-  width: 100%; 
-  padding: 10px; 
+  width: 100%;
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;
@@ -90,7 +89,7 @@ const DEFAULT_VALUES = {
 export default function CreateInitiativeForm({
   onSubmit,
   defaultData = {},
-  isEditMode = false
+  isEditMode = false,
 }) {
   const router = useRouter();
 
@@ -173,7 +172,6 @@ export default function CreateInitiativeForm({
     router.push("/");
   };
 
-
   return (
     <Form onSubmit={handleSubmit}>
       <Heading>{isEditMode ? "Edit Initiative" : "Create Initiative"}</Heading>
@@ -214,8 +212,8 @@ export default function CreateInitiativeForm({
               : null
           }
           onChange={handleDateChange}
-          dateFormat="dd.MM.yyyy" 
-          locale={de} 
+          dateFormat="dd.MM.yyyy"
+          locale={de}
           minDate={new Date()}
           placeholderText="dd.mm.yyyy"
         />

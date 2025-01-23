@@ -7,19 +7,23 @@ const ListContainer = styled.ul`
   padding: 16px;
   grid-template-columns: 1fr 1fr;
   list-style: none;
+  background-color: "var(--mainbackground)";
+`;
+
+const YourInitiatives = styled.h1`
+  color: var(--accents);
+  text-align: left;
+  padding-left: 5%;
 `;
 
 const Title = styled.h1`
   margin: 16px;
 `;
 
-export default function InitiativeList({
-  initiatives,
-  onDelete,
-}) {
+export default function InitiativeList({ initiatives, onDelete }) {
   return (
     <>
-      <Title>Your Initiatives</Title>
+      <YourInitiatives>Your Initiatives</YourInitiatives>
       <ListContainer>
         {initiatives.map((initiative) => (
           <li key={initiative.id}>

@@ -9,11 +9,13 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: left;
   justify-content: center;
-  border: 1px solid black;
+  border: 1px;
   border-radius: 10px;
   height: 150px;
   width: 100%;
+  color: var(--text);
   background-color: ${({ isCompleted }) =>
     isCompleted ? "var(--highlightedcard)" : "var(--cardbackground)"};
 `;
@@ -34,19 +36,22 @@ const Tag = styled.li`
   border-radius: 4px;
   padding: 4px 8px;
   font-size: 11px;
+  background-color: var(--tags);
+  color: var(--contrasttext);
 `;
 
 const StyledLink = styled(Link)`
   text-decoration: none;
-  color: inherit;
+  color: var(--text);
   width: 100%;
   text-align: center;
 `;
 
 const DateText = styled.p`
-  text-align: center;
+  text-align: right;
   margin: 10px;
   font-size: 11px;
+  color: var(--text);
 `;
 
 const Modal = styled.div`
@@ -59,7 +64,7 @@ const Modal = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
-  background-color: lightgray;
+  background-color: var(--buttons);
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -74,11 +79,11 @@ const LinkButton = styled(Link)`
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  border: 1px solid black;
+  border: 1px;
   font-weight: bold;
   font-size: 10px;
-  background-color: #bcc1c5;
-  color: black;
+  background-color: var(--buttons);
+  color: var(--text);
 `;
 
 const Button = styled.button`
@@ -87,27 +92,28 @@ const Button = styled.button`
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  border: 1px solid black;
+  border: 1px;
   font-weight: bold;
   font-size: 10px;
 
   &:nth-child(1),
   &:nth-child(2) {
-    background-color: #bcc1c5;
-    color: black;
+    background-color: var(--cardbackground);
+    color: var(--text);
   }
 
   &:nth-child(3) {
-    background-color: #f4a896;
-    color: black;
+    background-color: var(--buttons);
+    color: var(--text);
   }
 `;
 
 const TopLeftButton = styled.button`
   position: absolute;
   top: 8px;
-  left: 8px;
+  right: 8px;
   background-color: transparent;
+  color: var(--text);
   border: none;
   font-size: 16px;
   cursor: pointer;

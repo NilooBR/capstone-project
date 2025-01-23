@@ -10,14 +10,16 @@ export default createGlobalStyle`
   body {
     margin: 0;
     font-family: system-ui;
+    background-color: var(--mainbackground);
   }
 
   :root {
+    --banner: #010080;
     --accents: #010080;
     --buttons:#010080;
     --tags: #24309e;
     --text: #0f172b;
-    --mainbackground: #ffffff;
+    --mainbackground: #ffff;
     --cardbackground: #f2f0ef;
     --contrasttext: #f2f0ef;
     --highlightedcard: #fafafa;

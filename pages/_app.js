@@ -4,10 +4,28 @@ import { initialData } from "@/lib/initialData";
 import styled from "styled-components";
 
 const StyledThemeButton = styled.button`
-  position: relative;
-  margin-top: 10px;
-  margin-right: 20px;
-  background-color: "var(--buttons)";
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: var(--buttons);
+  color: var(--contrasttext);
+  border: none;
+  padding: 12px 20px;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+  z-index: 100;
+  &:hover {
+    background: var(--tags);
+    color: var(--contrasttext);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+  }
+  &:active {
+    transform: scale(0.95);
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+  }
 `;
 
 export default function App({ Component, pageProps }) {
