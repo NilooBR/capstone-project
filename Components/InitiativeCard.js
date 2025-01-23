@@ -40,10 +40,10 @@ export default function InitiativeCard({
     <Card isCompleted={isCompleted}>
       <TopLeftButton onClick={() => setIsModalOpen(true)}>...</TopLeftButton>
       <StyledLink href={`/initiatives/${id}`}>
-        <h3>
+        <StyledSpan>
           {truncateText(title, 10)}
           <CompletedInitiative isCompleted={isCompleted} />{" "}
-        </h3>
+        </StyledSpan>
         <TagList>
           {tags.map((tag) => (
             <Tag key={tag}>{tag}</Tag>
@@ -172,4 +172,9 @@ const TopLeftButton = styled.button`
   border: none;
   font-size: 16px;
   cursor: pointer;
+`;
+
+const StyledSpan = styled.span`
+  font-size: 20px;
+  font-weight: bold;
 `;

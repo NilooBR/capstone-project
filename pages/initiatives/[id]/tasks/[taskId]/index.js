@@ -1,75 +1,116 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import styled from "styled-components";
+import Image from "next/image";
+import { useTaskState } from "@/utils/useTaskState";
 
 export default function TaskDetailPage({
   onDeleteTask,
   initiatives,
   onUpdateInitiatives,
+  onUpdateUploadedImages,
 }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { id: initiativeId, taskId } = router.query;
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
-  const [task, setTask] = useState(null);
-  const [status, setStatus] = useState("Pending");
-  const [showEditSuccess, setShowEditSuccess] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (searchParams.get("success") === "true") {
-      setShowEditSuccess(true);
-      const timeout = setTimeout(() => setShowEditSuccess(false), 3000);
-      return () => clearTimeout(timeout);
-    }
-  }, [searchParams]);
-
-  useEffect(() => {
-    if (initiativeId && taskId) {
-      const selectedInitiative = initiatives.find(
-        (initiative) => initiative.id === initiativeId
-      );
-
-      if (selectedInitiative) {
-        const selectedTask = selectedInitiative.tasks?.find(
-          (item) => item.id == taskId
-        );
-
-        if (selectedTask) {
-          setTask(selectedTask);
-          setStatus(selectedTask.status);
-        }
-      }
-    }
-  }, [initiativeId, taskId, initiatives]);
+  const { task, status, updateTaskStatus } = useTaskState(
+    initiativeId,
+    taskId,
+    initiatives
+  );
 
   if (!task)
     return (
       <div>
         <h1>Task Not Found</h1>
         <p>We could not find a task with the provided ID.</p>
-        <StyledLink href="/">Go Back to List</StyledLink>
+        <StyledLink href={`/initiatives/${initiativeId}`}>
+          Go Back to List
+        </StyledLink>
       </div>
     );
 
-  function handleStatusChange(event) {
-    const newStatus = event.target.value;
-    setStatus(newStatus);
+  async function handleImageUpload(files) {
+    if (files.length === 0) {
+      setUploadMessage("No files selected.");
+      return;
+    }
 
-    const updatedInitiatives = initiatives.map((initiative) => {
-      if (initiative.id === initiativeId) {
-        return {
-          ...initiative,
-          tasks: initiative.tasks.map((task) =>
-            task.id == taskId ? { ...task, status: newStatus } : task
-          ),
-        };
-      }
-      return initiative;
+    setLoading(true);
+    setUploadMessage("");
+
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append("uploadedImages", file);
+      formData.append("originalFilenames", file.name);
     });
 
-    onUpdateInitiatives(updatedInitiatives);
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`File upload failed with status ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      const images = data.images.map((img) => ({ ...img, taskId }));
+      onUpdateUploadedImages(initiativeId, taskId, images);
+      setUploadMessage("Files uploaded successfully.");
+    } catch (error) {
+      console.error("Upload error:", error);
+      setUploadMessage(`An error occurred during the upload: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDeleteImage(publicId) {
+    try {
+      const response = await fetch(`/api/delete`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ public_id: publicId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete image.");
+      }
+
+      const updatedInitiatives = initiatives.map((initiative) => {
+        if (initiative.id === initiativeId) {
+          return {
+            ...initiative,
+            tasks: initiative.tasks.map((task) =>
+              task.id == taskId
+                ? {
+                    ...task,
+                    uploadedImages: task.uploadedImages.filter(
+                      (image) => image.public_id !== publicId
+                    ),
+                  }
+                : task
+            ),
+          };
+        }
+        return initiative;
+      });
+
+      onUpdateInitiatives(updatedInitiatives);
+      setUploadMessage("Image deleted successfully.");
+    } catch (error) {
+      console.error("Delete error:", error);
+      setUploadMessage("An error occurred while deleting the image.");
+    }
   }
 
   function handleDelete() {
@@ -84,12 +125,48 @@ export default function TaskDetailPage({
         <Description>{task.description}</Description>
         <Label>
           Status:
-          <select value={status} onChange={handleStatusChange}>
+          <select
+            value={status}
+            onChange={(e) =>
+              updateTaskStatus(e.target.value, onUpdateInitiatives)
+            }
+          >
             <option value="Pending">Pending</option>
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
           </select>
         </Label>
+        <FileUploadContainer>
+          <label>
+            Upload Images:
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={(e) => handleImageUpload(Array.from(e.target.files))}
+            />
+          </label>
+          {loading && <p>Uploading... Please wait.</p>}
+          {uploadMessage && <p>{uploadMessage}</p>}
+          <ImagePreviewContainer>
+            {task.uploadedImages?.map((image) => (
+              <ImageWrapper key={image.public_id}>
+                <a href={image.url} target="_blank">
+                  <Image
+                    src={image.url}
+                    alt={`${task?.title}`}
+                    fill
+                    style={{ objectFit: "contain" }}
+                  />
+                </a>
+                <button onClick={() => handleDeleteImage(image.public_id)}>
+                  Delete
+                </button>
+              </ImageWrapper>
+            ))}
+          </ImagePreviewContainer>
+        </FileUploadContainer>
+
         {deleteButtonClicked && (
           <DialogOverlay>
             <ConfirmationDialog>
@@ -107,6 +184,7 @@ export default function TaskDetailPage({
             </ConfirmationDialog>
           </DialogOverlay>
         )}
+
         {showEditSuccess && (
           <DialogOverlay>
             <ConfirmationDialog>
@@ -153,13 +231,6 @@ const Footer = styled.div`
 const Title = styled.h1`
   margin: 20px 0;
   font-size: 1.8rem;
-  word-wrap: break-word;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-  white-space: normal;
-  text-align: left;
-  max-width: 100%;
-  overflow: hidden;
 `;
 
 const Description = styled.article`
@@ -168,6 +239,58 @@ const Description = styled.article`
   border: 1px solid grey;
   border-radius: 8px;
   background-color: #ffffff;
+`;
+
+const Label = styled.label`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 20px;
+`;
+
+const FileUploadContainer = styled.div`
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid grey;
+  border-radius: 8px;
+  background-color: #ffffff;
+`;
+
+const ImagePreviewContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 20px;
+`;
+
+const ImageWrapper = styled.div`
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border: 1px solid grey;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+
+  button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 5px;
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+
+    &:hover {
+      background-color: #ff4d4d;
+    }
+  }
 `;
 
 const Button = styled.button`
@@ -190,13 +313,6 @@ const Button = styled.button`
 const StyledLink = styled(Button).attrs({ as: Link })`
   text-decoration: none;
   text-align: center;
-`;
-
-const Label = styled.label`
-  display: flex;
-  flex-direction: row;
-  gap: 5px;
-  margin-top: 20px;
 `;
 
 const DialogOverlay = styled.div`
@@ -232,5 +348,3 @@ const ButtonGroup = styled.div`
 const ConfirmationDialogButton = styled(Button)`
   flex: 1;
 `;
-
-

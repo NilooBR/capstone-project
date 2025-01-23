@@ -44,6 +44,29 @@ export default function App({ Component, pageProps }) {
     setInitiatives(updatedInitiatives);
   }
 
+  function handleUpdateUploadedImages(initiativeId, taskId, newImages) {
+    const updatedInitiatives = initiatives.map((initiative) =>
+      initiative.id === initiativeId
+        ? {
+            ...initiative,
+            tasks: initiative.tasks.map((task) =>
+              task.id === taskId
+                ? {
+                    ...task,
+                    uploadedImages: [
+                      ...(task.uploadedImages || []),
+                      ...newImages,
+                    ],
+                  }
+                : task
+            ),
+          }
+        : initiative
+    );
+
+    setInitiatives(updatedInitiatives);
+  }
+
   function handleUpdateInitiatives(newInitiatives) {
     setInitiatives(newInitiatives);
   }
@@ -59,6 +82,7 @@ export default function App({ Component, pageProps }) {
         onToggleCompleted={handleToggleCompleted}
         onEditInitiative={handleEditInitiative}
         onDeleteTask={handleDeleteTask}
+        onUpdateUploadedImages={handleUpdateUploadedImages}
         onUpdateInitiatives={handleUpdateInitiatives}
       />
     </>

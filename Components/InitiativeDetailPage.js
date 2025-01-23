@@ -16,6 +16,15 @@ export default function InitiativeDetailPage({
 }) {
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
 
+  const allUploadedImages = tasks
+    .filter((task) => task.uploadedImages?.length > 0)
+    .flatMap((task) =>
+      task.uploadedImages.map((file) => ({
+        url: file.url,
+        name: file.original_filename,
+      }))
+    );
+
   function getStatusColor(status) {
     switch (status) {
       case "Pending":
@@ -77,14 +86,7 @@ export default function InitiativeDetailPage({
             <span>Mark as completed</span>
           )}
         </CompletedContainer>
-
         <TasksGrid>
-          <StyledLinkTask href={`/initiatives/${id}/tasks/createTask`}>
-            <AddTaskCard>
-              <p>➕</p>
-              <h2>Add task</h2>
-            </AddTaskCard>
-          </StyledLinkTask>
           {tasks?.length > 0 ? (
             tasks.map((task) => (
               <StyledLinkTask
@@ -106,6 +108,22 @@ export default function InitiativeDetailPage({
             </NoTasksMessage>
           )}
         </TasksGrid>
+        <AttachmentSection>
+          <h2>All Uploaded Images</h2>
+          {allUploadedImages.length > 0 ? (
+            <AttachmentList>
+              {allUploadedImages.map((file) => (
+                <li key={file.url}>
+                  <a href={file.url} target="_blank">
+                    {file.name}
+                  </a>
+                </li>
+              ))}
+            </AttachmentList>
+          ) : (
+            <p>No uploaded files available.</p>
+          )}
+        </AttachmentSection>
       </Content>
       <Footer>
         <StyledLink href="/">Back</StyledLink>
@@ -182,13 +200,23 @@ const EmptyMessage = styled.span`
 
 const CompletedContainer = styled.div`
   display: inline-block;
-  cursor: pointer;
-  background: #a8a8a8;
-  border-radius: 4px;
-  padding: 4px 8px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin: 10px 0;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  button {
+    cursor: pointer;
+    background: #007a55;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 10px;
+    font-weight: bold;
+    color: white;
+
+    &:hover {
+      background-color: #032f2e;
+    }
+  }
 `;
 
 const Footer = styled.div`
@@ -311,4 +339,13 @@ const NoTasksMessage = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+const AttachmentSection = styled.div`
+  margin-top: 20px;
+`;
+
+const AttachmentList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
 `;
