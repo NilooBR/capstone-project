@@ -96,14 +96,16 @@ export default function InitiativeDetailPage({
             </ConfirmationDialog>
           </DialogOverlay>
         )}
-        <CompletedContainer onClick={() => onToggleCompleted(id)}>
-          {isCompleted ? (
-            <span>
-              Completed <CompletedInitiative isCompleted={isCompleted} />
-            </span>
-          ) : (
-            <span>Mark as completed</span>
-          )}
+        <CompletedContainer>
+          <button onClick={() => onToggleCompleted(id)}>
+            {isCompleted ? (
+              <>
+                Completed <CompletedInitiative isCompleted={isCompleted} />
+              </>
+            ) : (
+              <>Mark as completed</>
+            )}
+          </button>
         </CompletedContainer>
         <TasksGrid>
           <StyledLinkTask href={`/initiatives/${id}/tasks/createTask`}>
@@ -366,6 +368,7 @@ const NoTasksMessage = styled.span`
   align-items: center;
   justify-content: center;
 `;
+
 const AttachmentSection = styled.div`
   margin-top: 20px;
 `;
