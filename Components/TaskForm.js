@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 
@@ -29,12 +29,6 @@ export default function TaskForm({
 
   const [errors, setErrors] = useState({});
   const [isDialogVisible, setIsDialogVisible] = useState(false);
-
-  useEffect(() => {
-    if (taskToEdit) {
-      setFormData({ ...DEFAULT_VALUES, ...taskToEdit });
-    }
-  }, [taskToEdit]);
 
   function validateForm() {
     const { title, description } = formData;
