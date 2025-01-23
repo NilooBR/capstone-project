@@ -46,6 +46,7 @@ export default function TaskDetailPage({
     const formData = new FormData();
     files.forEach((file) => {
       formData.append("uploadedImages", file);
+      formData.append("originalFilenames", file.name);
     });
 
     try {
