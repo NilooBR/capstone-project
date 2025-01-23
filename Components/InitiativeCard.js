@@ -2,6 +2,7 @@ import styled from "styled-components";
 import Link from "next/link";
 import CompletedInitiative from "./CompletedInitiative";
 import { useState, useRef, useEffect } from "react";
+import { createGlobalStyle } from "styled-components";
 
 const Card = styled.div`
   position: relative;
@@ -14,7 +15,7 @@ const Card = styled.div`
   height: 150px;
   width: 100%;
   background-color: ${({ isCompleted }) =>
-    isCompleted ? "lightgrey" : "white"};
+    isCompleted ? "var(--highlightedcard)" : "var(--cardbackground)"};
 `;
 
 const TagList = styled.ul`
@@ -127,14 +128,14 @@ export default function InitiativeCard({
     if (modalRef.current && !modalRef.current.contains(event.target)) {
       setIsModalOpen(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (isModalOpen) {
-      document.addEventListener("mousedown", handleOutsideClick)
+      document.addEventListener("mousedown", handleOutsideClick);
     }
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick)
+      document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [isModalOpen]);
 
@@ -154,7 +155,7 @@ export default function InitiativeCard({
       </StyledLink>
 
       {isModalOpen && (
-        <Modal ref={modalRef} >
+        <Modal ref={modalRef}>
           <LinkButton href={`/initiatives/${id}/edit`}>Edit</LinkButton>
           <Button onClick={() => onDelete(id)}>Delete</Button>
           <Button onClick={() => setIsModalOpen(false)}>Close</Button>

@@ -1,14 +1,22 @@
 import { useState } from "react";
 import GlobalStyle from "../styles";
 import { initialData } from "@/lib/initialData";
+import styled from "styled-components";
+
+const StyledThemeButton = styled.button`
+  position: relative;
+  margin-top: 10px;
+  margin-right: 20px;
+  background-color: "var(--buttons)";
+`;
 
 export default function App({ Component, pageProps }) {
   const [initiatives, setInitiatives] = useState(initialData);
+  const [theme, setTheme] = useState("light");
 
   function handleCreateInitiative(newInitiative) {
     setInitiatives((prev) => [...prev, newInitiative]);
   }
-
 
   function handleDeleteInitiative(id) {
     const updatedInitiatives = initiatives.filter(
@@ -49,9 +57,15 @@ export default function App({ Component, pageProps }) {
     setInitiatives(newInitiatives);
   }
 
+  function toggleTheme() {
+    setTheme((previousTheme) => (previousTheme === "light" ? "dark" : "light"));
+  }
   return (
     <>
-      <GlobalStyle />
+      <GlobalStyle theme={theme} />
+      <StyledThemeButton onClick={toggleTheme}>
+        Switch to {theme === "light" ? "Dark" : "Light"} mode
+      </StyledThemeButton>
       <Component
         {...pageProps}
         initiatives={initiatives}
