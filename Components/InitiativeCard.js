@@ -142,9 +142,9 @@ export default function InitiativeCard({
     <Card isCompleted={isCompleted}>
       <TopLeftButton onClick={() => setIsModalOpen(true)}>...</TopLeftButton>
       <StyledLink href={`/initiatives/${id}`}>
-        <h3>
+        <h2>
           {title} <CompletedInitiative isCompleted={isCompleted} />{" "}
-        </h3>
+        </h2>
         <TagList>
           {tags.map((tag) => (
             <Tag key={tag}>{tag}</Tag>

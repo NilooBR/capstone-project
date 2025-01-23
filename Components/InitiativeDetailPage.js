@@ -61,14 +61,16 @@ export default function InitiativeDetailPage({
             </ConfirmationDialogButton>
           </ConfirmationDialog>
         )}
-        <CompletedContainer onClick={() => onToggleCompleted(id)}>
-          {isCompleted ? (
-            <span>
-              Completed <CompletedInitiative isCompleted={isCompleted} />
-            </span>
-          ) : (
-            <span>Mark as completed</span>
-          )}
+        <CompletedContainer>
+          <button onClick={() => onToggleCompleted(id)}>
+            {isCompleted ? (
+              <>
+                Completed <CompletedInitiative isCompleted={isCompleted} />
+              </>
+            ) : (
+              <>Mark as completed</>
+            )}
+          </button>
         </CompletedContainer>
         <TasksGrid>
           {tasks?.length > 0 ? (
@@ -90,7 +92,7 @@ export default function InitiativeDetailPage({
           )}
         </TasksGrid>
         <AttachmentSection>
-          <h3>All Uploaded Images</h3>
+          <h2>All Uploaded Images</h2>
           {allUploadedImages.length > 0 ? (
             <AttachmentList>
               {allUploadedImages.map((url) => (
@@ -186,13 +188,23 @@ const ConfirmationDialog = styled.div`
 
 const CompletedContainer = styled.div`
   display: inline-block;
-  cursor: pointer;
-  background: #a8a8a8;
-  border-radius: 4px;
-  padding: 4px 8px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin: 10px 0;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  button {
+    cursor: pointer;
+    background: #007a55;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 10px;
+    font-weight: bold;
+    color: white;
+
+    &:hover {
+      background-color: #032f2e;
+    }
+  }
 `;
 
 const Footer = styled.div`
@@ -276,7 +288,7 @@ const AddTaskCard = styled.div`
   cursor: pointer;
   margin: 2px;
   background-color: white;
-`
+`;
 
 const TaskCard = styled.div`
   padding: 2px;
