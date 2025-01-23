@@ -112,6 +112,11 @@ const TopLeftButton = styled.button`
   cursor: pointer;
 `;
 
+const StyledSpan = styled.span`
+  font-size: 20px;
+  font-weight: bold;
+`;
+
 export default function InitiativeCard({
   id,
   title,
@@ -127,14 +132,14 @@ export default function InitiativeCard({
     if (modalRef.current && !modalRef.current.contains(event.target)) {
       setIsModalOpen(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (isModalOpen) {
-      document.addEventListener("mousedown", handleOutsideClick)
+      document.addEventListener("mousedown", handleOutsideClick);
     }
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick)
+      document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [isModalOpen]);
 
@@ -142,9 +147,9 @@ export default function InitiativeCard({
     <Card isCompleted={isCompleted}>
       <TopLeftButton onClick={() => setIsModalOpen(true)}>...</TopLeftButton>
       <StyledLink href={`/initiatives/${id}`}>
-        <h3>
+        <StyledSpan>
           {title} <CompletedInitiative isCompleted={isCompleted} />{" "}
-        </h3>
+        </StyledSpan>
         <TagList>
           {tags.map((tag) => (
             <Tag key={tag}>{tag}</Tag>
@@ -154,7 +159,7 @@ export default function InitiativeCard({
       </StyledLink>
 
       {isModalOpen && (
-        <Modal ref={modalRef} >
+        <Modal ref={modalRef}>
           <LinkButton href={`/initiatives/${id}/edit`}>Edit</LinkButton>
           <Button onClick={() => onDelete(id)}>Delete</Button>
           <Button onClick={() => setIsModalOpen(false)}>Close</Button>
