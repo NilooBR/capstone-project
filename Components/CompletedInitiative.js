@@ -6,5 +6,5 @@ const Badge = styled.span`
 
 export default function CompletedInitiative({ isCompleted }) {
   if (!isCompleted) return null;
-  return <Badge>✔️</Badge>;
+  return <Badge>✓</Badge>;
 }
