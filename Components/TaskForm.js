@@ -33,16 +33,16 @@ export default function TaskForm({
   function validateForm() {
     const { title, description } = formData;
     return {
-      title: title.trim() ? null : "Title is required.",
-      description: description.trim() ? null : "Description is required.",
+      title: title.trim() ? null : "Title is required",
+      description: description.trim() ? null : "Description is required",
     };
-  };
+  }
 
   function handleChange(event) {
     const { name, value } = event.target;
     setErrors({});
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  }
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -58,7 +58,7 @@ export default function TaskForm({
     } else {
       saveChanges();
     }
-  };
+  }
 
   function saveChanges() {
     const updatedTask = {
@@ -110,11 +110,15 @@ export default function TaskForm({
       </Label>
       <Label>
         Status
-        <select name="status" value={formData.status} onChange={handleChange}>
+        <StyledSelect
+          name="status"
+          value={formData.status}
+          onChange={handleChange}
+        >
           <option value="Pending">Pending</option>
           <option value="In Progress">In Progress</option>
           <option value="Completed">Completed</option>
-        </select>
+        </StyledSelect>
       </Label>
       {isDialogVisible && (
         <DialogOverlay>
@@ -155,8 +159,8 @@ const Form = styled.form`
 `;
 
 const Heading = styled.h1`
-  font-size: 20px;
-  text-align: center;
+  color: var(--title);
+  text-align: left;
 `;
 
 const Label = styled.label`
@@ -165,25 +169,50 @@ const Label = styled.label`
   gap: 8px;
   font-weight: bold;
   font-size: 1rem;
+  color: var(--title);
 `;
 
 const Input = styled.input`
   padding: 10px;
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid var(--cardbackground);
+  background-color: var(--cardbackground);
+  color: var(--text);
+  border-radius: 10px;
+
+  &:focus {
+    outline: 2px solid var(--errortext);
+  }
 `;
 
 const Textarea = styled.textarea`
   padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid var(--cardbackground);
+  background-color: var(--cardbackground);
+  border-radius: 10px;
+  color: var(--text);
+
+  &:focus {
+    outline: 2px solid var(--errortext);
+  }
+`;
+
+const StyledSelect = styled.select`
+  padding: 7px;
+  border: 1px solid var(--cardbackground);
+  background-color: var(--cardbackground);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 0.8rem;
+
+  &:focus {
+    outline: 2px solid var(--errortext);
+  }
 `;
 
 const Error = styled.p`
-  color: red;
-  font-size: 0.9rem;
+  color: var(--errortext);
+  font-size: 0.8rem;
 `;
 
 const ButtonGroup = styled.div`
@@ -196,16 +225,15 @@ const ButtonGroup = styled.div`
 const Button = styled.button`
   padding: 10px 20px;
   border: none;
-  border-radius: 5px;
-  background-color: #bcc1c5;
-  color: black;
-  font-weight: bold;
+  border-radius: 50px;
+  background-color: var(--buttons);
+  color: var(--contrasttext);
   cursor: pointer;
-  border: 1px solid black;
+  border: none;
   font-size: 10px;
 
   &:hover {
-    background-color: #5a6268;
+    background-color: var(--accents);
   }
 `;
 
@@ -215,17 +243,19 @@ const DialogOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--highlightedcard);
+  color: var(--text);
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
 const ConfirmationDialog = styled.div`
-  background: white;
+  background: var(--highlightedcard);
+  color: var(--text);
   padding: 20px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: none;
   text-align: center;
 `;
 

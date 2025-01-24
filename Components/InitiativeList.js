@@ -7,7 +7,9 @@ export default function InitiativeList({ initiatives, onDelete }) {
     <>
       <YourInitiatives>Your Initiatives</YourInitiatives>
       <ListContainer>
-        <StyledLink href="/initiatives/create">➕ Create Initiative</StyledLink>
+        <StyledLink href="/initiatives/create">
+          ➕<br></br>Create Initiative
+        </StyledLink>
         {initiatives.length === 0 ? (
           <NoInitiativesMessage>
             No initiatives available. Please create initiatives first.👆
@@ -43,7 +45,7 @@ const ListContainer = styled.ul`
 `;
 
 const YourInitiatives = styled.h1`
-  color: var(--accents);
+  color: var(--title);
   margin: 16px;
 `;
 
@@ -64,19 +66,19 @@ const StyledLink = styled(Link)`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 1px solid black;
-  border-radius: 10px;
+  border-radius: 20px;
+  border: 1px var(--cardborder);
   height: 150px;
   text-align: center;
   background-color: var(--highlightedcard);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
   text-decoration: none;
   color: var(--text);
   transition: transform 0.2s, box-shadow 0.2s;
 
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.01);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 

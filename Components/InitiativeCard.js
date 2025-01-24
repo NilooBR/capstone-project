@@ -73,39 +73,46 @@ const Card = styled.div`
   text-align: left;
   justify-content: center;
   border: 1px;
-  border-radius: 10px;
+  border-radius: 20px;
   height: 150px;
   width: 100%;
   color: var(--text);
   background-color: ${({ isCompleted }) =>
     isCompleted ? "var(--highlightedcard)" : "var(--cardbackground)"};
+
+  &:hover {
+    background-color: var(--highlightedcard);
+  }
 `;
 
 const TagList = styled.ul`
   padding: 0;
   margin: 0;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: left;
+  align-items: left;
   flex-wrap: wrap;
-  gap: 3px;
+  gap: 4px;
+  margin-top: 7px;
   list-style: none;
 `;
 
 const Tag = styled.li`
-  background: #bcc1c5;
-  border-radius: 4px;
+  background: var(--tags);
+  border-radius: 10px;
   padding: 4px 8px;
-  font-size: 11px;
+  font-size: 10px;
   background-color: var(--tags);
   color: var(--contrasttext);
+  border: none;
 `;
 
 const StyledLink = styled(Link)`
   text-decoration: none;
   color: var(--text);
   width: 100%;
-  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
 `;
 
 const DateText = styled.p`
@@ -118,14 +125,15 @@ const DateText = styled.p`
 const Modal = styled.div`
   position: absolute;
   background-color: white;
-  border: 1px solid gray;
+  border: var(--cardborder);
   padding: 16px;
-  border-radius: 10px;
+  border-radius: 20px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
-  background-color: var(--buttons);
+  background-color: var(--cardbackground);
+  border: 1px var(--errortext);
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -138,34 +146,31 @@ const LinkButton = styled(Link)`
   margin: 4px;
   padding: 8px 12px;
   border: none;
-  border-radius: 4px;
+  border-radius: 50px;
   cursor: pointer;
-  border: 1px;
-  font-weight: bold;
-  font-size: 10px;
+  border: none;
+  font-size: 12px;
   background-color: var(--buttons);
-  color: var(--text);
+  color: var(--contrasttext);
 `;
 
 const Button = styled.button`
   margin: 4px;
   padding: 8px 12px;
   border: none;
-  border-radius: 4px;
+  border-radius: 50px;
   cursor: pointer;
-  border: 1px;
-  font-weight: bold;
-  font-size: 10px;
+  font-size: 12px;
 
   &:nth-child(1),
   &:nth-child(2) {
-    background-color: var(--cardbackground);
-    color: var(--text);
+    background-color: var(--buttons);
+    color: var(--contrasttext);
   }
 
   &:nth-child(3) {
     background-color: var(--buttons);
-    color: var(--text);
+    color: var(--contrasttext);
   }
 `;
 
@@ -183,4 +188,5 @@ const TopLeftButton = styled.button`
 const StyledSpan = styled.span`
   font-size: 15px;
   font-weight: bold;
+  text-align: left;
 `;

@@ -15,14 +15,17 @@ export default createGlobalStyle`
 
   :root {
     --banner: #010080;
-    --accents: #010080;
+    --accents: #24309e; // also to hover --buttons
     --buttons:#010080;
-    --tags: #24309e;
+    --tags: #010080;
     --text: #0f172b;
+    --errortext: #90a1ba; // also for :focus area
+    --title: #010080;
     --mainbackground: #ffff;
     --cardbackground: #f2f0ef;
     --contrasttext: #f2f0ef;
-    --highlightedcard: #fafafa;
+    --highlightedcard: #fafafa; // also for dialog boxes
+    --cardborder:  #f2f0ef;
   }
 
   ${({ theme }) =>
@@ -34,6 +37,8 @@ export default createGlobalStyle`
         --buttons: #3c82f6;
         --tags: #1e2939;
         --text: #fafafa;
+        --errortext: red;
+        --title:   #f2f0ef
         --mainbackground: #121212;
         --cardbackground: #18181b;
         --contrasttext: #121212;

@@ -17,7 +17,7 @@ const StyledThemeButton = styled.button`
   transition: all 0.3s ease-in-out;
   z-index: 100;
   &:hover {
-    background: var(--tags);
+    background: var(--accents);
     color: var(--contrasttext);
     box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
     transform: scale(1.05);
