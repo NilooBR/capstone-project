@@ -6,79 +6,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-  min-height: 100vh;
-  padding: 20px;
-  box-sizing: border-box;
-`;
-
-const Heading = styled.h1`
-  font-size: 20px;
-  text-align: center;
-`;
-
-const Label = styled.label`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-weight: bold;
-  font-size: 1rem;
-`;
-
-const Input = styled.input`
-  padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-`;
-
-const Textarea = styled.textarea`
-  padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-`;
-
-const StyledDatePicker = styled(DatePicker)`
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-`;
-
-const Error = styled.p`
-  color: red;
-  font-size: 0.9rem;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: auto;
-`;
-
-const Button = styled.button`
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: #bcc1c5;
-  color: black;
-  font-weight: bold;
-  cursor: pointer;
-  border: 1px solid black;
-  font-size: 10px;
-
-  &:hover {
-    background-color: #5a6268;
-  }
-`;
-
 const DEFAULT_VALUES = {
   title: "",
   description: "",
@@ -86,7 +13,7 @@ const DEFAULT_VALUES = {
   tags: "",
 };
 
-export default function CreateInitiativeForm({
+export default function InitiativeForm({
   onSubmit,
   defaultData = {},
   isEditMode = false,
@@ -102,13 +29,17 @@ export default function CreateInitiativeForm({
   });
 
   const [errors, setErrors] = useState({});
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
 
-  const handleDateChange = (date) => {
-    const germanDate = format(date, "dd.MM.yyyy");
-    setFormData({ ...formData, deadline: germanDate });
-  };
+  function handleDateChange(date) {
+    if (date) {
+      const germanDate = format(date, "dd.MM.yyyy");
+      setFormData({ ...formData, deadline: germanDate });
+      setErrors((prevErrors) => ({ ...prevErrors, deadline: null }));
+    }
+  }
 
-  const handleChange = (event) => {
+  function handleChange(event) {
     const { name, value } = event.target;
 
     const updatedFormData = { ...formData, [name]: value };
@@ -133,11 +64,19 @@ export default function CreateInitiativeForm({
 
     setErrors(newErrors);
     setFormData(updatedFormData);
-  };
+  }
 
-  const handleSubmit = (event) => {
+  function handleSubmit(event) {
     event.preventDefault();
 
+    if (isEditMode) {
+      setIsDialogVisible(true);
+    } else {
+      saveChanges();
+    }
+  }
+
+  function saveChanges() {
     const { title, description, deadline, tags } = formData;
 
     const tagList = tags
@@ -152,9 +91,8 @@ export default function CreateInitiativeForm({
       tags: tagList.length > 5 ? "You can add a maximum of 5 tags." : null,
     };
 
-    setErrors(newErrors);
-
     if (Object.values(newErrors).some((error) => error)) {
+      setErrors(newErrors);
       return;
     }
 
@@ -165,12 +103,19 @@ export default function CreateInitiativeForm({
     };
 
     onSubmit(updatedInitiative);
-    router.push("/");
-  };
+    router.replace({
+      pathname: `/initiatives/${updatedInitiative.id}`,
+      query: { success: "true" },
+    });
+  }
 
-  const handleCancel = () => {
-    router.push("/");
-  };
+  function handleCancel() {
+    if (isEditMode) {
+      router.push(`/initiatives/${formData.id}`);
+    } else {
+      router.push("/");
+    }
+  }
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -231,7 +176,15 @@ export default function CreateInitiativeForm({
         />
         {errors.tags && <Error>{errors.tags}</Error>}
       </Label>
-
+      {isDialogVisible && (
+        <DialogOverlay>
+          <ConfirmationDialog>
+            <p>You have unsaved changes. Would you like to save your edits?</p>
+            <DialogButton onClick={saveChanges}>Save</DialogButton>
+            <DialogButton onClick={handleCancel}>Cancel</DialogButton>
+          </ConfirmationDialog>
+        </DialogOverlay>
+      )}
       <ButtonGroup>
         <Button type="button" onClick={handleCancel}>
           Cancel
@@ -246,3 +199,103 @@ export default function CreateInitiativeForm({
     </Form>
   );
 }
+
+// Styled Components
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+`;
+
+const Heading = styled.h1`
+  font-size: 20px;
+  text-align: center;
+`;
+
+const Label = styled.label`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+`;
+
+const Input = styled.input`
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
+const Textarea = styled.textarea`
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
+const StyledDatePicker = styled(DatePicker)`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+`;
+
+const Error = styled.p`
+  color: red;
+  font-size: 0.9rem;
+`;
+
+const Button = styled.button`
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #bcc1c5;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  border: 1px solid black;
+  font-size: 10px;
+
+  &:hover {
+    background-color: #5a6268;
+  }
+`;
+
+const DialogOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+`;
+
+const ConfirmationDialog = styled.div`
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  text-align: center;
+`;
+
+const DialogButton = styled(Button)`
+  margin: 5px;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+`;

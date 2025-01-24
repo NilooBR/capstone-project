@@ -2,7 +2,68 @@ import styled from "styled-components";
 import Link from "next/link";
 import CompletedInitiative from "./CompletedInitiative";
 import { useState, useRef, useEffect } from "react";
-import { createGlobalStyle } from "styled-components";
+
+export default function InitiativeCard({
+  id,
+  title,
+  tags,
+  deadline,
+  onDelete,
+  isCompleted,
+}) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const modalRef = useRef(null);
+
+  const handleOutsideClick = (event) => {
+    if (modalRef.current && !modalRef.current.contains(event.target)) {
+      setIsModalOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isModalOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [isModalOpen]);
+
+  function truncateText(text, maxLength) {
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength) + "...";
+    }
+    return text;
+  }
+
+  return (
+    <Card isCompleted={isCompleted}>
+      <TopLeftButton onClick={() => setIsModalOpen(true)}>...</TopLeftButton>
+      <StyledLink href={`/initiatives/${id}`}>
+        <StyledSpan>
+          {truncateText(title, 20)}
+          <CompletedInitiative isCompleted={isCompleted} />{" "}
+        </StyledSpan>
+        <TagList>
+          {tags.map((tag) => (
+            <Tag key={tag}>{tag}</Tag>
+          ))}
+        </TagList>
+        <DateText>{deadline}</DateText>
+      </StyledLink>
+
+      {isModalOpen && (
+        <Modal ref={modalRef}>
+          <LinkButton href={`/initiatives/${id}/edit`}>Edit</LinkButton>
+          <Button onClick={() => onDelete(id)}>Delete</Button>
+          <Button onClick={() => setIsModalOpen(false)}>Close</Button>
+        </Modal>
+      )}
+    </Card>
+  );
+}
+
+// Styled Components
 
 const Card = styled.div`
   position: relative;
@@ -119,54 +180,7 @@ const TopLeftButton = styled.button`
   cursor: pointer;
 `;
 
-export default function InitiativeCard({
-  id,
-  title,
-  tags,
-  deadline,
-  onDelete,
-  isCompleted,
-}) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const modalRef = useRef(null);
-
-  const handleOutsideClick = (event) => {
-    if (modalRef.current && !modalRef.current.contains(event.target)) {
-      setIsModalOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    if (isModalOpen) {
-      document.addEventListener("mousedown", handleOutsideClick);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, [isModalOpen]);
-
-  return (
-    <Card isCompleted={isCompleted}>
-      <TopLeftButton onClick={() => setIsModalOpen(true)}>...</TopLeftButton>
-      <StyledLink href={`/initiatives/${id}`}>
-        <h3>
-          {title} <CompletedInitiative isCompleted={isCompleted} />{" "}
-        </h3>
-        <TagList>
-          {tags.map((tag) => (
-            <Tag key={tag}>{tag}</Tag>
-          ))}
-        </TagList>
-        <DateText>{deadline}</DateText>
-      </StyledLink>
-
-      {isModalOpen && (
-        <Modal ref={modalRef}>
-          <LinkButton href={`/initiatives/${id}/edit`}>Edit</LinkButton>
-          <Button onClick={() => onDelete(id)}>Delete</Button>
-          <Button onClick={() => setIsModalOpen(false)}>Close</Button>
-        </Modal>
-      )}
-    </Card>
-  );
-}
+const StyledSpan = styled.span`
+  font-size: 15px;
+  font-weight: bold;
+`;
