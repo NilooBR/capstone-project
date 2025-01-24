@@ -1,12 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import GlobalStyle from "../styles";
-import { initialData } from "@/lib/initialData";
+import useSWR from "swr";
+
+const fetcher = (url) => fetch(url).then((res) => res.json());
 
 export default function App({ Component, pageProps }) {
-  const [initiatives, setInitiatives] = useState(initialData);
+  const { data, error, isLoading, mutate } = useSWR(
+    "/api/initiatives",
+    fetcher
+  );
+  const [initiatives, setInitiatives] = useState([]);
+
+  useEffect(() => {
+    if (data?.data) {
+      setInitiatives(data.data);
+    }
+  }, [data]);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error loading initiatives: {error.message}</p>;
 
   function handleCreateInitiative(newInitiative) {
     setInitiatives((prev) => [...prev, newInitiative]);
+    mutate([...initiatives, newInitiative], false);
   }
 
   function handleDeleteInitiative(id) {
@@ -14,6 +30,7 @@ export default function App({ Component, pageProps }) {
       (initiative) => initiative.id !== id
     );
     setInitiatives(updatedInitiatives);
+    mutate(updatedInitiatives, false);
   }
 
   function handleToggleCompleted(id) {
@@ -23,6 +40,7 @@ export default function App({ Component, pageProps }) {
         : initiative
     );
     setInitiatives(updatedInitiatives);
+    mutate(updatedInitiatives, false);
   }
 
   function handleEditInitiative(updatedInitiative) {
@@ -30,6 +48,7 @@ export default function App({ Component, pageProps }) {
       initiative.id === updatedInitiative.id ? updatedInitiative : initiative
     );
     setInitiatives(updatedInitiatives);
+    mutate(updatedInitiatives, false);
   }
 
   function handleDeleteTask(initiativeId, taskId) {
@@ -42,6 +61,7 @@ export default function App({ Component, pageProps }) {
         : initiative
     );
     setInitiatives(updatedInitiatives);
+    mutate(updatedInitiatives, false);
   }
 
   function handleUpdateUploadedImages(initiativeId, taskId, newImages) {
@@ -63,12 +83,13 @@ export default function App({ Component, pageProps }) {
           }
         : initiative
     );
-
     setInitiatives(updatedInitiatives);
+    mutate(updatedInitiatives, false);
   }
 
   function handleUpdateInitiatives(newInitiatives) {
     setInitiatives(newInitiatives);
+    mutate(newInitiatives, false);
   }
 
   return (
