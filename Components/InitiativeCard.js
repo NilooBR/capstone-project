@@ -98,7 +98,7 @@ const TagList = styled.ul`
 `;
 
 const Tag = styled.li`
-  background: var(--tags);
+  background: var(--mainbackground);
   border-radius: 10px;
   padding: 4px 8px;
   font-size: 10px;

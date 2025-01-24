@@ -68,7 +68,7 @@ export default function InitiativeDetailPage({
           {tags.length > 0 ? (
             tags.map((tag) => <Tag key={tag}>{tag}</Tag>)
           ) : (
-            <EmptyMessage>No tags available</EmptyMessage>
+            <EmptyMessage></EmptyMessage>
           )}
         </TagList>
         {deleteButtonClicked && (
@@ -130,8 +130,7 @@ export default function InitiativeDetailPage({
             ))
           ) : (
             <NoTasksMessage>
-              No tasks available for this initiative. Please create initiatives
-              first. 👈
+              No tasks available yet <br></br> Let's add some!
             </NoTasksMessage>
           )}
         </TasksGrid>
@@ -148,7 +147,7 @@ export default function InitiativeDetailPage({
               ))}
             </AttachmentList>
           ) : (
-            <p>No images available</p>
+            <NoImages>Add images to your tasks to view them here</NoImages>
           )}
         </AttachmentSection>
       </Content>
@@ -206,7 +205,7 @@ const Title = styled.h1`
   text-align: left;
   max-width: 100%;
   overflow: hidden;
-  color: var(--banner);
+  color: var(--title);
 `;
 
 const Description = styled.article`
@@ -238,13 +237,13 @@ const CompletedContainer = styled.div`
     background: var(--accents);
     border: none;
     border-radius: 10px;
-    padding: 4px 8px;
+    padding: 5px 10px;
     font-size: 12px;
     font-weight: bold;
     color: var(--contrasttext);
 
     &:hover {
-      background-color: var(--buttons);
+      background-color: var(--accents);
     }
   }
 `;
@@ -331,7 +330,7 @@ const DialogOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--highlightedcard)
+  background: var(--highlightedcard);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -361,8 +360,7 @@ const ConfirmationDialogButton = styled(Button)`
 
 const NoTasksMessage = styled.span`
   font-size: 10px;
-  font-weight: bold;
-  color: black;
+  color: var(--text);
   text-align: center;
   margin-top: 20px;
   display: flex;
@@ -370,12 +368,24 @@ const NoTasksMessage = styled.span`
   justify-content: center;
 `;
 
+const NoImages = styled.p`
+  font-size: 10px;
+  color: var(--text);
+  text-align: center;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+`;
+
 const AttachmentSection = styled.div`
   margin-top: 20px;
+  color: var(--text);
 `;
 
 const AttachmentList = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
+  color: var(--text);
 `;

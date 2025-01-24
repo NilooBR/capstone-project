@@ -87,7 +87,7 @@ export default function TaskForm({
 
   return (
     <Form onSubmit={handleSubmit}>
-      <Heading>{isEditMode ? "Edit Task" : "Create Task"}</Heading>
+      <Heading>{isEditMode ? "Edit Task" : "Add task"}</Heading>
       <Label>
         Task Title
         <Input
