@@ -47,6 +47,7 @@ export default function App({ Component, pageProps }) {
     fetcher
   );
   const [initiatives, setInitiatives] = useState([]);
+  const [theme, setTheme] = useState("light");
 
   useEffect(() => {
     if (data?.data) {

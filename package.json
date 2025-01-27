@@ -15,15 +15,15 @@
     "eslint": "8.44.0",
     "eslint-config-next": "13.4.8",
     "formidable": "^3.5.2",
-    "mongoose": "^8.9.5",
     "lucide-react": "^0.474.0",
+    "mongoose": "^8.9.5",
     "next": "13.4.8",
     "react": "18.2.0",
     "react-datepicker": "^7.6.0",
     "react-dom": "18.2.0",
+    "react-icons": "^5.4.0",
     "styled-components": "^6.0.2",
-    "swr": "^2.3.0",
-    "react-icons": "^5.4.0"
+    "swr": "^2.3.0"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.0.1",
