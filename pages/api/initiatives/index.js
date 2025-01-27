@@ -1,12 +1,14 @@
 import dbConnect from "@/db/connect";
 import Initiative from "@/db/models/Initiative";
-
 export default async function handler(req, res) {
   await dbConnect();
 
   if (req.method === "GET") {
     try {
-      const initiatives = await Initiative.find().populate("tasks");
+      const initiatives = await Initiative.find().populate({
+        path: "tasks",
+        model: "Task",
+      });
       res.status(200).json({ success: true, data: initiatives });
     } catch (error) {
       console.error("Error fetching initiatives:", error);
