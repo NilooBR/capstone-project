@@ -119,7 +119,7 @@ export default function InitiativeDetailPage({
             tasks.map((task) => (
               <StyledLinkTask
                 key={task.id}
-                href={`/initiatives/${id}/tasks/${task.id}`}
+                href={`/initiatives/${id}/tasks/${task._id}`}
               >
                 <TaskCard>
                   <h2>{truncateText(task.title, 10)}</h2>

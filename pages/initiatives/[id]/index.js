@@ -33,10 +33,11 @@ export default function InitiativeDetailsPage({
     onDeleteInitiative(id);
     router.push("/");
   }
+  console.log(selectedInitiative)
 
   return (
     <InitiativeDetailPage
-      id={selectedInitiative.id}
+      id={selectedInitiative._id}
       title={selectedInitiative.title}
       description={selectedInitiative.description}
       deadline={selectedInitiative.deadline}
