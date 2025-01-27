@@ -95,11 +95,11 @@ export default function TaskDetailPage({
       }
 
       const updatedInitiatives = initiatives.map((initiative) => {
-        if (initiative.id === initiativeId) {
+        if (initiative._id === initiativeId) {
           return {
             ...initiative,
             tasks: initiative.tasks.map((task) =>
-              task.id == taskId
+              task._id == taskId
                 ? {
                     ...task,
                     uploadedImages: task.uploadedImages.filter(
