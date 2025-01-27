@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import CompletedInitiative from "./CompletedInitiative";
@@ -108,11 +108,12 @@ export default function InitiativeDetailPage({
           </button>
         </CompletedContainer>
         <TasksGrid>
-          <StyledLinkTask href={`/initiatives/${id}/tasks/createTask`}>
-            <AddTaskCard>
-              <p>➕</p>
-              <h2>Add task</h2>
-            </AddTaskCard>
+          <StyledLinkTask
+            $variant="addTaskCard"
+            href={`/initiatives/${id}/tasks/createTask`}
+          >
+            <span>➕</span>
+            <h2>Add task</h2>
           </StyledLinkTask>
           {tasks?.length > 0 ? (
             tasks.map((task) => (
@@ -130,7 +131,7 @@ export default function InitiativeDetailPage({
             ))
           ) : (
             <NoTasksMessage>
-              No tasks available yet <br></br> Let's add some!
+              No tasks available yet <br></br> Please add some!
             </NoTasksMessage>
           )}
         </TasksGrid>
@@ -312,25 +313,9 @@ const StyledLinkTask = styled(Link)`
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
     `};
-    
+
   &:hover {
     background-color: var(--highlightedcard);
-  }
-`;
-
-const AddTaskCard = styled.div`
-  cursor: pointer;
-  margin: 2px;
-  background-color: var(--cardbackground);
-  transition: transform 0.2s, box-shadow 0.2s;
-
-  &:hover {
-    transform: scale(1.01);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-
-  &:active {
-    transform: scale(0.95);
   }
 `;
 
