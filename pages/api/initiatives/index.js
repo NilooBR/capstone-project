@@ -19,13 +19,15 @@ export default async function handler(request, response) {
 
   if (request.method === "POST") {
     try {
-      const { title, description, deadline } = request.body;
+      const { title, description, deadline, tags } = request.body;
 
       const newInitiative = await Initiative.create({
         title,
         description,
         deadline,
+        tags: tags || [],
       });
+
       response.status(201).json({ success: true, data: newInitiative });
     } catch (error) {
       response.status(500).json({
