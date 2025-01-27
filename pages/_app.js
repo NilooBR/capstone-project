@@ -133,11 +133,11 @@ export default function App({ Component, pageProps }) {
 
   function handleUpdateUploadedImages(initiativeId, taskId, newImages) {
     const updatedInitiatives = initiatives.map((initiative) =>
-      initiative.id === initiativeId
+      initiative._id === initiativeId
         ? {
             ...initiative,
             tasks: initiative.tasks.map((task) =>
-              task.id === taskId
+              task._id === taskId
                 ? {
                     ...task,
                     uploadedImages: [

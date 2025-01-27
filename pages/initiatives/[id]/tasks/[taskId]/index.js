@@ -65,19 +65,16 @@ export default function TaskDetailPage({
         method: "POST",
         body: formData,
       });
-
       if (!response.ok) {
-        throw new Error(`File upload failed with status ${response.status}`);
+        throw new Error(`Upload failed with status ${response.status}`);
       }
 
-      const data = await response.json();
-
-      const images = data.images.map((img) => ({ ...img, taskId }));
+      const { images } = await response.json();
       onUpdateUploadedImages(initiativeId, taskId, images);
-      setUploadMessage("Files uploaded successfully.");
+      setUploadMessage("Images uploaded successfully.");
     } catch (error) {
-      console.error("Upload error:", error);
-      setUploadMessage(`An error occurred during the upload: ${error.message}`);
+      console.error("Image upload error:", error);
+      setUploadMessage(`An error occurred during upload: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -302,6 +299,23 @@ const ImagePreviewContainer = styled.div`
   gap: 15px;
   margin-top: 20px;
   background-color: var(--cardbackground);
+
+  button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 5px;
+    background-color: var(--buttons);
+    color: var(--contrasttext);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+
+    &:hover {
+      background-color: var(--accents);
+    }
+  }
 `;
 
 const ImageWrapper = styled.div`
@@ -315,23 +329,6 @@ const ImageWrapper = styled.div`
   justify-content: center;
   align-items: center;
   background-color: var(--cardbackground);
-
-  button {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    padding: 5px;
-    background-color: var(--buttons);
-    color: var(--text);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 12px;
-
-    &:hover {
-      background-color: var(--accents);
-    }
-  }
 `;
 
 const Button = styled.button`
