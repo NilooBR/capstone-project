@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import CompletedInitiative from "./CompletedInitiative";
 import { useSearchParams } from "next/navigation";
+import { format } from "date-fns";
 
 export default function InitiativeDetailPage({
   id,
@@ -18,6 +19,7 @@ export default function InitiativeDetailPage({
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
   const searchParams = useSearchParams();
   const [showEditSuccess, setShowEditSuccess] = useState(false);
+  const formattedDeadline = deadline ? format(new Date(deadline), "dd.MM.yyyy") : "No deadline";
 
   useEffect(() => {
     if (searchParams.get("success") === "true") {
@@ -62,7 +64,7 @@ export default function InitiativeDetailPage({
         <Title>{title}</Title>
         <Description>{description}</Description>
         <Deadline>
-          <strong>Deadline:</strong> {deadline}
+          <strong>Deadline:</strong> {formattedDeadline}
         </Deadline>
         <TagList>
           {tags.length > 0 ? (

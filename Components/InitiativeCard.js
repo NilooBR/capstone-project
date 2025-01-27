@@ -2,6 +2,7 @@ import styled from "styled-components";
 import Link from "next/link";
 import CompletedInitiative from "./CompletedInitiative";
 import { useState, useRef, useEffect } from "react";
+import { format } from "date-fns";
 
 export default function InitiativeCard({
   id,
@@ -13,6 +14,7 @@ export default function InitiativeCard({
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef(null);
+  const formattedDeadline = deadline ? format(new Date(deadline), "dd.MM.yyyy") : "No deadline";
 
   const handleOutsideClick = (event) => {
     if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -49,7 +51,7 @@ export default function InitiativeCard({
             <Tag key={tag}>{tag}</Tag>
           ))}
         </TagList>
-        <DateText>{deadline}</DateText>
+        <DateText>{formattedDeadline}</DateText>
       </StyledLink>
 
       {isModalOpen && (
