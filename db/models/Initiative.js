@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import "./Task";
 const { Schema } = mongoose;
 
 const InitiativeSchema = new Schema({
