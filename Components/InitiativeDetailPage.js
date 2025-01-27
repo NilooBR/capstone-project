@@ -288,16 +288,20 @@ const StyledLink = styled(Link)`
 `;
 
 const StyledLinkTask = styled(Link)`
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 10px 20px;
   text-align: center;
   text-decoration: none;
-  border-radius: 10px;
+  border-radius: 20px;
+  border: 1px var(--cardborder);
+
   background-color: var(--cardbackground);
   color: var(--text);
   font-weight: bold;
   cursor: pointer;
-
   font-size: 7px;
 
   &:hover {
@@ -306,14 +310,22 @@ const StyledLinkTask = styled(Link)`
 `;
 
 const AddTaskCard = styled.div`
-  padding: 2px;
   cursor: pointer;
   margin: 2px;
   background-color: var(--cardbackground);
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 `;
 
 const TaskCard = styled.div`
-  padding: 2px;
   cursor: pointer;
   margin: 2px;
 `;
@@ -330,7 +342,7 @@ const DialogOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--highlightedcard);
+  background: var(--mainbackground);
   display: flex;
   justify-content: center;
   align-items: center;

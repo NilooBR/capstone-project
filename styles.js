@@ -11,6 +11,7 @@ export default createGlobalStyle`
     margin: 0;
     font-family: system-ui;
     background-color: var(--mainbackground);
+    color: var(--text);
   }
 
   :root {
@@ -25,8 +26,9 @@ export default createGlobalStyle`
     --contrasttext: #f2f0ef;
     --highlightedcard: #fafafa; // also for dialog boxes
     --cardborder: #d1d5db;
-
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    --toggle-icon-color: #f2f0ef ; 
+    --toggle-hover-color: #f2f0ef;
+    --focus-outline-color: #d1d5db;  
 
 }
 
@@ -45,6 +47,9 @@ export default createGlobalStyle`
         --contrasttext: #121212;
         --highlightedcard: #3a5e92; // also for dialog boxes
         --cardborder: #1e2939;
+        --toggle-icon-color: #d1d5db;
+        --toggle-hover-color: #60a5fa;
+        --focus-outline-color: #2563eb;
       }
     `}
 `;
