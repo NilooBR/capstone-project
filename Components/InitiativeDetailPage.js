@@ -309,6 +309,7 @@ const StyledLinkTask = styled(Link)`
   ${(props) =>
     props.$variant === "addTaskCard" &&
     css`
+      background-color: var(--highlightedcard);
       &:hover {
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
