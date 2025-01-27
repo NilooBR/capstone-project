@@ -22,7 +22,7 @@ export default function InitiativeDetailPage({
   useEffect(() => {
     if (searchParams.get("success") === "true") {
       setShowEditSuccess(true);
-      const timeout = setTimeout(() => setShowEditSuccess(false), 3000);
+      const timeout = setTimeout(() => setShowEditSuccess(false), 1000);
       return () => clearTimeout(timeout);
     }
   }, [searchParams]);

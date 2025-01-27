@@ -1,8 +1,31 @@
 import styled from "styled-components";
 import InitiativeCard from "./InitiativeCard";
 import Link from "next/link";
+import { useMemo } from "react";
 
-export default function InitiativeList({ initiatives, onDelete }) {
+export default function InitiativeList({ initiatives = [], onDelete }) {
+  const parsedDate = (date) => {
+    const splitDate = date.split(".");
+    const [day, month, year] = splitDate;
+    const formattedDate = new Date(`${year}-${month}-${day}`);
+    return formattedDate;
+  };
+
+  const openInitiatives = useMemo(() => {
+    return initiatives
+      .filter((initiative) => !initiative.isCompleted)
+      .sort((a, b) => {
+        return parsedDate(a.deadline) - parsedDate(b.deadline);
+      });
+  }, [initiatives]);
+
+  const completedInitiatives = useMemo(() => {
+    return initiatives
+      .filter((initiative) => initiative.isCompleted)
+      .sort((a, b) => {
+        return parsedDate(a.deadline) - parsedDate(b.deadline);
+      });
+  }, [initiatives]);
   return (
     <>
       <YourInitiatives>Your Initiatives</YourInitiatives>
@@ -10,24 +33,38 @@ export default function InitiativeList({ initiatives, onDelete }) {
         <StyledLink href="/initiatives/create">
           ➕<br></br>Create Initiative
         </StyledLink>
-        {initiatives.length === 0 ? (
+        {openInitiatives.length === 0 ? (
           <NoInitiativesMessage>
-            No initiatives available. Please create initiatives first.👆
+            No open initiatives available. Please create some! 👆
           </NoInitiativesMessage>
         ) : (
-          initiatives.map((initiative) => (
+          openInitiatives.map((initiative) => (
             <li key={initiative._id}>
               <InitiativeCard
                 id={initiative._id}
                 title={initiative.title}
                 tags={initiative.tags}
                 deadline={initiative.deadline}
-                isCompleted={initiative?.isCompleted || false}
+                isCompleted={initiative.isCompleted}
                 onDelete={onDelete}
               />
             </li>
           ))
         )}
+
+        {completedInitiatives.length > 0 &&
+          completedInitiatives.map((initiative) => (
+            <li key={initiative.id}>
+              <InitiativeCard
+                id={initiative.id}
+                title={initiative.title}
+                tags={initiative.tags}
+                deadline={initiative.deadline}
+                isCompleted={initiative.isCompleted}
+                onDelete={onDelete}
+              />
+            </li>
+          ))}
       </ListContainer>
     </>
   );
