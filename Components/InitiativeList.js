@@ -5,9 +5,11 @@ import Link from "next/link";
 export default function InitiativeList({ initiatives, onDelete }) {
   return (
     <>
-      <Title>Your Initiatives</Title>
+      <YourInitiatives>Your Initiatives</YourInitiatives>
       <ListContainer>
-        <StyledLink href="/initiatives/create">➕ Create Initiative</StyledLink>
+        <StyledLink href="/initiatives/create">
+          ➕<br></br>Create Initiative
+        </StyledLink>
         {initiatives.length === 0 ? (
           <NoInitiativesMessage>
             No initiatives available. Please create initiatives first.👆
@@ -39,16 +41,18 @@ const ListContainer = styled.ul`
   padding: 16px;
   grid-template-columns: 1fr 1fr;
   list-style: none;
+  background-color: "var(--mainbackground)";
 `;
 
-const Title = styled.h1`
+const YourInitiatives = styled.h1`
+  color: var(--title);
   margin: 16px;
 `;
 
 const NoInitiativesMessage = styled.span`
   font-size: 10px;
   font-weight: bold;
-  color: black;
+  color: var(--text);
   text-align: center;
   margin-top: 20px;
   display: flex;
@@ -62,19 +66,19 @@ const StyledLink = styled(Link)`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 1px solid black;
-  border-radius: 10px;
+  border-radius: 20px;
+  border: 1px var(--cardborder);
   height: 150px;
   text-align: center;
-  background-color: lightgrey;
-  font-size: 16px;
+  background-color: var(--highlightedcard);
+  font-size: 15px;
   font-weight: bold;
   text-decoration: none;
-  color: black;
+  color: var(--text);
   transition: transform 0.2s, box-shadow 0.2s;
 
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.01);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import CompletedInitiative from "./CompletedInitiative";
@@ -68,7 +68,7 @@ export default function InitiativeDetailPage({
           {tags.length > 0 ? (
             tags.map((tag) => <Tag key={tag}>{tag}</Tag>)
           ) : (
-            <EmptyMessage>No tags available</EmptyMessage>
+            <EmptyMessage></EmptyMessage>
           )}
         </TagList>
         {deleteButtonClicked && (
@@ -108,11 +108,12 @@ export default function InitiativeDetailPage({
           </button>
         </CompletedContainer>
         <TasksGrid>
-          <StyledLinkTask href={`/initiatives/${id}/tasks/createTask`}>
-            <AddTaskCard>
-              <p>➕</p>
-              <h2>Add task</h2>
-            </AddTaskCard>
+          <StyledLinkTask
+            $variant="addTaskCard"
+            href={`/initiatives/${id}/tasks/createTask`}
+          >
+            <span>➕</span>
+            <h2>Add task</h2>
           </StyledLinkTask>
           {tasks?.length > 0 ? (
             tasks.map((task) => (
@@ -130,13 +131,12 @@ export default function InitiativeDetailPage({
             ))
           ) : (
             <NoTasksMessage>
-              No tasks available for this initiative. Please create initiatives
-              first. 👈
+              No tasks available yet <br></br> Please add some!
             </NoTasksMessage>
           )}
         </TasksGrid>
         <AttachmentSection>
-          <h2>All Uploaded Images</h2>
+          <h3>Images</h3>
           {allUploadedImages.length > 0 ? (
             <AttachmentList>
               {allUploadedImages.map((file) => (
@@ -148,7 +148,7 @@ export default function InitiativeDetailPage({
               ))}
             </AttachmentList>
           ) : (
-            <p>No uploaded files available.</p>
+            <NoImages>Add images to your tasks to view them here</NoImages>
           )}
         </AttachmentSection>
       </Content>
@@ -167,18 +167,20 @@ const TagList = styled.ul`
   padding: 0;
   margin: 0;
   display: flex;
-  justify-content: start;
-  align-items: start;
+  justify-content: left;
+  align-items: left;
   flex-wrap: wrap;
   gap: 3px;
   list-style: none;
 `;
 
 const Tag = styled.li`
-  background: #bcc1c5;
-  border-radius: 4px;
+  background: var(--tags);
+  color: var(--contrasttext);
+  border-radius: 10px;
   padding: 4px 8px;
-  font-size: 11px;
+  font-size: 10px;
+  border: none;
 `;
 
 const PageContainer = styled.div`
@@ -186,7 +188,7 @@ const PageContainer = styled.div`
   flex-direction: column;
   min-height: 100vh;
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: var(--mainbackground);
 `;
 
 const Content = styled.div`
@@ -204,25 +206,26 @@ const Title = styled.h1`
   text-align: left;
   max-width: 100%;
   overflow: hidden;
+  color: var(--title);
 `;
 
 const Description = styled.article`
   margin: 10px 0;
   padding: 20px;
-  border: 1px solid grey;
-  border-radius: 8px;
-  background-color: #ffffff;
+  border-radius: 10px;
+  background-color: var(--cardbackground);
+  color: var(--text);
 `;
 
 const Deadline = styled.p`
   margin: 10px 0;
   font-size: 1rem;
-  color: #333;
+  color: var(--text);
 `;
 
 const EmptyMessage = styled.span`
   font-size: 0.9rem;
-  color: #888;
+  color: var(--text);
 `;
 
 const CompletedContainer = styled.div`
@@ -232,16 +235,16 @@ const CompletedContainer = styled.div`
 
   button {
     cursor: pointer;
-    background: #007a55;
+    background: var(--accents);
     border: none;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 10px;
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-size: 12px;
     font-weight: bold;
-    color: white;
+    color: var(--contrasttext);
 
     &:hover {
-      background-color: #032f2e;
+      background-color: var(--accents);
     }
   }
 `;
@@ -256,16 +259,15 @@ const Button = styled.button`
   display: inline-block;
   padding: 10px 20px;
   text-align: center;
-  border-radius: 5px;
-  background-color: #bcc1c5;
-  color: black;
+  border: none;
+  border-radius: 50px;
+  background-color: var(--buttons);
+  color: var(--contrasttext);
   cursor: pointer;
-  border: 1px solid black;
-  font-weight: bold;
-  font-size: 10px;
+  font-size: 12px;
 
   &:hover {
-    background-color: #5a6268;
+    background-color: var(--accents);
   }
 `;
 
@@ -274,46 +276,51 @@ const StyledLink = styled(Link)`
   padding: 10px 20px;
   text-align: center;
   text-decoration: none;
-  border-radius: 5px;
-  background-color: #bcc1c5;
-  color: black;
-  font-weight: bold;
+  border-radius: 50px;
+  border: none;
+  background-color: var(--buttons);
+  color: var(--contrasttext);
   cursor: pointer;
-  border: 1px solid black;
-  font-size: 10px;
+  font-size: 12px;
 
   &:hover {
-    background-color: #5a6268;
+    background-color: var(--accents);
   }
 `;
 
 const StyledLinkTask = styled(Link)`
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 10px 20px;
   text-align: center;
   text-decoration: none;
-  border-radius: 5px;
-  background-color: #ebebeb;
-  color: black;
+  border-radius: 20px;
+  border: 1px var(--cardborder);
+
+  background-color: var(--cardbackground);
+  color: var(--text);
   font-weight: bold;
   cursor: pointer;
-  border: 0.5px solid black;
   font-size: 7px;
+  transition: box-shadow 0.2s;
+
+  ${(props) =>
+    props.$variant === "addTaskCard" &&
+    css`
+      background-color: var(--highlightedcard);
+      &:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+    `};
 
   &:hover {
-    background-color: #bcc1c5;
+    background-color: var(--highlightedcard);
   }
 `;
 
-const AddTaskCard = styled.div`
-  padding: 2px;
-  cursor: pointer;
-  margin: 2px;
-  background-color: transparent;
-`;
-
 const TaskCard = styled.div`
-  padding: 2px;
   cursor: pointer;
   margin: 2px;
 `;
@@ -330,7 +337,7 @@ const DialogOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--mainbackground);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -338,9 +345,9 @@ const DialogOverlay = styled.div`
 `;
 
 const ConfirmationDialog = styled.div`
-  background: white;
+  background: var(--highlightedcard);
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 20px;
   text-align: center;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   width: 90%;
@@ -360,8 +367,7 @@ const ConfirmationDialogButton = styled(Button)`
 
 const NoTasksMessage = styled.span`
   font-size: 10px;
-  font-weight: bold;
-  color: black;
+  color: var(--text);
   text-align: center;
   margin-top: 20px;
   display: flex;
@@ -369,12 +375,24 @@ const NoTasksMessage = styled.span`
   justify-content: center;
 `;
 
+const NoImages = styled.p`
+  font-size: 10px;
+  color: var(--text);
+  text-align: center;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+`;
+
 const AttachmentSection = styled.div`
   margin-top: 20px;
+  color: var(--text);
 `;
 
 const AttachmentList = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
+  color: var(--text);
 `;

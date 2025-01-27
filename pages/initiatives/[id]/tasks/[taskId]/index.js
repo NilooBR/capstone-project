@@ -135,8 +135,8 @@ export default function TaskDetailPage({
         <Title>{task.title}</Title>
         <Description>{task.description}</Description>
         <Label>
-          Status:
-          <select
+          Status
+          <StyledSelect
             value={status}
             onChange={(e) =>
               updateTaskStatus(e.target.value, onUpdateInitiatives)
@@ -145,18 +145,19 @@ export default function TaskDetailPage({
             <option value="Pending">Pending</option>
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
-          </select>
+          </StyledSelect>
         </Label>
+        <br></br>
+        <StyledLabel>
+          Upload images
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={(e) => handleImageUpload(Array.from(e.target.files))}
+          />
+        </StyledLabel>
         <FileUploadContainer>
-          <label>
-            Upload Images:
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={(e) => handleImageUpload(Array.from(e.target.files))}
-            />
-          </label>
           {loading && <p>Uploading... Please wait.</p>}
           {uploadMessage && <p>{uploadMessage}</p>}
           <ImagePreviewContainer>
@@ -224,7 +225,7 @@ const PageContainer = styled.div`
   flex-direction: column;
   min-height: 100vh;
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: var(--mainbackground);
 `;
 
 const Content = styled.div`
@@ -240,7 +241,6 @@ const Footer = styled.div`
 
 const Title = styled.h1`
   margin: 20px 0;
-  font-size: 1.8rem;
   word-wrap: break-word;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -248,29 +248,52 @@ const Title = styled.h1`
   text-align: left;
   max-width: 100%;
   overflow: hidden;
+  color: var(--title);
 `;
 
 const Description = styled.article`
   margin: 10px 0;
   padding: 20px;
-  border: 1px solid grey;
-  border-radius: 8px;
-  background-color: #ffffff;
+  border-radius: 10px;
+  background-color: var(--cardbackground);
+  color: var(--text);
 `;
 
 const Label = styled.label`
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  margin-top: 20px;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  color: var(--title);
+`;
+
+const StyledSelect = styled.select`
+  padding: 7px;
+  border: 1px solid var(--cardbackground);
+  background-color: var(--cardbackground);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 0.8rem;
+
+  &:focus {
+    outline: 2px solid var(--errortext);
+  }
+`;
+
+const StyledLabel = styled.label`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  color: var(--title);
 `;
 
 const FileUploadContainer = styled.div`
   margin-top: 20px;
   padding: 15px;
-  border: 1px solid grey;
   border-radius: 8px;
-  background-color: #ffffff;
 `;
 
 const ImagePreviewContainer = styled.div`
@@ -278,6 +301,7 @@ const ImagePreviewContainer = styled.div`
   flex-wrap: wrap;
   gap: 15px;
   margin-top: 20px;
+  background-color: var(--cardbackground);
 `;
 
 const ImageWrapper = styled.div`
@@ -290,22 +314,22 @@ const ImageWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f0f0f0;
+  background-color: var(--cardbackground);
 
   button {
     position: absolute;
     top: 5px;
     right: 5px;
     padding: 5px;
-    background-color: #ff6b6b;
-    color: white;
+    background-color: var(--buttons);
+    color: var(--text);
     border: none;
-    border-radius: 3px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 12px;
 
     &:hover {
-      background-color: #ff4d4d;
+      background-color: var(--accents);
     }
   }
 `;
@@ -313,17 +337,16 @@ const ImageWrapper = styled.div`
 const Button = styled.button`
   display: inline-block;
   padding: 10px 20px;
-  text-align: center;
-  border-radius: 5px;
-  background-color: #bcc1c5;
-  color: black;
+  border: none;
+  border-radius: 50px;
+  background-color: var(--buttons);
+  color: var(--contrasttext);
   cursor: pointer;
-  border: 1px solid black;
-  font-weight: bold;
-  font-size: 10px;
+  border: none;
+  font-size: 12px;
 
   &:hover {
-    background-color: #5a6268;
+    background-color: var(--accents);
   }
 `;
 
@@ -338,7 +361,8 @@ const DialogOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--highlightedcard);
+  color: var(--text);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -346,7 +370,8 @@ const DialogOverlay = styled.div`
 `;
 
 const ConfirmationDialog = styled.div`
-  background: white;
+  background: var(--highlightedcard);
+  color: var(--text);
   padding: 20px;
   border-radius: 8px;
   text-align: center;

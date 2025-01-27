@@ -1,9 +1,41 @@
 import { useState } from "react";
 import GlobalStyle from "../styles";
 import { initialData } from "@/lib/initialData";
+import styled from "styled-components";
+import { FaSun, FaMoon } from "react-icons/fa";
+
+const StyledThemeButton = styled.button`
+  display: flex;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 50px;
+  background: var(--buttons);
+  color: var(--toggle-icon-color);
+
+  cursor: pointer;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+  z-index: 100;
+
+  &:hover {
+    background: var(--accents);
+    color: var(--toggle-hover-color);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+  }
+  &:focus {
+    transform: scale(0.95);
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+    outline: 1px solid var(--focus-outline-color);
+  }
+`;
 
 export default function App({ Component, pageProps }) {
   const [initiatives, setInitiatives] = useState(initialData);
+  const [theme, setTheme] = useState("light");
 
   function handleCreateInitiative(newInitiative) {
     setInitiatives((prev) => [...prev, newInitiative]);
@@ -71,9 +103,16 @@ export default function App({ Component, pageProps }) {
     setInitiatives(newInitiatives);
   }
 
+  function toggleTheme() {
+    setTheme((previousTheme) => (previousTheme === "light" ? "dark" : "light"));
+  }
   return (
     <>
-      <GlobalStyle />
+      <GlobalStyle theme={theme} />
+      <StyledThemeButton onClick={toggleTheme}>
+        {theme === "light" ? <FaMoon /> : <FaSun />}
+      </StyledThemeButton>
+
       <Component
         {...pageProps}
         initiatives={initiatives}

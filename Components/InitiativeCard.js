@@ -70,57 +70,70 @@ const Card = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: left;
   justify-content: center;
-  border: 1px solid black;
-  border-radius: 10px;
+  border: 1px;
+  border-radius: 20px;
   height: 150px;
   width: 100%;
+  color: var(--text);
   background-color: ${({ isCompleted }) =>
-    isCompleted ? "lightgrey" : "white"};
+    isCompleted ? "var(--highlightedcard)" : "var(--cardbackground)"};
+
+  &:hover {
+    background-color: var(--highlightedcard);
+  }
 `;
 
 const TagList = styled.ul`
   padding: 0;
   margin: 0;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: left;
+  align-items: left;
   flex-wrap: wrap;
-  gap: 3px;
+  gap: 4px;
+  margin-top: 7px;
   list-style: none;
 `;
 
 const Tag = styled.li`
-  background: #bcc1c5;
-  border-radius: 4px;
+  background: var(--mainbackground);
+  border-radius: 10px;
   padding: 4px 8px;
-  font-size: 11px;
+  font-size: 10px;
+  background-color: var(--tags);
+  color: var(--contrasttext);
+  border: none;
 `;
 
 const StyledLink = styled(Link)`
   text-decoration: none;
-  color: inherit;
+  color: var(--text);
   width: 100%;
-  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
 `;
 
 const DateText = styled.p`
-  text-align: center;
+  text-align: right;
   margin: 10px;
   font-size: 11px;
+  color: var(--text);
 `;
 
 const Modal = styled.div`
   position: absolute;
   background-color: white;
-  border: 1px solid gray;
+  border: var(--cardborder);
   padding: 16px;
-  border-radius: 10px;
+  border-radius: 20px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
-  background-color: lightgray;
+  background-color: var(--cardbackground);
+  border: 1px var(--errortext);
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -133,42 +146,40 @@ const LinkButton = styled(Link)`
   margin: 4px;
   padding: 8px 12px;
   border: none;
-  border-radius: 4px;
+  border-radius: 50px;
   cursor: pointer;
-  border: 1px solid black;
-  font-weight: bold;
-  font-size: 10px;
-  background-color: #bcc1c5;
-  color: black;
+  border: none;
+  font-size: 12px;
+  background-color: var(--buttons);
+  color: var(--contrasttext);
 `;
 
 const Button = styled.button`
   margin: 4px;
   padding: 8px 12px;
   border: none;
-  border-radius: 4px;
+  border-radius: 50px;
   cursor: pointer;
-  border: 1px solid black;
-  font-weight: bold;
-  font-size: 10px;
+  font-size: 12px;
 
   &:nth-child(1),
   &:nth-child(2) {
-    background-color: #bcc1c5;
-    color: black;
+    background-color: var(--buttons);
+    color: var(--contrasttext);
   }
 
   &:nth-child(3) {
-    background-color: #f4a896;
-    color: black;
+    background-color: var(--buttons);
+    color: var(--contrasttext);
   }
 `;
 
 const TopLeftButton = styled.button`
   position: absolute;
   top: 8px;
-  left: 8px;
+  right: 8px;
   background-color: transparent;
+  color: var(--text);
   border: none;
   font-size: 16px;
   cursor: pointer;
@@ -177,4 +188,5 @@ const TopLeftButton = styled.button`
 const StyledSpan = styled.span`
   font-size: 15px;
   font-weight: bold;
+  text-align: left;
 `;

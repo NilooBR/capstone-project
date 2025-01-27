@@ -52,14 +52,14 @@ export default function InitiativeForm({
         .filter((tag) => tag !== "");
 
       if (tags.length > 5) {
-        newErrors.tags = "You can add a maximum of 5 tags.";
+        newErrors.tags = "Please add a maximum of 5 tags";
         setErrors(newErrors);
         return;
       } else {
         newErrors.tags = null;
       }
     } else {
-      newErrors[name] = value.trim() ? null : `${name} is required.`;
+      newErrors[name] = value.trim() ? null : `${name} is required`;
     }
 
     setErrors(newErrors);
@@ -85,10 +85,10 @@ export default function InitiativeForm({
       .filter((tag) => tag !== "");
 
     const newErrors = {
-      title: title.trim() ? null : "Title is required.",
-      description: description.trim() ? null : "Description is required.",
-      deadline: deadline.trim() ? null : "Deadline is required.",
-      tags: tagList.length > 5 ? "You can add a maximum of 5 tags." : null,
+      title: title.trim() ? null : "Title is required",
+      description: description.trim() ? null : "Description is required",
+      deadline: deadline.trim() ? null : "Deadline is required",
+      tags: tagList.length > 5 ? "Please add a maximum of 5 tags" : null,
     };
 
     if (Object.values(newErrors).some((error) => error)) {
@@ -121,7 +121,7 @@ export default function InitiativeForm({
     <Form onSubmit={handleSubmit}>
       <Heading>{isEditMode ? "Edit Initiative" : "Create Initiative"}</Heading>
       <Label>
-        Initiative Title
+        Initiative title
         <Input
           id="title"
           name="title"
@@ -145,7 +145,7 @@ export default function InitiativeForm({
       </Label>
 
       <Label>
-        Select Deadline
+        Deadline
         <StyledDatePicker
           selected={
             formData.deadline
@@ -166,7 +166,7 @@ export default function InitiativeForm({
       </Label>
 
       <Label>
-        Tags (comma-separated)
+        Tags (separated by a comma)
         <Input
           id="tags"
           name="tags"
@@ -213,8 +213,8 @@ const Form = styled.form`
 `;
 
 const Heading = styled.h1`
-  font-size: 20px;
-  text-align: center;
+  color: var(--title);
+  text-align: left;
 `;
 
 const Label = styled.label`
@@ -223,48 +223,60 @@ const Label = styled.label`
   gap: 8px;
   font-weight: bold;
   font-size: 1rem;
+  color: var(--title);
 `;
 
 const Input = styled.input`
   padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid var(--cardbackground);
+  background-color: var(--cardbackground);
+  color: var(--text);
+  border-radius: 10px;
+  &:focus {
+    outline: 2px solid var(--errortext);
+  }
 `;
 
 const Textarea = styled.textarea`
   padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid var(--cardbackground);
+  background-color: var(--cardbackground);
+  border-radius: 10px;
+  color: var(--text);
+  &:focus {
+    outline: 2px solid var(--errortext);
+  }
 `;
 
 const StyledDatePicker = styled(DatePicker)`
   width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
+  border: 1px solid var(--cardbackground);
+  background-color: var(--cardbackground);
+  color: var(--text);
+  border-radius: 10px;
+  &:focus {
+    outline: 2px solid var(--errortext);
+  }
 `;
 
 const Error = styled.p`
-  color: red;
-  font-size: 0.9rem;
+  color: var(--errortext);
+  font-size: 0.8rem;
 `;
 
 const Button = styled.button`
   padding: 10px 20px;
   border: none;
-  border-radius: 5px;
-  background-color: #bcc1c5;
-  color: black;
-  font-weight: bold;
+  border-radius: 50px;
+  background-color: var(--buttons);
+  color: var(--contrasttext);
   cursor: pointer;
-  border: 1px solid black;
-  font-size: 10px;
+  border: none;
+  font-size: 12px;
 
   &:hover {
-    background-color: #5a6268;
+    background-color: var(--accents);
   }
 `;
 
@@ -274,7 +286,8 @@ const DialogOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--highlightedcard);
+  color: var(--text);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -282,10 +295,11 @@ const DialogOverlay = styled.div`
 `;
 
 const ConfirmationDialog = styled.div`
-  background: white;
+  background: var(--highlightedcard);
+  color: var(--text);
   padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  border-radius: 20px;
+  border: 2px;
   text-align: center;
 `;
 
