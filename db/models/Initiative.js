@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+const { Schema } = mongoose;
 
-const InitiativeSchema = new mongoose.Schema({
+const InitiativeSchema = new Schema({
   title: {
     type: String,
     required: true,
@@ -25,7 +26,7 @@ const InitiativeSchema = new mongoose.Schema({
   },
   tasks: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Task",
     },
   ],

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+const { Schema } = mongoose;
 
-const TaskSchema = new mongoose.Schema({
+const TaskSchema = new Schema({
   title: {
     type: String,
     required: true,
@@ -19,7 +20,7 @@ const TaskSchema = new mongoose.Schema({
     default: [],
   },
   initiative: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "Initiative",
     required: true,
   },

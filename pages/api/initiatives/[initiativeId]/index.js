@@ -7,14 +7,11 @@ export default async function handler(request, response) {
 
   if (request.method === "GET") {
     try {
-      const initiative = await Initiative.findById(initiativeId).populate("tasks");
-      if (!initiative) {
-        response.status(404).json({ success: false, message: "Initiative not found." });
-        return;
-      }
+      const initiative = await Initiative.findById(initiativeId).populate(
+        "tasks"
+      );
       response.status(200).json({ success: true, data: initiative });
     } catch (error) {
-      console.error("Error fetching initiative:", error);
       response.status(500).json({
         success: false,
         message: "Failed to fetch initiative.",
