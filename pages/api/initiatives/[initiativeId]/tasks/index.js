@@ -14,7 +14,7 @@ export default async function handler(req, res) {
         title,
         description,
         status,
-        uploadedImages: uploadedImages.map((img) => img.url),
+        uploadedImages,
         initiative: initiativeId,
       });
 
