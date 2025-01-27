@@ -33,7 +33,6 @@ export default function InitiativeDetailsPage({
     onDeleteInitiative(id);
     router.push("/");
   }
-  console.log(selectedInitiative)
 
   return (
     <InitiativeDetailPage

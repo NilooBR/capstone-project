@@ -31,10 +31,6 @@ const InitiativeSchema = new Schema({
       ref: "Task",
     },
   ],
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
 });
 
 export default mongoose.models.Initiative ||

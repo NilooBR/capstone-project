@@ -1,33 +1,10 @@
 import dbConnect from "@/db/connect";
-import Initiative from "@/db/models/Initiative";
 import Task from "@/db/models/Task";
 
 export default async function handler(request, response) {
   await dbConnect();
 
-  const { initiativeId, taskId } = request.query;
-
-  if (request.method === "POST") {
-    try {
-      const { title, description, status } = request.body;
-      const newTask = await Task.create({
-        title,
-        description,
-        status,
-        initiative: initiativeId,
-      });
-      await Initiative.findByIdAndUpdate(initiativeId, {
-        $push: { tasks: newTask._id },
-      });
-
-      response.status(201).json({ message: "Task created", task: newTask });
-    } catch (error) {
-      response
-        .status(500)
-        .json({ error: "Error creating task", details: error.message });
-    }
-    return;
-  }
+  const { taskId } = request.query;
 
   if (request.method === "GET") {
     try {

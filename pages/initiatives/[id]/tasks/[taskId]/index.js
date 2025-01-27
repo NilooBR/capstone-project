@@ -361,8 +361,7 @@ const DialogOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--highlightedcard);
-  color: var(--text);
+  background: var(--mainbackground);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -371,9 +370,8 @@ const DialogOverlay = styled.div`
 
 const ConfirmationDialog = styled.div`
   background: var(--highlightedcard);
-  color: var(--text);
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 20px;
   text-align: center;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   width: 90%;

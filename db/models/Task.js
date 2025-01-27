@@ -24,10 +24,6 @@ const TaskSchema = new Schema({
     ref: "Initiative",
     required: true,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
 });
 
 export default mongoose.models.Task || mongoose.model("Task", TaskSchema);

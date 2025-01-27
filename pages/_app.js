@@ -59,27 +59,37 @@ export default function App({ Component, pageProps }) {
   if (error) return <p>Error loading initiatives: {error.message}</p>;
 
   async function handleCreateInitiative(newInitiative) {
-    try {
-      const res = await fetch("/api/initiatives", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newInitiative),
-      });
+    const res = await fetch("/api/initiatives", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newInitiative),
+    });
 
-      if (!res.ok) {
-        throw new Error(`Failed to create initiative. Status: ${res.status}`);
-      }
+    const savedInitiative = await res.json();
 
-      const savedInitiative = await res.json();
+    setInitiatives((prev) => [...prev, savedInitiative.data]);
+    mutate([...initiatives, savedInitiative.data], false);
 
-      setInitiatives((prev) => [...prev, savedInitiative.data]);
-      mutate([...initiatives, savedInitiative.data], false);
+    return savedInitiative.data;
+  }
 
-      return savedInitiative.data;
-    } catch (error) {
-      console.error("Error creating initiative:", error);
-      return null;
-    }
+  async function handleCreateTask(initiativeId, newTask) {
+    const res = await fetch(`/api/initiatives/${initiativeId}/tasks`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newTask),
+    });
+
+    const { task } = await res.json();
+
+    const updatedInitiatives = initiatives.map((initiative) =>
+      initiative._id === initiativeId
+        ? { ...initiative, tasks: [...initiative.tasks, task] }
+        : initiative
+    );
+
+    handleUpdateInitiatives(updatedInitiatives);
+    return task;
   }
 
   function handleDeleteInitiative(id) {
@@ -169,6 +179,7 @@ export default function App({ Component, pageProps }) {
         onDeleteTask={handleDeleteTask}
         onUpdateUploadedImages={handleUpdateUploadedImages}
         onUpdateInitiatives={handleUpdateInitiatives}
+        onCreateTask={handleCreateTask}
       />
     </>
   );

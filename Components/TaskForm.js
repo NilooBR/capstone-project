@@ -10,18 +10,12 @@ const DEFAULT_VALUES = {
 
 export default function TaskForm({
   onSubmit,
-  initiatives,
   taskToEdit = null,
   isEditMode = false,
 }) {
   const router = useRouter();
   const { id: initiativeId } = router.query;
 
-  const selectedInitiative = initiatives.find(
-    (initiative) => initiative.id === initiativeId
-  );
-
-  const selectedTasksArray = selectedInitiative?.tasks ?? [];
   const [formData, setFormData] = useState({
     ...DEFAULT_VALUES,
     ...taskToEdit,
@@ -61,27 +55,25 @@ export default function TaskForm({
   }
 
   function saveChanges() {
-    const updatedTask = {
-      id: taskToEdit?._id || null,
-      ...formData,
+    const { title, description, status } = formData;
+
+    const newErrors = {
+      title: title.trim() ? null : "Title is required",
+      description: description.trim() ? null : "Description is required",
     };
 
-    const updatedTasks = isEditMode
-      ? selectedTasksArray.map((task) =>
-          task.id === updatedTask.id ? updatedTask : task
-        )
-      : [updatedTask, ...selectedTasksArray];
+    if (Object.values(newErrors).some((error) => error)) {
+      setErrors(newErrors);
+      return;
+    }
 
-    const updatedInitiative = {
-      ...selectedInitiative,
-      tasks: updatedTasks,
-    };
+    const updatedTask = { ...formData, status };
 
-    onSubmit(updatedInitiative);
-
-    router.push({
-      pathname: `/initiatives/${initiativeId}/tasks/${updatedTask.id}`,
-      query: { success: "true" },
+    onSubmit(updatedTask).then((savedTask) => {
+      router.replace({
+        pathname: `/initiatives/${initiativeId}/tasks/${savedTask._id}`,
+        query: { success: "true" },
+      });
     });
   }
 
