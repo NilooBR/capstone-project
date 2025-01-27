@@ -62,7 +62,7 @@ export default function TaskForm({
 
   function saveChanges() {
     const updatedTask = {
-      id: taskToEdit?.id || crypto.randomUUID(),
+      id: taskToEdit?._id || null,
       ...formData,
     };
 

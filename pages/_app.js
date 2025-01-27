@@ -26,9 +26,28 @@ export default function App({ Component, pageProps }) {
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error loading initiatives: {error.message}</p>;
 
-  function handleCreateInitiative(newInitiative) {
-    setInitiatives((prev) => [...prev, newInitiative]);
-    mutate([...initiatives, newInitiative], false);
+  async function handleCreateInitiative(newInitiative) {
+    try {
+      const res = await fetch("/api/initiatives", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newInitiative),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Failed to create initiative. Status: ${res.status}`);
+      }
+
+      const savedInitiative = await res.json();
+
+      setInitiatives((prev) => [...prev, savedInitiative.data]);
+      mutate([...initiatives, savedInitiative.data], false);
+
+      return savedInitiative.data;
+    } catch (error) {
+      console.error("Error creating initiative:", error);
+      return null;
+    }
   }
 
   function handleDeleteInitiative(id) {

@@ -16,7 +16,7 @@ export default function InitiativeDetailsPage({
   const { id } = router.query;
 
   const selectedInitiative = initiatives.find(
-    (initiative) => initiative.id === id
+    (initiative) => initiative._id === id
   );
 
   if (!selectedInitiative) {

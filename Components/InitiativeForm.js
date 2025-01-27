@@ -96,16 +96,23 @@ export default function InitiativeForm({
       return;
     }
 
+    const formattedDeadline = new Date(
+      deadline.split(".")[2], // Year
+      deadline.split(".")[1] - 1, // Month
+      deadline.split(".")[0] // Day
+    ).toISOString();
+
     const updatedInitiative = {
       ...formData,
       tags: tagList,
-      id: formData.id || crypto.randomUUID(),
+      deadline: formattedDeadline,
     };
 
-    onSubmit(updatedInitiative);
-    router.replace({
-      pathname: `/initiatives/${updatedInitiative.id}`,
-      query: { success: "true" },
+    onSubmit(updatedInitiative).then((savedInitiative) => {
+      router.replace({
+        pathname: `/initiatives/${savedInitiative._id}`,
+        query: { success: "true" },
+      });
     });
   }
 

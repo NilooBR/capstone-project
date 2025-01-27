@@ -14,9 +14,9 @@ export default function InitiativeList({ initiatives, onDelete }) {
           </NoInitiativesMessage>
         ) : (
           initiatives.map((initiative) => (
-            <li key={initiative.id}>
+            <li key={initiative._id}>
               <InitiativeCard
-                id={initiative.id}
+                id={initiative._id}
                 title={initiative.title}
                 tags={initiative.tags}
                 deadline={initiative.deadline}

@@ -7,12 +7,12 @@ export function useTaskState(initiativeId, taskId, initiatives) {
   useEffect(() => {
     if (initiativeId && taskId) {
       const selectedInitiative = initiatives.find(
-        (initiative) => initiative.id === initiativeId
+        (initiative) => initiative._id === initiativeId
       );
 
       if (selectedInitiative) {
         const selectedTask = selectedInitiative.tasks?.find(
-          (item) => item.id == taskId
+          (item) => item._id == taskId
         );
 
         if (selectedTask) {
@@ -27,11 +27,11 @@ export function useTaskState(initiativeId, taskId, initiatives) {
     setStatus(newStatus);
 
     const updatedInitiatives = initiatives.map((initiative) => {
-      if (initiative.id === initiativeId) {
+      if (initiative._id === initiativeId) {
         return {
           ...initiative,
           tasks: initiative.tasks.map((task) =>
-            task.id == taskId ? { ...task, status: newStatus } : task
+            task._id == taskId ? { ...task, status: newStatus } : task
           ),
         };
       }
