@@ -15,7 +15,6 @@ export default async function handler(req, res) {
         description,
         status,
         uploadedImages,
-        initiative: initiativeId,
       });
 
       await Initiative.findByIdAndUpdate(initiativeId, {

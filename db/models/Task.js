@@ -19,11 +19,6 @@ const TaskSchema = new Schema({
     type: [String],
     default: [],
   },
-  initiative: {
-    type: Schema.Types.ObjectId,
-    ref: "Initiative",
-    required: true,
-  },
 });
 
 export default mongoose.models.Task || mongoose.model("Task", TaskSchema);
