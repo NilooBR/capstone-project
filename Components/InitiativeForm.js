@@ -70,7 +70,7 @@ export default function InitiativeForm({
     event.preventDefault();
 
     if (isEditMode) {
-      setIsDialogVisible(true);
+      saveChanges();
     } else {
       saveChanges();
     }
@@ -110,6 +110,32 @@ export default function InitiativeForm({
   }
 
   function handleCancel() {
+    const hasUnsavedChanges =
+      formData.title.trim() ||
+      formData.description.trim() ||
+      formData.deadline.trim() ||
+      formData.tags.trim();
+
+    if (hasUnsavedChanges) {
+      setIsDialogVisible(true);
+    } else {
+      navigateAway();
+    }
+  }
+
+  function navigateAway() {
+    if (!isEditMode) {
+      setFormData(DEFAULT_VALUES);
+    } else {
+      setFormData({
+        ...DEFAULT_VALUES,
+        ...defaultData,
+        tags: Array.isArray(defaultData.tags)
+          ? defaultData.tags.join(", ")
+          : defaultData.tags || "",
+      });
+    }
+    setIsDialogVisible(false);
     if (isEditMode) {
       router.push(`/initiatives/${formData.id}`);
     } else {
@@ -181,7 +207,7 @@ export default function InitiativeForm({
           <ConfirmationDialog>
             <p>You have unsaved changes. Would you like to save your edits?</p>
             <DialogButton onClick={saveChanges}>Save</DialogButton>
-            <DialogButton onClick={handleCancel}>Cancel</DialogButton>
+            <DialogButton onClick={navigateAway}>Cancel</DialogButton>
           </ConfirmationDialog>
         </DialogOverlay>
       )}

@@ -44,6 +44,32 @@ export default function TaskForm({
     setFormData((prev) => ({ ...prev, [name]: value }));
   }
 
+  function handleCancel() {
+    const hasUnsavedChanges =
+      formData.title.trim() ||
+      formData.description.trim() ||
+      formData.status !== DEFAULT_VALUES.status;
+
+    if (hasUnsavedChanges) {
+      setIsDialogVisible(true);
+    } else {
+      navigateAway();
+    }
+  }
+
+  function navigateAway() {
+    if (isEditMode) {
+      setFormData({
+        ...DEFAULT_VALUES,
+        ...taskToEdit,
+      });
+    } else {
+      setFormData(DEFAULT_VALUES);
+    }
+    setIsDialogVisible(false);
+    router.push(`/initiatives/${initiativeId}`);
+  }
+
   function handleSubmit(event) {
     event.preventDefault();
     const newErrors = validateForm();
@@ -54,7 +80,7 @@ export default function TaskForm({
     }
 
     if (isEditMode) {
-      setIsDialogVisible(true);
+      saveChanges();
     } else {
       saveChanges();
     }
@@ -125,19 +151,12 @@ export default function TaskForm({
           <ConfirmationDialog>
             <p>You have unsaved changes. Would you like to save your edits?</p>
             <DialogButton onClick={saveChanges}>Save</DialogButton>
-            <DialogButton
-              onClick={() => router.push(`/initiatives/${initiativeId}`)}
-            >
-              Cancel
-            </DialogButton>
+            <DialogButton onClick={navigateAway}>Cancel</DialogButton>
           </ConfirmationDialog>
         </DialogOverlay>
       )}
       <ButtonGroup>
-        <Button
-          type="button"
-          onClick={() => router.push(`/initiatives/${initiativeId}`)}
-        >
+        <Button type="button" onClick={handleCancel}>
           Cancel
         </Button>
         <Button type="submit">{isEditMode ? "Save" : "Create"}</Button>
