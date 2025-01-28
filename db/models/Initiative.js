@@ -31,6 +31,10 @@ const InitiativeSchema = new Schema({
       ref: "Task",
     },
   ],
+  isCompleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export default mongoose.models.Initiative ||

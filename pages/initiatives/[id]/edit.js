@@ -1,23 +1,36 @@
 import { useRouter } from "next/router";
 import InitiativeForm from "@/Components/InitiativeForm";
+import useSWR from "swr";
 
-export default function EditInitiativePage({ initiatives, onEditInitiative }) {
+export default function EditInitiativePage() {
   const router = useRouter();
-  const { id } = router.query;
+  const { id: initiativeId } = router.query;
 
-  const initiativeToEdit = initiatives.find(
-    (initiative) => initiative.id === id
+  const { data: initiatives, mutate } = useSWR("/api/initiatives");
+
+  const initiativeToEdit = initiatives?.find(
+    (initiative) => initiative._id === initiativeId
   );
 
   if (!initiativeToEdit) {
     return <h2>Initiative not found</h2>;
   }
 
-  return (
-    <InitiativeForm
-      onSubmit={onEditInitiative}
-      defaultData={initiativeToEdit}
-      isEditMode={true}
-    />
-  );
+  async function handleEditInitiative(updatedInitiative) {
+    const response = await fetch(`/api/initiatives/${initiativeId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedInitiative),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Edit failed ${response.status}`);
+    }
+
+    await response.json();
+    mutate();
+    router.push(`/initiatives/${initiativeId}`);
+  }
+
+  return <InitiativeForm onSubmit={handleEditInitiative} isEditMode={true} />;
 }

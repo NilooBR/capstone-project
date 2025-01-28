@@ -1,46 +1,45 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import useSWR from "swr";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 
-const DEFAULT_VALUES = {
-  title: "",
-  description: "",
-  deadline: "",
-  tags: "",
-};
-
-export default function InitiativeForm({
-  onSubmit,
-  defaultData = {},
-  isEditMode = false,
-}) {
+export default function InitiativeForm({ isEditMode = false, initiativeId }) {
   const router = useRouter();
 
+  const { data: initiatives, error, isLoading , mutate } = useSWR("/api/initiatives");
+
+  const validInitiatives = Array.isArray(initiatives) ? initiatives : [];
+
+  const currentInitiative =
+    validInitiatives.find((i) => i._id === initiativeId) || {};
+
   const [formData, setFormData] = useState({
-    ...DEFAULT_VALUES,
-    ...defaultData,
-    tags: Array.isArray(defaultData.tags)
-      ? defaultData.tags.join(", ")
-      : defaultData.tags || "",
+    title: currentInitiative?.title || "",
+    description: currentInitiative?.description || "",
+    deadline: currentInitiative?.deadline || "",
+    tags: currentInitiative?.tags?.join(", ") || "",
   });
 
   const [errors, setErrors] = useState({});
   const [isDialogVisible, setIsDialogVisible] = useState(false);
 
+  if (error) return <p>❌Error loading: {error.message}</p>;
+  if (isLoading) return <p>⏳ Fetching...</p>;
+  if (!initiatives) return <p>Loading...</p>;
+
   function handleDateChange(date) {
     if (date) {
-      const germanDate = format(date, "dd.MM.yyyy");
-      setFormData({ ...formData, deadline: germanDate });
-      setErrors((prevErrors) => ({ ...prevErrors, deadline: null }));
+      setFormData({ ...formData, deadline: format(date, "dd.MM.yyyy") });
+      setErrors((prev) => ({ ...prev, deadline: null }));
     }
   }
 
-  function handleChange(event) {
-    const { name, value } = event.target;
+  function handleChange(e) {
+    const { name, value } = e.target;
 
     const updatedFormData = { ...formData, [name]: value };
     const newErrors = { ...errors };
@@ -66,8 +65,63 @@ export default function InitiativeForm({
     setFormData(updatedFormData);
   }
 
-  function handleSubmit(event) {
-    event.preventDefault();
+  async function saveChanges() {
+    const { title, description, deadline, tags } = formData;
+
+    const formattedDeadline = new Date(
+      deadline.split(".")[2],
+      deadline.split(".")[1] - 1,
+      deadline.split(".")[0]
+    ).toISOString();
+
+    const payload = {
+      title,
+      description,
+      deadline: formattedDeadline,
+      tags: tags.split(",").map((tag) => tag.trim()),
+    };
+
+    try {
+      if (isEditMode) {
+        await fetch(`/api/initiatives/${initiativeId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        await fetch("/api/initiatives", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
+
+      mutate();
+      router.push(isEditMode ? `/initiatives/${initiativeId}` : "/");
+    } catch (err) {
+      console.error("Error saving changes:", err);
+    }
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    const { title, description, deadline, tags } = formData;
+
+    const newErrors = {
+      title: title.trim() ? null : "Title is required",
+      description: description.trim() ? null : "Description is required",
+      deadline: deadline.trim() ? null : "Deadline is required",
+      tags:
+        tags.split(",").filter((tag) => tag.trim() !== "").length > 5
+          ? "Please add a maximum of 5 tags"
+          : null,
+    };
+
+    if (Object.values(newErrors).some((error) => error)) {
+      setErrors(newErrors);
+      return;
+    }
 
     if (isEditMode) {
       setIsDialogVisible(true);
@@ -76,49 +130,9 @@ export default function InitiativeForm({
     }
   }
 
-  function saveChanges() {
-    const { title, description, deadline, tags } = formData;
-
-    const tagList = tags
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter((tag) => tag !== "");
-
-    const newErrors = {
-      title: title.trim() ? null : "Title is required",
-      description: description.trim() ? null : "Description is required",
-      deadline: deadline.trim() ? null : "Deadline is required",
-      tags: tagList.length > 5 ? "Please add a maximum of 5 tags" : null,
-    };
-
-    if (Object.values(newErrors).some((error) => error)) {
-      setErrors(newErrors);
-      return;
-    }
-
-    const formattedDeadline = new Date(
-      deadline.split(".")[2], // Year
-      deadline.split(".")[1] - 1, // Month
-      deadline.split(".")[0] // Day
-    ).toISOString();
-
-    const updatedInitiative = {
-      ...formData,
-      tags: tagList,
-      deadline: formattedDeadline,
-    };
-
-    onSubmit(updatedInitiative).then((savedInitiative) => {
-      router.replace({
-        pathname: `/initiatives/${savedInitiative._id}`,
-        query: { success: "true" },
-      });
-    });
-  }
-
   function handleCancel() {
     if (isEditMode) {
-      router.push(`/initiatives/${formData.id}`);
+      router.push(`/initiatives/${initiativeId}`);
     } else {
       router.push("/");
     }
@@ -128,7 +142,7 @@ export default function InitiativeForm({
     <Form onSubmit={handleSubmit}>
       <Heading>{isEditMode ? "Edit Initiative" : "Create Initiative"}</Heading>
       <Label>
-        Initiative title
+        Initiative Title
         <Input
           id="title"
           name="title"

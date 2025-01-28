@@ -2,8 +2,15 @@ import styled from "styled-components";
 import InitiativeCard from "./InitiativeCard";
 import Link from "next/link";
 import { useMemo } from "react";
+import useSWR from "swr";
 
-export default function InitiativeList({ initiatives = [], onDelete }) {
+export default function InitiativeList() {
+  const {
+    data: initiatives,
+    error,
+    isLoading,
+  } = useSWR("/api/initiatives");
+
   const parsedDate = (date) => {
     const splitDate = date.split(".");
     const [day, month, year] = splitDate;
@@ -11,27 +18,37 @@ export default function InitiativeList({ initiatives = [], onDelete }) {
     return formattedDate;
   };
 
-  const openInitiatives = useMemo(() => {
-    return initiatives
-      .filter((initiative) => !initiative.isCompleted)
-      .sort((a, b) => {
-        return parsedDate(a.deadline) - parsedDate(b.deadline);
-      });
+  const validInitiatives = useMemo(() => {
+    return Array.isArray(initiatives) ? initiatives : [];
   }, [initiatives]);
 
+  const openInitiatives = useMemo(() => {
+    return validInitiatives
+      .filter((initiative) => !initiative.isCompleted)
+      .sort((a, b) => parsedDate(a.deadline) - parsedDate(b.deadline));
+  }, [validInitiatives]);
+
   const completedInitiatives = useMemo(() => {
-    return initiatives
+    return validInitiatives
       .filter((initiative) => initiative.isCompleted)
-      .sort((a, b) => {
-        return parsedDate(a.deadline) - parsedDate(b.deadline);
-      });
-  }, [initiatives]);
+      .sort((a, b) => parsedDate(a.deadline) - parsedDate(b.deadline));
+  }, [validInitiatives]);
+
+  if (isLoading) return <p>⏳ Fetching...</p>;
+  if (error) return <p>❌ Error loading: {error.message}</p>;
+
+  async function handleDelete(initiativeId) {
+    await fetch(`/api/initiatives/${initiativeId}`, { method: "DELETE" });
+    mutate();
+  }
+
   return (
     <>
       <YourInitiatives>Your Initiatives</YourInitiatives>
       <ListContainer>
         <StyledLink href="/initiatives/create">
-          ➕<br></br>Create Initiative
+          ➕<br />
+          Create Initiative
         </StyledLink>
         {openInitiatives.length === 0 ? (
           <NoInitiativesMessage>
@@ -42,11 +59,8 @@ export default function InitiativeList({ initiatives = [], onDelete }) {
             <li key={initiative._id}>
               <InitiativeCard
                 id={initiative._id}
-                title={initiative.title}
-                tags={initiative.tags}
-                deadline={initiative.deadline}
                 isCompleted={initiative.isCompleted}
-                onDelete={onDelete}
+                onDelete={() => handleDelete(initiative._id)}
               />
             </li>
           ))
@@ -54,14 +68,11 @@ export default function InitiativeList({ initiatives = [], onDelete }) {
 
         {completedInitiatives.length > 0 &&
           completedInitiatives.map((initiative) => (
-            <li key={initiative.id}>
+            <li key={initiative._id}>
               <InitiativeCard
-                id={initiative.id}
-                title={initiative.title}
-                tags={initiative.tags}
-                deadline={initiative.deadline}
+                id={initiative._id}
                 isCompleted={initiative.isCompleted}
-                onDelete={onDelete}
+                onDelete={() => handleDelete(initiative._id)}
               />
             </li>
           ))}

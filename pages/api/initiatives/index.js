@@ -25,6 +25,7 @@ export default async function handler(request, response) {
         title,
         description,
         deadline,
+        isCompleted,
         tags: tags || [],
       });
 

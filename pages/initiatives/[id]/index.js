@@ -1,50 +1,70 @@
 import InitiativeDetailPage from "@/Components/InitiativeDetailPage";
-import Link from "next/link";
 import { useRouter } from "next/router";
+import useSWR from "swr";
 import styled from "styled-components";
+import Link from "next/link";
 
-const StyledLink = styled(Link)`
-  text-decoration: none;
-`;
-
-export default function InitiativeDetailsPage({
-  initiatives,
-  onDeleteInitiative,
-  onToggleCompleted,
-}) {
+export default function InitiativeDetailsPage() {
   const router = useRouter();
-  const { id } = router.query;
+  const { id: initiativeId } = router.query;
 
-  const selectedInitiative = initiatives.find(
-    (initiative) => initiative._id === id
-  );
+  const {
+    data: initiative,
+    error,
+    isLoading,
+    mutate,
+  } = useSWR(initiativeId ? `/api/initiatives/${initiativeId}` : null);
 
-  if (!selectedInitiative) {
+  if (error) {
     return (
       <div>
-        <h1>Initiative Not Found</h1>
-        <p>We could not find an initiative with the provided ID.</p>
+        <h1>Error</h1>
+        <p>Failed to load initiative: {error.message}</p>
         <StyledLink href="/">Go Back to List</StyledLink>
       </div>
     );
   }
 
-  function handleDelete() {
-    onDeleteInitiative(id);
-    router.push("/");
+  if (error) return <p>❌Error loading: {error.message}</p>;
+  if (isLoading) return <p>⏳ Fetching...</p>;
+  if (!initiative) {
+    return <p>Loading...</p>;
+  }
+
+  async function handleDeleteInitiative() {
+    try {
+      await fetch(`/api/initiatives/${initiativeId}`, { method: "DELETE" });
+      mutate();
+      router.push("/");
+    } catch (err) {
+      console.error("Error deleting initiative:", err);
+    }
+  }
+
+  async function handleToggleCompleted() {
+    try {
+      await fetch(`/api/initiatives/${initiativeId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isCompleted: !initiative.isCompleted }),
+      });
+      mutate();
+    } catch (err) {
+      console.error("Error toggling initiative completion:", err);
+    }
   }
 
   return (
     <InitiativeDetailPage
-      id={selectedInitiative._id}
-      title={selectedInitiative.title}
-      description={selectedInitiative.description}
-      deadline={selectedInitiative.deadline}
-      isCompleted={selectedInitiative.isCompleted}
-      tags={selectedInitiative.tags}
-      onDelete={handleDelete}
-      onToggleCompleted={onToggleCompleted}
-      tasks={selectedInitiative.tasks}
+      initiativeId={initiative._id}
+      onDelete={handleDeleteInitiative}
+      onToggleCompleted={handleToggleCompleted}
     />
   );
 }
+
+// Styled Components
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+`;

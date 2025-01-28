@@ -1,28 +1,65 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import useSWR from "swr";
 import styled from "styled-components";
 
-const DEFAULT_VALUES = {
-  title: "",
-  description: "",
-  status: "Pending",
-};
-
-export default function TaskForm({
-  onSubmit,
-  taskToEdit = null,
-  isEditMode = false,
-}) {
+export default function TaskForm({ isEditMode = false, initiativeId, taskId }) {
   const router = useRouter();
-  const { id: initiativeId } = router.query;
+
+  const {
+    data: initiatives,
+    error,
+    isLoading,
+    mutate,
+  } = useSWR("/api/initiatives");
+  const initiative = initiatives?.find(
+    (initiative) => initiative._id === initiativeId
+  );
+  const task = initiative?.tasks?.find((task) => task._id === taskId) || {};
 
   const [formData, setFormData] = useState({
-    ...DEFAULT_VALUES,
-    ...taskToEdit,
+    title: task?.title || "",
+    description: task?.description || "",
+    status: task?.status || "Pending",
   });
 
   const [errors, setErrors] = useState({});
   const [isDialogVisible, setIsDialogVisible] = useState(false);
+
+  if (error) return <p>❌Error loading: {error.message}</p>;
+  if (isLoading) return <p>⏳ Fetching...</p>;
+  if (!initiatives) return <p>Loading...</p>;
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+    setErrors({});
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }
+
+  async function saveChanges() {
+    try {
+      const payload = { ...formData };
+
+      if (isEditMode) {
+        await fetch(`/api/initiatives/${initiativeId}/tasks/${taskId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        await fetch(`/api/initiatives/${initiativeId}/tasks`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
+
+      mutate(); // Revalidate data
+      router.push(`/initiatives/${initiativeId}`);
+    } catch (err) {
+      console.error("Error saving task:", err);
+    }
+  }
 
   function validateForm() {
     const { title, description } = formData;
@@ -30,12 +67,6 @@ export default function TaskForm({
       title: title.trim() ? null : "Title is required",
       description: description.trim() ? null : "Description is required",
     };
-  }
-
-  function handleChange(event) {
-    const { name, value } = event.target;
-    setErrors({});
-    setFormData((prev) => ({ ...prev, [name]: value }));
   }
 
   function handleSubmit(event) {
@@ -54,32 +85,9 @@ export default function TaskForm({
     }
   }
 
-  function saveChanges() {
-    const { title, description, status } = formData;
-
-    const newErrors = {
-      title: title.trim() ? null : "Title is required",
-      description: description.trim() ? null : "Description is required",
-    };
-
-    if (Object.values(newErrors).some((error) => error)) {
-      setErrors(newErrors);
-      return;
-    }
-
-    const updatedTask = { ...formData, status };
-
-    onSubmit(updatedTask).then((savedTask) => {
-      router.replace({
-        pathname: `/initiatives/${initiativeId}/tasks/${savedTask._id}`,
-        query: { success: "true" },
-      });
-    });
-  }
-
   return (
     <Form onSubmit={handleSubmit}>
-      <Heading>{isEditMode ? "Edit Task" : "Add task"}</Heading>
+      <Heading>{isEditMode ? "Edit Task" : "Add Task"}</Heading>
       <Label>
         Task Title
         <Input

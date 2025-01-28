@@ -4,22 +4,22 @@ import { useState, useEffect } from "react";
 import CompletedInitiative from "./CompletedInitiative";
 import { useSearchParams } from "next/navigation";
 import { format } from "date-fns";
+import useSWR from "swr";
 
 export default function InitiativeDetailPage({
-  id,
-  title,
-  description,
-  tags,
-  deadline,
+  initiativeId,
   onDelete,
   onToggleCompleted,
-  isCompleted,
-  tasks,
 }) {
+  const {
+    data: initiative,
+    error,
+    isLoading,
+  } = useSWR(initiativeId ? `/api/initiatives/${initiativeId}` : null);
+
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
   const searchParams = useSearchParams();
   const [showEditSuccess, setShowEditSuccess] = useState(false);
-  const formattedDeadline = deadline ? format(new Date(deadline), "dd.MM.yyyy") : "No deadline";
 
   useEffect(() => {
     if (searchParams.get("success") === "true") {
@@ -29,7 +29,20 @@ export default function InitiativeDetailPage({
     }
   }, [searchParams]);
 
-  const allUploadedImages = (tasks || [])
+  const {
+    title,
+    description,
+    tags,
+    deadline,
+    isCompleted,
+    tasks = [],
+  } = initiative;
+
+  const formattedDeadline = deadline
+    ? format(new Date(deadline), "dd.MM.yyyy")
+    : "No deadline";
+
+  const allUploadedImages = tasks
     .filter((task) => task.uploadedImages?.length > 0)
     .flatMap((task) =>
       task.uploadedImages.map((file) => ({
@@ -57,6 +70,9 @@ export default function InitiativeDetailPage({
     }
     return text;
   }
+
+  if (error) return <p>❌Error loading: {error.message}</p>;
+  if (isLoading) return <p>⏳ Fetching...</p>;
 
   return (
     <PageContainer>
@@ -94,12 +110,12 @@ export default function InitiativeDetailPage({
           <DialogOverlay>
             <ConfirmationDialog>
               <h2>✔️</h2>
-              <p>Your Initiative has been updated successfully!</p>
+              <p>Your initiative has been updated successfully!</p>
             </ConfirmationDialog>
           </DialogOverlay>
         )}
         <CompletedContainer>
-          <button onClick={() => onToggleCompleted(id)}>
+          <button onClick={onToggleCompleted}>
             {isCompleted ? (
               <>
                 Completed <CompletedInitiative isCompleted={isCompleted} />
@@ -112,16 +128,16 @@ export default function InitiativeDetailPage({
         <TasksGrid>
           <StyledLinkTask
             $variant="addTaskCard"
-            href={`/initiatives/${id}/tasks/createTask`}
+            href={`/initiatives/${initiativeId}/tasks/createTask`}
           >
             <span>➕</span>
             <h2>Add task</h2>
           </StyledLinkTask>
-          {tasks?.length > 0 ? (
+          {tasks.length > 0 ? (
             tasks.map((task) => (
               <StyledLinkTask
-                key={task.id}
-                href={`/initiatives/${id}/tasks/${task._id}`}
+                key={task._id}
+                href={`/initiatives/${initiativeId}/tasks/${task._id}`}
               >
                 <TaskCard>
                   <h2>{truncateText(task.title, 10)}</h2>
@@ -133,7 +149,8 @@ export default function InitiativeDetailPage({
             ))
           ) : (
             <NoTasksMessage>
-              No tasks available yet <br></br> Please add some!
+              No tasks available yet <br />
+              Please add some!
             </NoTasksMessage>
           )}
         </TasksGrid>
@@ -157,7 +174,7 @@ export default function InitiativeDetailPage({
       <Footer>
         <StyledLink href="/">Back</StyledLink>
         <Button onClick={() => setDeleteButtonClicked(true)}>Delete</Button>
-        <StyledLink href={`/initiatives/${id}/edit`}>Edit</StyledLink>
+        <StyledLink href={`/initiatives/${initiativeId}/edit`}>Edit</StyledLink>
       </Footer>
     </PageContainer>
   );

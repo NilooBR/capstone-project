@@ -3,51 +3,67 @@ import Link from "next/link";
 import CompletedInitiative from "./CompletedInitiative";
 import { useState, useRef, useEffect } from "react";
 import { format } from "date-fns";
+import useSWR from "swr";
 
 export default function InitiativeCard({
-  id,
-  title,
-  tags,
-  deadline,
+  id: initiativeId,
   onDelete,
   isCompleted,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const modalRef = useRef(null);
-  const formattedDeadline = deadline ? format(new Date(deadline), "dd.MM.yyyy") : "No deadline";
 
-  const handleOutsideClick = (event) => {
-    if (modalRef.current && !modalRef.current.contains(event.target)) {
-      setIsModalOpen(false);
-    }
-  };
+  const {
+    data: initiative,
+    error,
+    isLoading,
+  } = useSWR(initiativeId ? `/api/initiatives/${initiativeId}` : null);
 
   useEffect(() => {
-    if (isModalOpen) {
-      document.addEventListener("mousedown", handleOutsideClick);
+    function handleOutsideClick(event) {
+      if (
+        isModalOpen &&
+        modalRef.current &&
+        !modalRef.current.contains(event.target)
+      ) {
+        setIsModalOpen(false);
+      }
     }
+
+    document.addEventListener("mousedown", handleOutsideClick);
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [isModalOpen]);
 
-  function truncateText(text, maxLength) {
+  const formattedDeadline = initiative?.deadline
+    ? format(new Date(initiative.deadline), "dd.MM.yyyy")
+    : "No deadline";
+
+  const handleModalToggle = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  const truncateText = (text, maxLength) => {
     if (text.length > maxLength) {
       return text.substring(0, maxLength) + "...";
     }
     return text;
-  }
+  };
+
+  if (error) return <p>❌Error loading: {error.message}</p>;
+  if (isLoading) return <p>⏳ Fetching...</p>;
 
   return (
     <Card isCompleted={isCompleted}>
-      <TopLeftButton onClick={() => setIsModalOpen(true)}>...</TopLeftButton>
-      <StyledLink href={`/initiatives/${id}`}>
+      <TopLeftButton onClick={handleModalToggle}>...</TopLeftButton>
+      <StyledLink href={`/initiatives/${initiativeId}`}>
         <StyledSpan>
-          {truncateText(title, 20)}
-          <CompletedInitiative isCompleted={isCompleted} />{" "}
+          {truncateText(initiative?.title || "Loading...", 20)}
+          <CompletedInitiative isCompleted={initiative?.isCompleted} />{" "}
         </StyledSpan>
         <TagList>
-          {tags.map((tag) => (
+          {initiative?.tags?.map((tag) => (
             <Tag key={tag}>{tag}</Tag>
           ))}
         </TagList>
@@ -56,9 +72,11 @@ export default function InitiativeCard({
 
       {isModalOpen && (
         <Modal ref={modalRef}>
-          <LinkButton href={`/initiatives/${id}/edit`}>Edit</LinkButton>
-          <Button onClick={() => onDelete(id)}>Delete</Button>
-          <Button onClick={() => setIsModalOpen(false)}>Close</Button>
+          <LinkButton href={`/initiatives/${initiativeId}/edit`}>
+            Edit
+          </LinkButton>
+          <Button onClick={() => onDelete(initiativeId)}>Delete</Button>
+          <Button onClick={handleModalToggle}>Close</Button>
         </Modal>
       )}
     </Card>
