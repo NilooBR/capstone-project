@@ -36,6 +36,7 @@ export default function InitiativeList() {
 
   if (isLoading) return <p>⏳ Fetching...</p>;
   if (error) return <p>❌ Error loading: {error.message}</p>;
+  if (!initiatives) return <p>⏳ Loading...</p>;
 
   async function handleDelete(initiativeId) {
     await fetch(`/api/initiatives/${initiativeId}`, { method: "DELETE" });

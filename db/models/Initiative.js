@@ -26,7 +26,7 @@ const InitiativeSchema = new Schema({
   },
   tasks: [
     {
-      type: Schema.Types.ObjectId,
+      type: [{ type: Schema.Types.ObjectId, ref: "Task" }],
       ref: "Task",
     },
   ],

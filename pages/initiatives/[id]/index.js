@@ -27,9 +27,7 @@ export default function InitiativeDetailsPage() {
 
   if (error) return <p>❌Error loading: {error.message}</p>;
   if (isLoading) return <p>⏳ Fetching...</p>;
-  if (!initiative) {
-    return <p>Loading...</p>;
-  }
+  if (!initiative) return <p>Loading...</p>;
 
   async function handleDeleteInitiative() {
     try {

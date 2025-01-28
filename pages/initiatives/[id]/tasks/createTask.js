@@ -24,5 +24,7 @@ export default function CreateTaskPage() {
     router.push(`/initiatives/${initiativeId}`);
   }
 
-  return <TaskForm onSubmit={handleCreateTask} initiatives={initiatives} />;
+  if (!initiativeId) return <p>Loading...</p>;
+
+  return <TaskForm onSubmit={handleCreateTask} initiativeId={initiativeId} />;
 }

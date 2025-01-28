@@ -53,6 +53,7 @@ export default function InitiativeCard({
 
   if (error) return <p>❌Error loading: {error.message}</p>;
   if (isLoading) return <p>⏳ Fetching...</p>;
+  if (!initiative) return <p>⏳ Loading...</p>;
 
   return (
     <Card isCompleted={isCompleted}>
