@@ -54,7 +54,7 @@ export default function TaskForm({ isEditMode = false, initiativeId, taskId }) {
         });
       }
 
-      mutate(); // Revalidate data
+      mutate();
       router.push(`/initiatives/${initiativeId}`);
     } catch (err) {
       console.error("Error saving task:", err);
