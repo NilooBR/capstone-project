@@ -12,11 +12,12 @@ export default function CreateTaskPage() {
       body: JSON.stringify(newTask),
     });
     const data = await response.json();
+    console.log(data)
     if (!response.ok) {
       throw new Error(`Task creation failed ${response.status}`);
     }
 
-    router.push(`/initiatives/${initiativeId}/tasks/${data._id}`);
+    router.push(`/initiatives/${initiativeId}/tasks/${data?.task?._id}`);
   }
 
   if (!initiativeId) return <p>Loading...</p>;
