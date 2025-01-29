@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -71,14 +72,15 @@ export default function InitiativeForm({
   }
 
   function handleSubmit(event) {
-    event.preventDefault();
+    if (event && event.preventDefault) {
+      event.preventDefault();
+    }
     const { title, description, deadline, tags } = formData;
 
     const tagList = tags
       .split(",")
       .map((tag) => tag.trim())
       .filter((tag) => tag !== "");
-
     const newErrors = {
       title: title.trim() ? null : "Title is required",
       description: description.trim() ? null : "Description is required",
@@ -93,10 +95,7 @@ export default function InitiativeForm({
 
     const formattedDeadline = formatDeadlineForDatabase(deadline);
     if (!formattedDeadline) {
-      setErrors((prev) => ({
-        ...prev,
-        deadline: "Invalid deadline format",
-      }));
+      setErrors((prev) => ({ ...prev, deadline: "Invalid deadline format" }));
       return;
     }
 
@@ -104,38 +103,6 @@ export default function InitiativeForm({
       ...formData,
       tags: tagList,
       deadline: formattedDeadline,
-    };
-
-    onSubmit(updatedInitiative);
-  }
-
-  function handleCancel() {
-    setIsDialogVisible(true);
-  }
-
-  function saveChanges() {
-    setIsDialogVisible(false);
-
-    const { title, description, deadline, tags } = formData;
-
-    const formattedDeadline = formatDeadlineForDatabase(deadline);
-    if (formattedDeadline === null) {
-      setErrors((prev) => ({
-        ...prev,
-        deadline: "Invalid deadline format",
-      }));
-      return;
-    }
-
-    const tagList = tags
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter((tag) => tag !== "");
-
-    const updatedInitiative = {
-      ...formData,
-      deadline: formattedDeadline,
-      tags: tagList,
     };
 
     onSubmit(updatedInitiative);
@@ -143,6 +110,11 @@ export default function InitiativeForm({
       pathname: `/initiatives/${updatedInitiative.id}`,
       query: { success: "true" },
     });
+  }
+
+  function handleCancel(event) {
+    event.preventDefault();
+    setIsDialogVisible(true);
   }
 
   function navigateAway() {
@@ -210,23 +182,36 @@ export default function InitiativeForm({
         />
         {errors.tags && <Error>{errors.tags}</Error>}
       </Label>
+
       <ConfirmationDialog
         isVisible={isDialogVisible}
         message="You have unsaved changes. Would you like to save your edits?"
-        onSaveAndContinue={saveChanges}
-        onDiscardChanges={navigateAway}
-        onCancel={() => setIsDialogVisible(false)}
+        onSaveAndContinue={() => {
+          setIsDialogVisible(false);
+          handleSubmit({ preventDefault: () => {} });
+        }}
+        onDiscardChanges={() => {
+          setIsDialogVisible(false);
+          navigateAway();
+        }}
+        onCancel={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDialogVisible(false);
+        }}
       />
+
       <ButtonGroup>
-        <Button type="button" onClick={handleCancel}>
+        <StyledLink href="/" onClick={handleCancel}>
           Cancel
-        </Button>
-        <Button
-          type="submit"
+        </StyledLink>
+        <StyledLink
+          href="#"
+          onClick={handleSubmit}
           disabled={Object.values(errors).some((error) => error)}
         >
           {isEditMode ? "Save" : "Create"}
-        </Button>
+        </StyledLink>
       </ButtonGroup>
     </Form>
   );
@@ -297,16 +282,14 @@ const Error = styled.p`
   font-size: 0.8rem;
 `;
 
-const Button = styled.button`
+const StyledLink = styled(Link)`
   padding: 10px 20px;
-  border: none;
   border-radius: 50px;
   background-color: var(--buttons);
   color: var(--contrasttext);
-  cursor: pointer;
-  border: none;
+  text-decoration: none;
+  text-align: center;
   font-size: 12px;
-
   &:hover {
     background-color: var(--accents);
   }

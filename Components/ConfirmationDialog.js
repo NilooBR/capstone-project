@@ -11,8 +11,8 @@ export default function ConfirmationDialog({
   if (!isVisible) return null;
 
   return (
-    <DialogOverlay>
-      <DialogBox>
+    <DialogOverlay onClick={(e) => e.stopPropagation()}>
+      <DialogBox onClick={(e) => e.stopPropagation()}>
         <p>{message}</p>
         <ButtonGroup>
           <DialogButton onClick={onSaveAndContinue}>

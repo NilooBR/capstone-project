@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import styled from "styled-components";
 import ConfirmationDialog from "./ConfirmationDialog";
 
@@ -35,7 +36,9 @@ export default function TaskForm({
   }
 
   function handleSubmit(event) {
-    event.preventDefault();
+    if (event && event.preventDefault) {
+      event.preventDefault();
+    }
     const newErrors = validateForm();
     setErrors(newErrors);
 
@@ -44,26 +47,21 @@ export default function TaskForm({
     }
 
     onSubmit(formData);
-  }
-
-  function saveChanges() {
-    setIsDialogVisible(false);
-
-    const updatedTask = {
-      ...task,
-      ...formData,
-    };
-    onSubmit(updatedTask);
     router.replace({
-      pathname: `/initiatives/${initiativeId}/tasks/${updatedTask.id}`,
+      pathname: `/initiatives/${initiativeId}/tasks/${task?.id || "new"}`,
       query: { success: "true" },
     });
+  }
+
+  function handleCancel(event) {
+    event.preventDefault();
+    setIsDialogVisible(true);
   }
 
   function navigateAway() {
     setIsDialogVisible(false);
     router.push(
-      isEditMode ? `/initiatives/${initiativeId}/tasks/${task.id}` : "/"
+      isEditMode ? `/initiatives/${initiativeId}/tasks/${task?.id}` : "/"
     );
   }
 
@@ -102,18 +100,36 @@ export default function TaskForm({
           <option value="Completed">Completed</option>
         </StyledSelect>
       </Label>
+
       <ConfirmationDialog
         isVisible={isDialogVisible}
         message="You have unsaved changes. Would you like to save your edits?"
-        onSaveAndContinue={saveChanges}
-        onDiscardChanges={navigateAway}
-        onCancel={() => setIsDialogVisible(false)}
+        onSaveAndContinue={() => {
+          setIsDialogVisible(false);
+          handleSubmit({ preventDefault: () => {} });
+        }}
+        onDiscardChanges={() => {
+          setIsDialogVisible(false);
+          navigateAway();
+        }}
+        onCancel={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDialogVisible(false);
+        }}
       />
+
       <ButtonGroup>
-        <Button type="button" onClick={() => setIsDialogVisible(true)}>
+        <StyledLink href="/" onClick={handleCancel}>
           Cancel
-        </Button>
-        <Button type="submit">{isEditMode ? "Save" : "Create"}</Button>
+        </StyledLink>
+        <StyledLink
+          href="#"
+          onClick={handleSubmit}
+          disabled={Object.values(errors).some((error) => error)}
+        >
+          {isEditMode ? "Save" : "Create"}
+        </StyledLink>
       </ButtonGroup>
     </Form>
   );
@@ -195,17 +211,22 @@ const ButtonGroup = styled.div`
   margin-top: auto;
 `;
 
-const Button = styled.button`
+const StyledLink = styled(Link)`
   padding: 10px 20px;
-  border: none;
   border-radius: 50px;
   background-color: var(--buttons);
   color: var(--contrasttext);
+  text-decoration: none;
+  text-align: center;
+  font-size: 12px;
   cursor: pointer;
-  border: none;
-  font-size: 10px;
 
   &:hover {
     background-color: var(--accents);
+  }
+
+  &[disabled] {
+    pointer-events: none;
+    opacity: 0.5;
   }
 `;
