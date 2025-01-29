@@ -45,10 +45,7 @@ export default function TaskForm({
     }
 
     onSubmit(formData);
-    router.replace({
-      pathname: `/initiatives/${initiativeId}/tasks/${task?.id}`,
-      query: { success: "true" },
-    });
+    
   }
 
   function handleCancel(event) {
@@ -59,7 +56,7 @@ export default function TaskForm({
   function navigateAway() {
     setIsDialogVisible(false);
     router.push(
-      isEditMode ? `/initiatives/${initiativeId}/tasks/${task?.id}` : "/"
+      isEditMode ? `/initiatives/${initiativeId}/tasks/${task._id}` : "/"
     );
   }
 

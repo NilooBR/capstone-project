@@ -12,7 +12,6 @@ export default function CreateTaskPage() {
       body: JSON.stringify(newTask),
     });
     const data = await response.json();
-    console.log(data)
     if (!response.ok) {
       throw new Error(`Task creation failed ${response.status}`);
     }

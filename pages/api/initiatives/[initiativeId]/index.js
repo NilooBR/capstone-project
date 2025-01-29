@@ -1,5 +1,6 @@
 import dbConnect from "@/db/connect";
 import Initiative from "@/db/models/Initiative";
+import Task from "@/db/models/Task";
 import mongoose from "mongoose";
 
 export default async function handler(request, response) {
@@ -51,8 +52,11 @@ export default async function handler(request, response) {
   }
 
   if (request.method === "DELETE") {
-    try {
-      await Initiative.findByIdAndDelete(initiativeId);
+    try {  
+      const deletedInitiative = await Initiative.findByIdAndDelete(initiativeId);
+      deletedInitiative.tasks.forEach(async (taskId) => {
+        await Task.findByIdAndDelete(taskId) 
+      });
       response.status(200).json("Initiative successfully deleted");
       return;
     } catch (error) {

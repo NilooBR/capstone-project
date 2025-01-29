@@ -36,10 +36,7 @@ export default async function handler(request, response) {
 
   if (request.method === "DELETE") {
     try {
-      const deletedInitiative = await Task.findByIdAndDelete(taskId);
-      deletedInitiative.tasks.forEach(async (taskId) => {
-        await Task.findByIdAndDelete(taskId) 
-      });
+      await Task.findByIdAndDelete(taskId);
       response.status(200).json("Task successfully deleted");
       return;
     } catch (error) {
