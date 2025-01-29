@@ -67,11 +67,12 @@ export default function InitiativeCard({
 
       {isModalOpen && (
         <Modal ref={modalRef}>
+          <Button onClick={handleModalToggle}>Close</Button>
+
+          <Button onClick={() => onDelete(initiativeId)}>Delete</Button>
           <LinkButton href={`/initiatives/${initiativeId}/edit`}>
             Edit
           </LinkButton>
-          <Button onClick={() => onDelete(initiativeId)}>Delete</Button>
-          <Button onClick={handleModalToggle}>Close</Button>
         </Modal>
       )}
     </Card>

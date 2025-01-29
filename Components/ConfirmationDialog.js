@@ -15,13 +15,13 @@ export default function ConfirmationDialog({
       <DialogBox onClick={(e) => e.stopPropagation()}>
         <p>{message}</p>
         <ButtonGroup>
-          <DialogButton onClick={onSaveAndContinue}>
-            Save & Continue
-          </DialogButton>
+          <DialogButton onClick={onCancel}>Cancel</DialogButton>
           <DialogButton onClick={onDiscardChanges}>
             Continue without Saving
           </DialogButton>
-          <DialogButton onClick={onCancel}>Cancel</DialogButton>
+          <DialogButton onClick={onSaveAndContinue}>
+            Save & Continue
+          </DialogButton>
         </ButtonGroup>
       </DialogBox>
     </DialogOverlay>
