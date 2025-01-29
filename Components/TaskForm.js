@@ -48,7 +48,7 @@ export default function TaskForm({
 
     onSubmit(formData);
     router.replace({
-      pathname: `/initiatives/${initiativeId}/tasks/${task?.id || "new"}`,
+      pathname: `/initiatives/${initiativeId}/tasks/${task?.id}`,
       query: { success: "true" },
     });
   }
