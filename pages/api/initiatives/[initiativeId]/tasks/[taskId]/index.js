@@ -1,21 +1,18 @@
 import dbConnect from "@/db/connect";
-import Initiative from "@/db/models/Initiative";
 import Task from "@/db/models/Task";
 
 export default async function handler(request, response) {
   await dbConnect();
-  const { initiativeId, taskId } = request.query;
+  const { taskId } = request.query;
 
   if (request.method === "GET") {
-    const initiative = await Initiative.findById(initiativeId).populate(
-      "tasks"
-    );
-    if (!initiative) {
+    const task = await Task.findById(taskId)
+    if (!task) {
       return response
         .status(404)
-        .json({ success: false, message: "Initiative not found." });
+        .json({ success: false, message: "Task not found." });
     }
-    return response.status(200).json({ success: true, data: initiative });
+    return response.status(200).json({ success: true, data: task });
   }
 
   if (request.method === "PUT") {
@@ -39,7 +36,10 @@ export default async function handler(request, response) {
 
   if (request.method === "DELETE") {
     try {
-      await Task.findByIdAndDelete(taskId);
+      const deletedInitiative = await Task.findByIdAndDelete(taskId);
+      deletedInitiative.tasks.forEach(async (taskId) => {
+        await Task.findByIdAndDelete(taskId) 
+      });
       response.status(200).json("Task successfully deleted");
       return;
     } catch (error) {
