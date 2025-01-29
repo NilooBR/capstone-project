@@ -29,8 +29,8 @@ export default async function handler(request, response) {
 
   if (request.method === "GET") {
     try {
-      const tasks = await Initiative.findById(initiativeId).populate("tasks");
-      response.status(200).json({ success: true, tasks });
+      const initiative = await Initiative.findById(initiativeId).populate("tasks");
+      response.status(200).json({ success: true, initiative });
     } catch (error) {
       response.status(500).json({ success: false, message: error.message });
     }

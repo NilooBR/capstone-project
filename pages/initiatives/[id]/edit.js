@@ -6,7 +6,15 @@ export default function EditInitiativePage() {
   const router = useRouter();
   const { id: initiativeId } = router.query;
 
-  const { data: initiativeToEdit } = useSWR(`/api/initiatives/${initiativeId}`);
+  const {
+    data: initiativeToEdit,
+    error,
+    isLoading,
+  } = useSWR(initiativeId ? `/api/initiatives/${initiativeId}` : null);
+
+  if (error) return <p>❌ Error loading: {error.message}</p>;
+  if (isLoading) return <p>⏳ Fetching...</p>;
+  if (!initiativeToEdit) return <h2>initiative not found</h2>;
 
   async function handleEditInitiative(updatedInitiative) {
     const response = await fetch(`/api/initiatives/${initiativeId}`, {

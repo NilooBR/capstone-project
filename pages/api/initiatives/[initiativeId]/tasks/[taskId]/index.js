@@ -21,7 +21,7 @@ export default async function handler(request, response) {
   if (request.method === "PUT") {
     try {
       const updatedTask = request.body;
-      const result = await Task.findByIdAndUpdate(initiativeId, updatedTask);
+      const result = await Task.findByIdAndUpdate(taskId, updatedTask);
 
       if (!result) {
         return response.status(404).json({ status: "Task not found" });
@@ -40,7 +40,7 @@ export default async function handler(request, response) {
   if (request.method === "DELETE") {
     try {
       await Task.findByIdAndDelete(taskId);
-      response.status(260).json("Task successfully deleted");
+      response.status(200).json("Task successfully deleted");
       return;
     } catch (error) {
       console.error("Error updating task:", error);

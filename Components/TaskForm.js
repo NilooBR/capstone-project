@@ -36,9 +36,7 @@ export default function TaskForm({
   }
 
   function handleSubmit(event) {
-    if (event && event.preventDefault) {
-      event.preventDefault();
-    }
+    if (event) event.preventDefault();
     const newErrors = validateForm();
     setErrors(newErrors);
 
@@ -106,7 +104,7 @@ export default function TaskForm({
         message="You have unsaved changes. Would you like to save your edits?"
         onSaveAndContinue={() => {
           setIsDialogVisible(false);
-          handleSubmit({ preventDefault: () => {} });
+          handleSubmit();
         }}
         onDiscardChanges={() => {
           setIsDialogVisible(false);

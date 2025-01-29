@@ -53,7 +53,7 @@ export default async function handler(request, response) {
   if (request.method === "DELETE") {
     try {
       await Initiative.findByIdAndDelete(initiativeId);
-      response.status(260).json("Initiative successfully deleted");
+      response.status(200).json("Initiative successfully deleted");
       return;
     } catch (error) {
       console.error("Error updating initiative:", error);

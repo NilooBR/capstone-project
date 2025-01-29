@@ -18,7 +18,11 @@ export default function TaskDetailPage() {
     mutate,
     isLoading,
     error,
-  } = useSWR(`/api/initiatives/${initiativeId}/tasks/${taskId}`);
+  } = useSWR(
+    initiativeId && taskId
+      ? `/api/initiatives/${initiativeId}/tasks/${taskId}`
+      : null
+  );
 
   if (!initiativeId || !taskId) return <p>Loading...</p>;
 

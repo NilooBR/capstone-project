@@ -15,16 +15,6 @@ export default function InitiativeDetailsPage() {
     mutate,
   } = useSWR(initiativeId ? `/api/initiatives/${initiativeId}` : null);
 
-  if (error) {
-    return (
-      <div>
-        <h1>Error</h1>
-        <p>Failed to load initiative: {error.message}</p>
-        <StyledLink href="/">Go Back to List</StyledLink>
-      </div>
-    );
-  }
-
   if (error) return <p>❌Error loading: {error.message}</p>;
   if (isLoading) return <p>⏳ Fetching...</p>;
   if (!initiative) return <p>Loading...</p>;

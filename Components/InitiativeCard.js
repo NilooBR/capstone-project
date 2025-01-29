@@ -4,6 +4,7 @@ import CompletedInitiative from "./CompletedInitiative";
 import { useState, useRef, useEffect } from "react";
 import { format } from "date-fns";
 import useSWR from "swr";
+import truncateText from "@/utility/truncateText";
 
 export default function InitiativeCard({
   id: initiativeId,
@@ -40,16 +41,9 @@ export default function InitiativeCard({
     ? format(new Date(initiative.deadline), "dd.MM.yyyy")
     : "No deadline";
 
-  const handleModalToggle = () => {
+  function handleModalToggle() {
     setIsModalOpen(!isModalOpen);
-  };
-
-  const truncateText = (text, maxLength) => {
-    if (text.length > maxLength) {
-      return text.substring(0, maxLength) + "...";
-    }
-    return text;
-  };
+  }
 
   if (error) return <p>❌Error loading: {error.message}</p>;
   if (isLoading) return <p>⏳ Fetching...</p>;

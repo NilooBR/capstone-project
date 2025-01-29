@@ -2,24 +2,14 @@ import GlobalStyle from "../styles";
 import styled from "styled-components";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { SWRConfig } from "swr";
-import { useEffect, useState } from "react";
+import useLocalStorage from "use-local-storage";
 
 export default function App({ Component, pageProps }) {
-  const [theme, setTheme] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("theme") || "light";
-    }
-    return "light";
-  });
-
-  useEffect(() => {
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+  const [theme, setTheme] = useLocalStorage("theme", "light");
 
   function toggleTheme() {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+    setTheme(theme === "light" ? "dark" : "light");
   }
-
 
   return (
     <SWRConfig

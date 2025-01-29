@@ -4,6 +4,7 @@ import { useState } from "react";
 import CompletedInitiative from "./CompletedInitiative";
 import { format } from "date-fns";
 import useSWR from "swr";
+import truncateText from "@/utility/truncateText";
 
 export default function InitiativeDetailPage({
   initiativeId,
@@ -56,12 +57,6 @@ export default function InitiativeDetailPage({
     }
   }
 
-  function truncateText(text, maxLength) {
-    return text.length > maxLength
-      ? text.substring(0, maxLength) + "..."
-      : text;
-  }
-
   return (
     <PageContainer>
       <Content>
@@ -74,7 +69,7 @@ export default function InitiativeDetailPage({
           {tags.length > 0 ? (
             tags.map((tag) => <Tag key={tag}>{tag}</Tag>)
           ) : (
-            <EmptyMessage></EmptyMessage>
+            <EmptyMessage>No tags available</EmptyMessage>
           )}
         </TagList>
         {deleteButtonClicked && (

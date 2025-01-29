@@ -72,9 +72,7 @@ export default function InitiativeForm({
   }
 
   function handleSubmit(event) {
-    if (event && event.preventDefault) {
-      event.preventDefault();
-    }
+    if (event) event.preventDefault();
     const { title, description, deadline, tags } = formData;
 
     const tagList = tags
@@ -188,7 +186,7 @@ export default function InitiativeForm({
         message="You have unsaved changes. Would you like to save your edits?"
         onSaveAndContinue={() => {
           setIsDialogVisible(false);
-          handleSubmit({ preventDefault: () => {} });
+          handleSubmit();
         }}
         onDiscardChanges={() => {
           setIsDialogVisible(false);
