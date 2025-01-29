@@ -34,8 +34,8 @@ export default function InitiativeDetailsPage() {
       await fetch(`/api/initiatives/${initiativeId}`, { method: "DELETE" });
       mutate();
       router.push("/");
-    } catch (err) {
-      console.error("Error deleting initiative:", err);
+    } catch (error) {
+      console.error("Error deleting initiative:", error);
     }
   }
 
@@ -47,8 +47,8 @@ export default function InitiativeDetailsPage() {
         body: JSON.stringify({ isCompleted: !initiative.isCompleted }),
       });
       mutate();
-    } catch (err) {
-      console.error("Error toggling initiative completion:", err);
+    } catch (error) {
+      console.error("Error toggling initiative completion:", error);
     }
   }
 

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Task from "./Task";
 const { Schema } = mongoose;
 
 const InitiativeSchema = new Schema({
@@ -24,12 +25,9 @@ const InitiativeSchema = new Schema({
       message: "Deadline must be in the future.",
     },
   },
-  tasks: [
-    {
-      type: [{ type: Schema.Types.ObjectId, ref: "Task" }],
-      ref: "Task",
-    },
-  ],
+  tasks: {
+    type: [{ type: Schema.Types.ObjectId, ref: "Task" }],
+  },
   isCompleted: {
     type: Boolean,
     default: false,

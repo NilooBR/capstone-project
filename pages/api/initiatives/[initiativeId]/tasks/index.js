@@ -2,43 +2,40 @@ import dbConnect from "@/db/connect";
 import Initiative from "@/db/models/Initiative";
 import Task from "@/db/models/Task";
 
-export default async function handler(req, res) {
+export default async function handler(request, response) {
   await dbConnect();
-  const { initiativeId } = req.query;
+  const { initiativeId } = request.query;
 
-  if (req.method === "POST") {
+  if (request.method === "POST") {
     try {
-      const { title, description, status, uploadedImages } = req.body;
+      const { title, description, status } = request.body;
 
       const newTask = await Task.create({
         title,
         description,
         status,
-        uploadedImages,
       });
 
       await Initiative.findByIdAndUpdate(initiativeId, {
         $push: { tasks: newTask._id },
       });
 
-      res.status(201).json({ success: true, task: newTask });
+      response.status(201).json({ success: true, task: newTask });
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
+      response.status(500).json({ success: false, message: error.message });
     }
     return;
   }
 
-  if (req.method === "GET") {
+  if (request.method === "GET") {
     try {
-      const tasks = await Initiative.findById(initiativeId)
-        .populate("tasks")
-        .select("tasks");
-      res.status(200).json({ success: true, tasks });
+      const tasks = await Initiative.findById(initiativeId).populate("tasks");
+      response.status(200).json({ success: true, tasks });
     } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
+      response.status(500).json({ success: false, message: error.message });
     }
     return;
   }
 
-  res.status(405).json({ success: false, message: "Method not allowed." });
+  response.status(405).json({ success: false, message: "Method not allowed." });
 }

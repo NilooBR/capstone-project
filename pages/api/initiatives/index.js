@@ -26,9 +26,8 @@ export default async function handler(request, response) {
         title,
         description,
         deadline,
-        tags: tags || [],
+        tags: tags,
         isCompleted: false,
-        tasks: [],
       });
 
       response.status(201).json({ success: true, data: newInitiative });

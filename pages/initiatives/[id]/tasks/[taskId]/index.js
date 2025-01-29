@@ -1,42 +1,24 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 
 export default function TaskDetailPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { id: initiativeId, taskId } = router.query;
 
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showEditSuccess, setShowEditSuccess] = useState(false);
 
   const {
-    data: initiatives,
-    error,
-    isLoading,
+    data: task,
     mutate,
-  } = useSWR("/api/initiatives");
-
-  useEffect(() => {
-    if (searchParams.get("success") === "true") {
-      setShowEditSuccess(true);
-      const timeout = setTimeout(() => setShowEditSuccess(false), 3000);
-      return () => clearTimeout(timeout);
-    }
-  }, [searchParams]);
-
-  if (error) return <p>❌Error loading: {error.message}</p>;
-  if (isLoading) return <p>⏳ Fetching...</p>;
-  if (!initiatives) return <p>Loading...</p>;
-
-  const initiative = initiatives.find((i) => i._id === initiativeId);
-  const task = initiative?.tasks?.find((t) => t._id === taskId);
+    isLoading,
+    error,
+  } = useSWR(`/api/initiatives/${initiativeId}/tasks/${taskId}`);
 
   if (!task) {
     return (
@@ -79,18 +61,17 @@ export default function TaskDetailPage() {
     });
 
     try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `/api/initiatives/${initiativeId}/tasks/${taskId}/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Upload failed with status ${response.status}`);
       }
-
-      const { images } = await response.json();
-
-      console.log("Uploaded Images:", images);
 
       mutate();
       setUploadMessage("Images uploaded successfully.");
@@ -103,12 +84,16 @@ export default function TaskDetailPage() {
   }
 
   async function handleDeleteImage(publicId) {
+    setLoading(true);
     try {
-      const response = await fetch("/api/delete", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ public_id: publicId }),
-      });
+      const response = await fetch(
+        `/api/initiatives/${initiativeId}/tasks/${taskId}/delete`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ public_id: publicId }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to delete image.");
@@ -119,6 +104,8 @@ export default function TaskDetailPage() {
     } catch (error) {
       console.error("Failed to delete image:", error);
       setUploadMessage("An error occurred while deleting the image.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -129,10 +116,13 @@ export default function TaskDetailPage() {
       });
       mutate();
       router.push(`/initiatives/${initiativeId}`);
-    } catch (err) {
-      console.error("Failed to delete task:", err);
+    } catch (error) {
+      console.error("Failed to delete task:", error);
     }
   }
+
+  if (error) return <p>❌Error loading: {error.message}</p>;
+  if (isLoading) return <p>⏳ Fetching...</p>;
 
   return (
     <PageContainer>
@@ -164,7 +154,7 @@ export default function TaskDetailPage() {
           {uploadMessage && <p>{uploadMessage}</p>}
           <ImagePreviewContainer>
             {task.uploadedImages?.map((image) => (
-              <ImageWrapper key={image.public_id}>
+              <ImageWrapper key={image.id}>
                 <a href={image.url} target="_blank">
                   <Image
                     src={image.url}
@@ -173,7 +163,7 @@ export default function TaskDetailPage() {
                     objectFit="contain"
                   />
                 </a>
-                <button onClick={() => handleDeleteImage(image.public_id)}>
+                <button onClick={() => handleDeleteImage(image.id)}>
                   Delete
                 </button>
               </ImageWrapper>
@@ -194,14 +184,6 @@ export default function TaskDetailPage() {
                   Yes, Delete
                 </ConfirmationDialogButton>
               </ButtonGroup>
-            </ConfirmationDialog>
-          </DialogOverlay>
-        )}
-        {showEditSuccess && (
-          <DialogOverlay>
-            <ConfirmationDialog>
-              <h2>✔️</h2>
-              <p>Your task has been updated successfully!</p>
             </ConfirmationDialog>
           </DialogOverlay>
         )}

@@ -3,19 +3,22 @@ import InitiativeCard from "./InitiativeCard";
 import Link from "next/link";
 import { useMemo } from "react";
 import useSWR from "swr";
+import { parse, isValid } from "date-fns";
 
 export default function InitiativeList() {
   const {
     data: initiatives,
     error,
+    mutate,
     isLoading,
   } = useSWR("/api/initiatives");
 
   const parsedDate = (date) => {
-    const splitDate = date.split(".");
-    const [day, month, year] = splitDate;
-    const formattedDate = new Date(`${year}-${month}-${day}`);
-    return formattedDate;
+    if (!date || typeof date !== "string") return new Date(0);
+
+    const parsed = parse(date, "dd.MM.yyyy", new Date());
+
+    return isValid(parsed) ? parsed : new Date(0);
   };
 
   const validInitiatives = useMemo(() => {

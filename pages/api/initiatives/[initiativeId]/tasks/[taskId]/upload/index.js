@@ -1,5 +1,6 @@
 import formidable from "formidable";
 import cloudinary from "cloudinary";
+import Task from "@/db/models/Task";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -14,6 +15,7 @@ export const config = {
 };
 
 export default async function handler(request, response) {
+  const { taskId } = request.query;
   if (request.method !== "POST") {
     response.status(400).json({ message: "Method not allowed" });
     return;
@@ -39,10 +41,14 @@ export default async function handler(request, response) {
 
       images.push({
         url: result.secure_url,
-        public_id: result.public_id,
-        original_filename: originalFilenames[index],
+        id: result.public_id,
+        displayName: originalFilenames[index],
       });
     }
+    await Task.findByIdAndUpdate(
+      taskId,
+      { $push: { uploadedImages: {$each: images}}},
+    )
 
     response.status(200).json({ images });
   } catch (error) {

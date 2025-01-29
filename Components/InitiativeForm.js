@@ -1,46 +1,41 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns";
+import { format, parse, isValid } from "date-fns";
 import { de } from "date-fns/locale";
+import ConfirmationDialog from "./ConfirmationDialog";
 
-export default function InitiativeForm({ isEditMode = false, initiativeId }) {
+export default function InitiativeForm({
+  isEditMode = false,
+  initiative,
+  onSubmit,
+}) {
   const router = useRouter();
-
-  const { data: initiatives, error, isLoading , mutate } = useSWR("/api/initiatives");
-
-  const validInitiatives = Array.isArray(initiatives) ? initiatives : [];
-
-  const currentInitiative =
-    validInitiatives.find((i) => i._id === initiativeId) || {};
-
   const [formData, setFormData] = useState({
-    title: currentInitiative?.title || "",
-    description: currentInitiative?.description || "",
-    deadline: currentInitiative?.deadline || "",
-    tags: currentInitiative?.tags?.join(", ") || "",
+    title: initiative?.title || "",
+    description: initiative?.description || "",
+    deadline: initiative?.deadline
+      ? formatDateForDisplay(initiative.deadline)
+      : "",
+    tags: initiative?.tags?.join(", ") || "",
   });
 
   const [errors, setErrors] = useState({});
   const [isDialogVisible, setIsDialogVisible] = useState(false);
 
-  if (error) return <p>❌Error loading: {error.message}</p>;
-  if (isLoading) return <p>⏳ Fetching...</p>;
-  if (!initiatives) return <p>Loading...</p>;
-
-  function handleDateChange(date) {
-    if (date) {
-      setFormData({ ...formData, deadline: format(date, "dd.MM.yyyy") });
-      setErrors((prev) => ({ ...prev, deadline: null }));
-    }
+  function formatDateForDisplay(date) {
+    return isValid(new Date(date)) ? format(new Date(date), "dd.MM.yyyy") : "";
   }
 
-  function handleChange(e) {
-    const { name, value } = e.target;
+  function formatDeadlineForDatabase(deadline) {
+    const parsedDate = parse(deadline, "dd.MM.yyyy", new Date());
+    return isValid(parsedDate) ? parsedDate.toISOString() : null;
+  }
 
+  function handleChange(event) {
+    const { name, value } = event.target;
     const updatedFormData = { ...formData, [name]: value };
     const newErrors = { ...errors };
 
@@ -65,57 +60,30 @@ export default function InitiativeForm({ isEditMode = false, initiativeId }) {
     setFormData(updatedFormData);
   }
 
-  async function saveChanges() {
-    const { title, description, deadline, tags } = formData;
-
-    const formattedDeadline = new Date(
-      deadline.split(".")[2],
-      deadline.split(".")[1] - 1,
-      deadline.split(".")[0]
-    ).toISOString();
-
-    const payload = {
-      title,
-      description,
-      deadline: formattedDeadline,
-      tags: tags.split(",").map((tag) => tag.trim()),
-    };
-
-    try {
-      if (isEditMode) {
-        await fetch(`/api/initiatives/${initiativeId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      } else {
-        await fetch("/api/initiatives", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      }
-
-      mutate();
-      router.push(isEditMode ? `/initiatives/${initiativeId}` : "/");
-    } catch (err) {
-      console.error("Error saving changes:", err);
+  function handleDateChange(date) {
+    if (date) {
+      const formattedDate = format(date, "dd.MM.yyyy");
+      setFormData((prev) => ({ ...prev, deadline: formattedDate }));
+      setErrors((prev) => ({ ...prev, deadline: null }));
+    } else {
+      setErrors((prev) => ({ ...prev, deadline: "Invalid date value" }));
     }
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-
+  function handleSubmit(event) {
+    event.preventDefault();
     const { title, description, deadline, tags } = formData;
+
+    const tagList = tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag !== "");
 
     const newErrors = {
       title: title.trim() ? null : "Title is required",
       description: description.trim() ? null : "Description is required",
       deadline: deadline.trim() ? null : "Deadline is required",
-      tags:
-        tags.split(",").filter((tag) => tag.trim() !== "").length > 5
-          ? "Please add a maximum of 5 tags"
-          : null,
+      tags: tagList.length > 5 ? "Please add a maximum of 5 tags" : null,
     };
 
     if (Object.values(newErrors).some((error) => error)) {
@@ -123,19 +91,63 @@ export default function InitiativeForm({ isEditMode = false, initiativeId }) {
       return;
     }
 
-    if (isEditMode) {
-      setIsDialogVisible(true);
-    } else {
-      saveChanges();
+    const formattedDeadline = formatDeadlineForDatabase(deadline);
+    if (!formattedDeadline) {
+      setErrors((prev) => ({
+        ...prev,
+        deadline: "Invalid deadline format",
+      }));
+      return;
     }
+
+    const updatedInitiative = {
+      ...formData,
+      tags: tagList,
+      deadline: formattedDeadline,
+    };
+
+    onSubmit(updatedInitiative);
   }
 
   function handleCancel() {
-    if (isEditMode) {
-      router.push(`/initiatives/${initiativeId}`);
-    } else {
-      router.push("/");
+    setIsDialogVisible(true);
+  }
+
+  function saveChanges() {
+    setIsDialogVisible(false);
+
+    const { title, description, deadline, tags } = formData;
+
+    const formattedDeadline = formatDeadlineForDatabase(deadline);
+    if (formattedDeadline === null) {
+      setErrors((prev) => ({
+        ...prev,
+        deadline: "Invalid deadline format",
+      }));
+      return;
     }
+
+    const tagList = tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag !== "");
+
+    const updatedInitiative = {
+      ...formData,
+      deadline: formattedDeadline,
+      tags: tagList,
+    };
+
+    onSubmit(updatedInitiative);
+    router.replace({
+      pathname: `/initiatives/${updatedInitiative.id}`,
+      query: { success: "true" },
+    });
+  }
+
+  function navigateAway() {
+    setIsDialogVisible(false);
+    router.push(isEditMode ? `/initiatives/${initiative?._id}` : "/");
   }
 
   return (
@@ -152,7 +164,6 @@ export default function InitiativeForm({ isEditMode = false, initiativeId }) {
         />
         {errors.title && <Error>{errors.title}</Error>}
       </Label>
-
       <Label>
         Description
         <Textarea
@@ -170,11 +181,14 @@ export default function InitiativeForm({ isEditMode = false, initiativeId }) {
         <StyledDatePicker
           selected={
             formData.deadline
-              ? new Date(
-                  formData.deadline.split(".")[2],
-                  formData.deadline.split(".")[1] - 1,
-                  formData.deadline.split(".")[0]
-                )
+              ? (() => {
+                  const parsedDate = parse(
+                    formData.deadline,
+                    "dd.MM.yyyy",
+                    new Date()
+                  );
+                  return isValid(parsedDate) ? parsedDate : null;
+                })()
               : null
           }
           onChange={handleDateChange}
@@ -185,7 +199,6 @@ export default function InitiativeForm({ isEditMode = false, initiativeId }) {
         />
         {errors.deadline && <Error>{errors.deadline}</Error>}
       </Label>
-
       <Label>
         Tags (separated by a comma)
         <Input
@@ -197,15 +210,13 @@ export default function InitiativeForm({ isEditMode = false, initiativeId }) {
         />
         {errors.tags && <Error>{errors.tags}</Error>}
       </Label>
-      {isDialogVisible && (
-        <DialogOverlay>
-          <ConfirmationDialog>
-            <p>You have unsaved changes. Would you like to save your edits?</p>
-            <DialogButton onClick={saveChanges}>Save</DialogButton>
-            <DialogButton onClick={handleCancel}>Cancel</DialogButton>
-          </ConfirmationDialog>
-        </DialogOverlay>
-      )}
+      <ConfirmationDialog
+        isVisible={isDialogVisible}
+        message="You have unsaved changes. Would you like to save your edits?"
+        onSaveAndContinue={saveChanges}
+        onDiscardChanges={navigateAway}
+        onCancel={() => setIsDialogVisible(false)}
+      />
       <ButtonGroup>
         <Button type="button" onClick={handleCancel}>
           Cancel
@@ -299,33 +310,6 @@ const Button = styled.button`
   &:hover {
     background-color: var(--accents);
   }
-`;
-
-const DialogOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--highlightedcard);
-  color: var(--text);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-`;
-
-const ConfirmationDialog = styled.div`
-  background: var(--highlightedcard);
-  color: var(--text);
-  padding: 20px;
-  border-radius: 20px;
-  border: 2px;
-  text-align: center;
-`;
-
-const DialogButton = styled(Button)`
-  margin: 5px;
 `;
 
 const ButtonGroup = styled.div`

@@ -1,8 +1,7 @@
 import styled, { css } from "styled-components";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import CompletedInitiative from "./CompletedInitiative";
-import { useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import useSWR from "swr";
 
@@ -18,16 +17,9 @@ export default function InitiativeDetailPage({
   } = useSWR(initiativeId ? `/api/initiatives/${initiativeId}` : null);
 
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
-  const searchParams = useSearchParams();
-  const [showEditSuccess, setShowEditSuccess] = useState(false);
 
-  useEffect(() => {
-    if (searchParams.get("success") === "true") {
-      setShowEditSuccess(true);
-      const timeout = setTimeout(() => setShowEditSuccess(false), 1000);
-      return () => clearTimeout(timeout);
-    }
-  }, [searchParams]);
+  if (error) return <p>❌ Error loading: {error.message}</p>;
+  if (isLoading) return <p>⏳ Fetching...</p>;
 
   const {
     title,
@@ -47,7 +39,7 @@ export default function InitiativeDetailPage({
     .flatMap((task) =>
       task.uploadedImages.map((file) => ({
         url: file.url,
-        name: file.original_filename,
+        name: file.displayName,
       }))
     );
 
@@ -65,14 +57,10 @@ export default function InitiativeDetailPage({
   }
 
   function truncateText(text, maxLength) {
-    if (text.length > maxLength) {
-      return text.substring(0, maxLength) + "...";
-    }
-    return text;
+    return text.length > maxLength
+      ? text.substring(0, maxLength) + "..."
+      : text;
   }
-
-  if (error) return <p>❌Error loading: {error.message}</p>;
-  if (isLoading) return <p>⏳ Fetching...</p>;
 
   return (
     <PageContainer>
@@ -103,14 +91,6 @@ export default function InitiativeDetailPage({
                   Yes, delete
                 </ConfirmationDialogButton>
               </ButtonGroup>
-            </ConfirmationDialog>
-          </DialogOverlay>
-        )}
-        {showEditSuccess && (
-          <DialogOverlay>
-            <ConfirmationDialog>
-              <h2>✔️</h2>
-              <p>Your initiative has been updated successfully!</p>
             </ConfirmationDialog>
           </DialogOverlay>
         )}

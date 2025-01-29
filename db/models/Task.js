@@ -16,7 +16,7 @@ const TaskSchema = new Schema({
     default: "Pending",
   },
   uploadedImages: {
-    type: [String],
+    type: [{ url: String, id: String, displayName: String }],
     default: [],
   },
 });

@@ -6,22 +6,11 @@ export default function EditTaskPage() {
   const router = useRouter();
   const { id: initiativeId, taskId } = router.query;
 
-  const { data: initiatives, mutate } = useSWR("/api/initiatives");
-
-  const initiativeToEdit = initiatives?.find(
-    (initiative) => initiative._id === initiativeId
-  );
-  const taskToEdit = initiativeToEdit?.tasks.find(
-    (task) => task._id === taskId
+  const { data: taskToEdit } = useSWR(
+    `/api/initiatives/${initiativeId}/tasks/${taskId}`
   );
 
-  if (!initiativeToEdit) {
-    return <h2>Initiative not found</h2>;
-  }
-
-  if (!taskToEdit) {
-    return <h2>Task not found</h2>;
-  }
+  if (!taskToEdit) return <h2>Task not found</h2>;
 
   async function handleEditTask(updatedTask) {
     const response = await fetch(
@@ -37,17 +26,15 @@ export default function EditTaskPage() {
       throw new Error(`Edit failed ${response.status}`);
     }
 
-    await response.json();
-    mutate();
-    router.push(`/initiatives/${initiativeId}`);
+    router.push(`/initiatives/${initiativeId}/tasks/${taskId}`);
   }
 
   return (
     <TaskForm
       onSubmit={handleEditTask}
-      initiatives={initiatives}
-      taskToEdit={taskToEdit}
-      isEditMode={true}
+      initiativeId={initiativeId}
+      task={taskToEdit}
+      isEditMode
     />
   );
 }

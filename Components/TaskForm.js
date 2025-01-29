@@ -1,21 +1,15 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import styled from "styled-components";
+import ConfirmationDialog from "./ConfirmationDialog";
 
-export default function TaskForm({ isEditMode = false, initiativeId, taskId }) {
+export default function TaskForm({
+  isEditMode = false,
+  task,
+  initiativeId,
+  onSubmit,
+}) {
   const router = useRouter();
-
-  const {
-    data: initiatives,
-    error,
-    isLoading,
-    mutate,
-  } = useSWR("/api/initiatives");
-  const initiative = initiatives?.find(
-    (initiative) => initiative._id === initiativeId
-  );
-  const task = initiative?.tasks?.find((task) => task._id === taskId) || {};
 
   const [formData, setFormData] = useState({
     title: task?.title || "",
@@ -26,39 +20,10 @@ export default function TaskForm({ isEditMode = false, initiativeId, taskId }) {
   const [errors, setErrors] = useState({});
   const [isDialogVisible, setIsDialogVisible] = useState(false);
 
-  if (error) return <p>❌Error loading: {error.message}</p>;
-  if (isLoading) return <p>⏳ Fetching...</p>;
-  if (!initiatives) return <p>Loading...</p>;
-
   function handleChange(event) {
     const { name, value } = event.target;
     setErrors({});
     setFormData((prev) => ({ ...prev, [name]: value }));
-  }
-
-  async function saveChanges() {
-    try {
-      const payload = { ...formData };
-
-      if (isEditMode) {
-        await fetch(`/api/initiatives/${initiativeId}/tasks/${taskId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      } else {
-        await fetch(`/api/initiatives/${initiativeId}/tasks`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-      }
-
-      mutate();
-      router.push(`/initiatives/${initiativeId}`);
-    } catch (err) {
-      console.error("Error saving task:", err);
-    }
   }
 
   function validateForm() {
@@ -78,11 +43,27 @@ export default function TaskForm({ isEditMode = false, initiativeId, taskId }) {
       return;
     }
 
-    if (isEditMode) {
-      setIsDialogVisible(true);
-    } else {
-      saveChanges();
-    }
+    onSubmit(formData);
+  }
+
+  function saveChanges() {
+    setIsDialogVisible(false);
+
+    const updatedTask = {
+      ...formData,
+    };
+    onSubmit(updatedTask);
+    router.replace({
+      pathname: `/initiatives/${initiativeId}/tasks/${updatedTask.id}`,
+      query: { success: "true" },
+    });
+  }
+
+  function navigateAway() {
+    setIsDialogVisible(false);
+    router.push(
+      isEditMode ? `/initiatives/${initiativeId}/tasks/${task.id}` : "/"
+    );
   }
 
   return (
@@ -120,24 +101,15 @@ export default function TaskForm({ isEditMode = false, initiativeId, taskId }) {
           <option value="Completed">Completed</option>
         </StyledSelect>
       </Label>
-      {isDialogVisible && (
-        <DialogOverlay>
-          <ConfirmationDialog>
-            <p>You have unsaved changes. Would you like to save your edits?</p>
-            <DialogButton onClick={saveChanges}>Save</DialogButton>
-            <DialogButton
-              onClick={() => router.push(`/initiatives/${initiativeId}`)}
-            >
-              Cancel
-            </DialogButton>
-          </ConfirmationDialog>
-        </DialogOverlay>
-      )}
+      <ConfirmationDialog
+        isVisible={isDialogVisible}
+        message="You have unsaved changes. Would you like to save your edits?"
+        onSaveAndContinue={saveChanges}
+        onDiscardChanges={navigateAway}
+        onCancel={() => setIsDialogVisible(false)}
+      />
       <ButtonGroup>
-        <Button
-          type="button"
-          onClick={() => router.push(`/initiatives/${initiativeId}`)}
-        >
+        <Button type="button" onClick={() => setIsDialogVisible(true)}>
           Cancel
         </Button>
         <Button type="submit">{isEditMode ? "Save" : "Create"}</Button>
@@ -235,30 +207,4 @@ const Button = styled.button`
   &:hover {
     background-color: var(--accents);
   }
-`;
-
-const DialogOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--highlightedcard);
-  color: var(--text);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ConfirmationDialog = styled.div`
-  background: var(--highlightedcard);
-  color: var(--text);
-  padding: 20px;
-  border-radius: 8px;
-  border: none;
-  text-align: center;
-`;
-
-const DialogButton = styled(Button)`
-  margin: 5px;
 `;
