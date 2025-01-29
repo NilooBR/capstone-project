@@ -139,7 +139,6 @@ const DateText = styled.p`
 
 const Modal = styled.div`
   position: absolute;
-  background-color: white;
   border: var(--cardborder);
   padding: 16px;
   border-radius: 20px;
@@ -148,6 +147,7 @@ const Modal = styled.div`
   transform: translate(-50%, -50%);
   z-index: 10;
   background-color: var(--cardbackground);
+  color: var(--contrasttext);
   border: 1px var(--errortext);
   display: flex;
   flex-direction: row;
