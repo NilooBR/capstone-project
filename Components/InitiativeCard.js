@@ -2,9 +2,9 @@ import styled from "styled-components";
 import Link from "next/link";
 import CompletedInitiative from "./CompletedInitiative";
 import { useState, useRef, useEffect } from "react";
-import { format } from "date-fns";
 import useSWR from "swr";
 import truncateText from "@/utility/truncateText";
+import { formatDateForDisplay } from "@/utility/dateUtils";
 
 export default function InitiativeCard({
   id: initiativeId,
@@ -38,7 +38,7 @@ export default function InitiativeCard({
   }, [isModalOpen]);
 
   const formattedDeadline = initiative?.deadline
-    ? format(new Date(initiative.deadline), "dd.MM.yyyy")
+    ? formatDateForDisplay(initiative.deadline)
     : "No deadline";
 
   function handleModalToggle() {

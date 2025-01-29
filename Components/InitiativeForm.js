@@ -7,6 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { format, parse, isValid } from "date-fns";
 import { de } from "date-fns/locale";
 import ConfirmationDialog from "./ConfirmationDialog";
+import { formatDateForDisplay, formatDeadlineForDatabase } from "@/utility/dateUtils";
 
 export default function InitiativeForm({
   isEditMode = false,
@@ -25,15 +26,6 @@ export default function InitiativeForm({
 
   const [errors, setErrors] = useState({});
   const [isDialogVisible, setIsDialogVisible] = useState(false);
-
-  function formatDateForDisplay(date) {
-    return isValid(new Date(date)) ? format(new Date(date), "dd.MM.yyyy") : "";
-  }
-
-  function formatDeadlineForDatabase(deadline) {
-    const parsedDate = parse(deadline, "dd.MM.yyyy", new Date());
-    return isValid(parsedDate) ? parsedDate.toISOString() : null;
-  }
 
   function handleChange(event) {
     const { name, value } = event.target;

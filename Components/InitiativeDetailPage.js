@@ -2,9 +2,9 @@ import styled, { css } from "styled-components";
 import Link from "next/link";
 import { useState } from "react";
 import CompletedInitiative from "./CompletedInitiative";
-import { format } from "date-fns";
 import useSWR from "swr";
 import truncateText from "@/utility/truncateText";
+import { formatDateForDisplay } from "@/utility/dateUtils";
 
 export default function InitiativeDetailPage({
   initiativeId,
@@ -32,7 +32,7 @@ export default function InitiativeDetailPage({
   } = initiative;
 
   const formattedDeadline = deadline
-    ? format(new Date(deadline), "dd.MM.yyyy")
+    ? formatDateForDisplay(deadline)
     : "No deadline";
 
   const allUploadedImages = tasks
