@@ -16,7 +16,7 @@ export default function EditTaskPage() {
     const response = await fetch(
       `/api/initiatives/${initiativeId}/tasks/${taskId}`,
       {
-        method: "PATCH",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedTask),
       }

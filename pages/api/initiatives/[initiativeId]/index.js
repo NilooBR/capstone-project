@@ -6,69 +6,60 @@ export default async function handler(request, response) {
   await dbConnect();
   const { initiativeId } = request.query;
 
-  try {
-    if (!initiativeId || !mongoose.Types.ObjectId.isValid(initiativeId)) {
-      return response.status(400).json({
+  if (!initiativeId || !mongoose.Types.ObjectId.isValid(initiativeId)) {
+    return response.status(400).json({
+      success: false,
+      error: "Invalid or missing initiativeId.",
+    });
+  }
+
+  if (request.method === "GET") {
+    const initiative = await Initiative.findById(initiativeId).populate(
+      "tasks"
+    );
+    if (!initiative) {
+      return response.status(404).json({
         success: false,
-        error: "Invalid or missing initiativeId.",
+        error: "Initiative not found.",
       });
     }
+    response.status(200).json({ success: true, data: initiative });
+    return;
+  }
 
-    if (request.method === "GET") {
-      const initiative = await Initiative.findById(initiativeId).populate(
-        "tasks"
-      );
-      if (!initiative) {
-        return response.status(404).json({
-          success: false,
-          error: "Initiative not found.",
-        });
-      }
-      response.status(200).json({ success: true, data: initiative });
-      return;
-    }
-
-    if (request.method === "PATCH") {
-      const updatedInitiative = await Initiative.findByIdAndUpdate(
+  if (request.method === "PUT") {
+    try {
+      const updatedInitiative = request.body;
+      const result = await Initiative.findByIdAndUpdate(
         initiativeId,
-        request.body,
-        { new: true }
+        updatedInitiative
       );
-      if (!updatedInitiative) {
-        return response.status(404).json({
-          success: false,
-          error: "Initiative not found for update.",
-        });
-      }
-      response
-        .status(200)
-        .json({ success: true, message: "Initiative successfully updated." });
-      return;
-    }
 
-    if (request.method === "DELETE") {
-      const deletedInitiative = await Initiative.findByIdAndDelete(
-        initiativeId
-      );
-      if (!deletedInitiative) {
-        return response.status(404).json({
-          success: false,
-          error: "Initiative not found for deletion.",
-        });
+      if (!result) {
+        return response.status(404).json({ status: "Initiative not found" });
       }
-      response
-        .status(200)
-        .json({ success: true, message: "Initiative successfully deleted." });
-      return;
-    }
 
-    response
-      .status(405)
-      .json({ success: false, message: "Method not allowed." });
-  } catch (error) {
-    console.error("API Error:", error);
-    response
-      .status(500)
-      .json({ success: false, error: "Internal Server Error" });
+      return response
+        .status(200)
+        .json({ status: "Initiative successfully updated", data: result });
+    } catch (error) {
+      console.error("Error updating initiative:", error);
+      return response
+        .status(500)
+        .json({ status: "Internal server error", error: error.message });
+    }
+  }
+
+  if (request.method === "DELETE") {
+    try {
+      await Initiative.findByIdAndDelete(initiativeId);
+      response.status(260).json("Initiative successfully deleted");
+      return;
+    } catch (error) {
+      console.error("Error updating initiative:", error);
+      return response
+        .status(500)
+        .json({ status: "Internal server error", error: error.message });
+    }
   }
 }

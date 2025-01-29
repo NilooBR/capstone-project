@@ -29,8 +29,8 @@ export default function TaskForm({
   function validateForm() {
     const { title, description } = formData;
     return {
-      title: title.trim() ? null : "Title is required",
-      description: description.trim() ? null : "Description is required",
+      title: title.trim() ? undefined : "Title is required",
+      description: description.trim() ? undefined : "Description is required",
     };
   }
 
@@ -50,6 +50,7 @@ export default function TaskForm({
     setIsDialogVisible(false);
 
     const updatedTask = {
+      ...task,
       ...formData,
     };
     onSubmit(updatedTask);

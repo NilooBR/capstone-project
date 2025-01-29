@@ -6,72 +6,47 @@ export default async function handler(request, response) {
   await dbConnect();
   const { initiativeId, taskId } = request.query;
 
-  try {
-    if (request.method === "GET") {
-      const initiative = await Initiative.findById(initiativeId).populate(
-        "tasks"
-      );
-      if (!initiative) {
-        return response
-          .status(404)
-          .json({ success: false, message: "Initiative not found." });
-      }
-      return response.status(200).json({ success: true, data: initiative });
+  if (request.method === "GET") {
+    const initiative = await Initiative.findById(initiativeId).populate(
+      "tasks"
+    );
+    if (!initiative) {
+      return response
+        .status(404)
+        .json({ success: false, message: "Initiative not found." });
     }
+    return response.status(200).json({ success: true, data: initiative });
+  }
 
-    if (request.method === "PATCH") {
-      const updateData = request.body;
+  if (request.method === "PUT") {
+    try {
+      const updatedTask = request.body;
+      const result = await Task.findByIdAndUpdate(initiativeId, updatedTask);
 
-      if (taskId) {
-        const updatedTask = await Task.findByIdAndUpdate(taskId, updateData);
-        if (!updatedTask) {
-          return response
-            .status(404)
-            .json({ success: false, message: "Task not found." });
-        }
-        return response
-          .status(200)
-          .json({ success: true, message: "Task successfully updated." });
-      } else {
-        const updatedInitiative = await Initiative.findByIdAndUpdate(
-          initiativeId,
-          updateData
-        );
-        if (!updatedInitiative) {
-          return response
-            .status(404)
-            .json({ success: false, message: "Initiative not found." });
-        }
-        return response
-          .status(200)
-          .json({ success: true, message: "Initiative successfully updated." });
+      if (!result) {
+        return response.status(404).json({ status: "Task not found" });
       }
-    }
-
-    if (request.method === "DELETE") {
-      await Initiative.findByIdAndUpdate(initiativeId, {
-        $pull: { tasks: taskId },
-      });
-
-      const deletedTask = await Task.findByIdAndDelete(taskId);
-      if (!deletedTask) {
-        return response
-          .status(404)
-          .json({ success: false, message: "Task not found." });
-      }
-
       return response
         .status(200)
-        .json({ success: true, message: "Task deleted successfully." });
+        .json({ status: "Task successfully updated", data: result });
+    } catch (error) {
+      console.error("Error updating task:", error);
+      return response
+        .status(500)
+        .json({ status: "Internal server error", error: error.message });
     }
+  }
 
-    response
-      .status(405)
-      .json({ success: false, message: "Method not allowed." });
-  } catch (error) {
-    console.error("API Error:", error);
-    response
-      .status(500)
-      .json({ success: false, error: "Internal Server error" });
+  if (request.method === "DELETE") {
+    try {
+      await Task.findByIdAndDelete(taskId);
+      response.status(260).json("Task successfully deleted");
+      return;
+    } catch (error) {
+      console.error("Error updating task:", error);
+      return response
+        .status(500)
+        .json({ status: "Internal server error", error: error.message });
+    }
   }
 }

@@ -20,6 +20,8 @@ export default function TaskDetailPage() {
     error,
   } = useSWR(`/api/initiatives/${initiativeId}/tasks/${taskId}`);
 
+  if (!initiativeId || !taskId) return <p>Loading...</p>;
+
   if (!task) {
     return (
       <div>
@@ -35,13 +37,14 @@ export default function TaskDetailPage() {
   async function updateTaskStatus(newStatus) {
     try {
       await fetch(`/api/initiatives/${initiativeId}/tasks/${taskId}`, {
-        method: "PATCH",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
       });
       mutate();
     } catch (err) {
       console.error("Failed to update task status:", err);
+      alert("Error updating task status. Please try again.");
     }
   }
 

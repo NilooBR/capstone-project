@@ -42,7 +42,7 @@ export default function InitiativeDetailsPage() {
   async function handleToggleCompleted() {
     try {
       await fetch(`/api/initiatives/${initiativeId}`, {
-        method: "PATCH",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isCompleted: !initiative.isCompleted }),
       });

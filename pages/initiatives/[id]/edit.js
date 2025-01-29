@@ -10,7 +10,7 @@ export default function EditInitiativePage() {
 
   async function handleEditInitiative(updatedInitiative) {
     const response = await fetch(`/api/initiatives/${initiativeId}`, {
-      method: "PATCH",
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedInitiative),
     });
