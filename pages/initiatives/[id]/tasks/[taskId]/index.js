@@ -1,40 +1,32 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
-import { useTaskState } from "@/utils/useTaskState";
-import { useSearchParams } from "next/navigation";
+import useSWR from "swr";
 
-export default function TaskDetailPage({
-  onDeleteTask,
-  initiatives,
-  onUpdateInitiatives,
-  onUpdateUploadedImages,
-}) {
+export default function TaskDetailPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { id: initiativeId, taskId } = router.query;
+
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showEditSuccess, setShowEditSuccess] = useState(false);
 
-  const { task, status, updateTaskStatus } = useTaskState(
-    initiativeId,
-    taskId,
-    initiatives
+  const {
+    data: task,
+    mutate,
+    isLoading,
+    error,
+  } = useSWR(
+    initiativeId && taskId
+      ? `/api/initiatives/${initiativeId}/tasks/${taskId}`
+      : null
   );
 
-  useEffect(() => {
-    if (searchParams.get("success") === "true") {
-      setShowEditSuccess(true);
-      const timeout = setTimeout(() => setShowEditSuccess(false), 3000);
-      return () => clearTimeout(timeout);
-    }
-  }, [searchParams]);
+  if (!initiativeId || !taskId) return <p>Loading...</p>;
 
-  if (!task)
+  if (!task) {
     return (
       <div>
         <h1>Task Not Found</h1>
@@ -44,6 +36,21 @@ export default function TaskDetailPage({
         </StyledLink>
       </div>
     );
+  }
+
+  async function updateTaskStatus(newStatus) {
+    try {
+      await fetch(`/api/initiatives/${initiativeId}/tasks/${taskId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      mutate();
+    } catch (err) {
+      console.error("Failed to update task status:", err);
+      alert("Error updating task status. Please try again.");
+    }
+  }
 
   async function handleImageUpload(files) {
     if (files.length === 0) {
@@ -61,73 +68,68 @@ export default function TaskDetailPage({
     });
 
     try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `/api/initiatives/${initiativeId}/tasks/${taskId}/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
-        throw new Error(`File upload failed with status ${response.status}`);
+        throw new Error(`Upload failed with status ${response.status}`);
       }
 
-      const data = await response.json();
-
-      const images = data.images.map((img) => ({ ...img, taskId }));
-      onUpdateUploadedImages(initiativeId, taskId, images);
-      setUploadMessage("Files uploaded successfully.");
+      mutate();
+      setUploadMessage("Images uploaded successfully.");
     } catch (error) {
-      console.error("Upload error:", error);
-      setUploadMessage(`An error occurred during the upload: ${error.message}`);
+      console.error("Image upload error:", error);
+      setUploadMessage(`An error occurred: ${error.message}`);
     } finally {
       setLoading(false);
     }
   }
 
   async function handleDeleteImage(publicId) {
+    setLoading(true);
     try {
-      const response = await fetch(`/api/delete`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ public_id: publicId }),
-      });
+      const response = await fetch(
+        `/api/initiatives/${initiativeId}/tasks/${taskId}/delete`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ public_id: publicId }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to delete image.");
       }
 
-      const updatedInitiatives = initiatives.map((initiative) => {
-        if (initiative.id === initiativeId) {
-          return {
-            ...initiative,
-            tasks: initiative.tasks.map((task) =>
-              task.id == taskId
-                ? {
-                    ...task,
-                    uploadedImages: task.uploadedImages.filter(
-                      (image) => image.public_id !== publicId
-                    ),
-                  }
-                : task
-            ),
-          };
-        }
-        return initiative;
-      });
-
-      onUpdateInitiatives(updatedInitiatives);
+      mutate();
       setUploadMessage("Image deleted successfully.");
     } catch (error) {
-      console.error("Delete error:", error);
+      console.error("Failed to delete image:", error);
       setUploadMessage("An error occurred while deleting the image.");
+    } finally {
+      setLoading(false);
     }
   }
 
-  function handleDelete() {
-    onDeleteTask(initiativeId, task.id);
-    router.push(`/initiatives/${initiativeId}`);
+  async function handleDeleteTask() {
+    try {
+      await fetch(`/api/initiatives/${initiativeId}/tasks/${taskId}`, {
+        method: "DELETE",
+      });
+      mutate();
+      router.push(`/initiatives/${initiativeId}`);
+    } catch (error) {
+      console.error("Failed to delete task:", error);
+    }
   }
+
+  if (error) return <p>❌Error loading: {error.message}</p>;
+  if (isLoading) return <p>⏳ Fetching...</p>;
 
   return (
     <PageContainer>
@@ -137,48 +139,44 @@ export default function TaskDetailPage({
         <Label>
           Status
           <StyledSelect
-            value={status}
-            onChange={(e) =>
-              updateTaskStatus(e.target.value, onUpdateInitiatives)
-            }
+            value={task.status}
+            onChange={(e) => updateTaskStatus(e.target.value)}
           >
             <option value="Pending">Pending</option>
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
           </StyledSelect>
         </Label>
-        <br></br>
-        <StyledLabel>
-          Upload images
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={(e) => handleImageUpload(Array.from(e.target.files))}
-          />
-        </StyledLabel>
         <FileUploadContainer>
+          <StyledLabel>
+            Upload Images
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={(e) => handleImageUpload(Array.from(e.target.files))}
+            />
+          </StyledLabel>
           {loading && <p>Uploading... Please wait.</p>}
           {uploadMessage && <p>{uploadMessage}</p>}
           <ImagePreviewContainer>
             {task.uploadedImages?.map((image) => (
-              <ImageWrapper key={image.public_id}>
+              <ImageWrapper key={image.id}>
                 <a href={image.url} target="_blank">
                   <Image
                     src={image.url}
-                    alt={`${task?.title}`}
-                    fill
-                    style={{ objectFit: "contain" }}
+                    alt={task.title}
+                    layout="fill"
+                    objectFit="contain"
                   />
                 </a>
-                <button onClick={() => handleDeleteImage(image.public_id)}>
+                <button onClick={() => handleDeleteImage(image.id)}>
                   Delete
                 </button>
               </ImageWrapper>
             ))}
           </ImagePreviewContainer>
         </FileUploadContainer>
-
         {deleteButtonClicked && (
           <DialogOverlay>
             <ConfirmationDialog>
@@ -189,18 +187,10 @@ export default function TaskDetailPage({
                 >
                   Cancel
                 </ConfirmationDialogButton>
-                <ConfirmationDialogButton onClick={handleDelete}>
-                  Yes, delete
+                <ConfirmationDialogButton onClick={handleDeleteTask}>
+                  Yes, Delete
                 </ConfirmationDialogButton>
               </ButtonGroup>
-            </ConfirmationDialog>
-          </DialogOverlay>
-        )}
-        {showEditSuccess && (
-          <DialogOverlay>
-            <ConfirmationDialog>
-              <h2>✔️</h2>
-              <p>Your task has been updated successfully!</p>
             </ConfirmationDialog>
           </DialogOverlay>
         )}
@@ -302,6 +292,23 @@ const ImagePreviewContainer = styled.div`
   gap: 15px;
   margin-top: 20px;
   background-color: var(--cardbackground);
+
+  button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 5px;
+    background-color: var(--buttons);
+    color: var(--contrasttext);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+
+    &:hover {
+      background-color: var(--accents);
+    }
+  }
 `;
 
 const ImageWrapper = styled.div`
@@ -315,23 +322,6 @@ const ImageWrapper = styled.div`
   justify-content: center;
   align-items: center;
   background-color: var(--cardbackground);
-
-  button {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    padding: 5px;
-    background-color: var(--buttons);
-    color: var(--text);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 12px;
-
-    &:hover {
-      background-color: var(--accents);
-    }
-  }
 `;
 
 const Button = styled.button`
@@ -361,8 +351,7 @@ const DialogOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--highlightedcard);
-  color: var(--text);
+  background: var(--mainbackground);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -371,9 +360,8 @@ const DialogOverlay = styled.div`
 
 const ConfirmationDialog = styled.div`
   background: var(--highlightedcard);
-  color: var(--text);
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 20px;
   text-align: center;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   width: 90%;

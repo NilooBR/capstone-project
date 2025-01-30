@@ -1,38 +1,52 @@
 import { useRouter } from "next/router";
 import TaskForm from "@/Components/TaskForm";
+import useSWR from "swr";
 
-export default function EditTaskPage({ initiatives, onEditInitiative }) {
+export default function EditTaskPage() {
   const router = useRouter();
   const { id: initiativeId, taskId } = router.query;
 
-  if (!initiativeId || !taskId) {
-    return <p>Loading ...</p>;
-  }
-
-  const initiativeToEdit = initiatives.find(
-    (initiative) => initiative.id === initiativeId
+  const {
+    data: taskToEdit,
+    error,
+    isLoading,
+  } = useSWR(
+    initiativeId && taskId
+      ? `/api/initiatives/${initiativeId}/tasks/${taskId}`
+      : null
   );
 
-  const taskToEdit = initiativeToEdit?.tasks.find((task) => task.id === taskId);
+  if (error) return <p>❌ Error loading: {error.message}</p>;
+  if (isLoading) return <p>⏳ Fetching...</p>;
+  if (!taskToEdit) return <h2>Task not found</h2>;
 
-  if (!initiativeToEdit) {
-    return <h2>Initiative not found</h2>;
-  }
+  async function handleEditTask(updatedTask) {
+    try {
+      const response = await fetch(
+        `/api/initiatives/${initiativeId}/tasks/${taskId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedTask),
+        }
+      );
 
-  if (!taskToEdit) {
-    return <p>Task not found!</p>;
-  }
+      if (!response.ok) {
+        throw new Error(`Edit failed: ${response.status}`);
+      }
 
-  function handleEditTask(updatedInitiative) {
-    onEditInitiative(updatedInitiative);
+      router.push(`/initiatives/${initiativeId}/tasks/${taskId}`);
+    } catch (error) {
+      console.error("Failed to update task:", error);
+    }
   }
 
   return (
     <TaskForm
       onSubmit={handleEditTask}
-      initiatives={initiatives}
-      taskToEdit={taskToEdit}
-      isEditMode={true}
+      initiativeId={initiativeId}
+      task={taskToEdit}
+      isEditMode
     />
   );
 }

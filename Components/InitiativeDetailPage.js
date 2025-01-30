@@ -1,38 +1,46 @@
 import styled, { css } from "styled-components";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import CompletedInitiative from "./CompletedInitiative";
-import { useSearchParams } from "next/navigation";
+import useSWR from "swr";
+import truncateText from "@/utility/truncateText";
+import { formatDateForDisplay } from "@/utility/dateUtils";
 
 export default function InitiativeDetailPage({
-  id,
-  title,
-  description,
-  tags,
-  deadline,
+  initiativeId,
   onDelete,
   onToggleCompleted,
-  isCompleted,
-  tasks,
 }) {
+  const {
+    data: initiative,
+    error,
+    isLoading,
+  } = useSWR(initiativeId ? `/api/initiatives/${initiativeId}` : null);
+
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
-  const searchParams = useSearchParams();
-  const [showEditSuccess, setShowEditSuccess] = useState(false);
 
-  useEffect(() => {
-    if (searchParams.get("success") === "true") {
-      setShowEditSuccess(true);
-      const timeout = setTimeout(() => setShowEditSuccess(false), 1000);
-      return () => clearTimeout(timeout);
-    }
-  }, [searchParams]);
+  if (error) return <p>❌ Error loading: {error.message}</p>;
+  if (isLoading) return <p>⏳ Fetching...</p>;
 
-  const allUploadedImages = (tasks || [])
+  const {
+    title,
+    description,
+    tags,
+    deadline,
+    isCompleted,
+    tasks = [],
+  } = initiative;
+
+  const formattedDeadline = deadline
+    ? formatDateForDisplay(deadline)
+    : "No deadline";
+
+  const allUploadedImages = tasks
     .filter((task) => task.uploadedImages?.length > 0)
     .flatMap((task) =>
       task.uploadedImages.map((file) => ({
         url: file.url,
-        name: file.original_filename,
+        name: file.displayName,
       }))
     );
 
@@ -49,26 +57,19 @@ export default function InitiativeDetailPage({
     }
   }
 
-  function truncateText(text, maxLength) {
-    if (text.length > maxLength) {
-      return text.substring(0, maxLength) + "...";
-    }
-    return text;
-  }
-
   return (
     <PageContainer>
       <Content>
         <Title>{title}</Title>
         <Description>{description}</Description>
         <Deadline>
-          <strong>Deadline:</strong> {deadline}
+          <strong>Deadline:</strong> {formattedDeadline}
         </Deadline>
         <TagList>
           {tags.length > 0 ? (
             tags.map((tag) => <Tag key={tag}>{tag}</Tag>)
           ) : (
-            <EmptyMessage></EmptyMessage>
+            <EmptyMessage>No tags available</EmptyMessage>
           )}
         </TagList>
         {deleteButtonClicked && (
@@ -88,16 +89,8 @@ export default function InitiativeDetailPage({
             </ConfirmationDialog>
           </DialogOverlay>
         )}
-        {showEditSuccess && (
-          <DialogOverlay>
-            <ConfirmationDialog>
-              <h2>✔️</h2>
-              <p>Your Initiative has been updated successfully!</p>
-            </ConfirmationDialog>
-          </DialogOverlay>
-        )}
         <CompletedContainer>
-          <button onClick={() => onToggleCompleted(id)}>
+          <button onClick={onToggleCompleted}>
             {isCompleted ? (
               <>
                 Completed <CompletedInitiative isCompleted={isCompleted} />
@@ -110,16 +103,16 @@ export default function InitiativeDetailPage({
         <TasksGrid>
           <StyledLinkTask
             $variant="addTaskCard"
-            href={`/initiatives/${id}/tasks/createTask`}
+            href={`/initiatives/${initiativeId}/tasks/createTask`}
           >
             <span>➕</span>
             <h2>Add task</h2>
           </StyledLinkTask>
-          {tasks?.length > 0 ? (
+          {tasks.length > 0 ? (
             tasks.map((task) => (
               <StyledLinkTask
-                key={task.id}
-                href={`/initiatives/${id}/tasks/${task.id}`}
+                key={task._id}
+                href={`/initiatives/${initiativeId}/tasks/${task._id}`}
               >
                 <TaskCard>
                   <h2>{truncateText(task.title, 10)}</h2>
@@ -131,7 +124,8 @@ export default function InitiativeDetailPage({
             ))
           ) : (
             <NoTasksMessage>
-              No tasks available yet <br></br> Please add some!
+              No tasks available yet <br />
+              Please add some!
             </NoTasksMessage>
           )}
         </TasksGrid>
@@ -155,7 +149,7 @@ export default function InitiativeDetailPage({
       <Footer>
         <StyledLink href="/">Back</StyledLink>
         <Button onClick={() => setDeleteButtonClicked(true)}>Delete</Button>
-        <StyledLink href={`/initiatives/${id}/edit`}>Edit</StyledLink>
+        <StyledLink href={`/initiatives/${initiativeId}/edit`}>Edit</StyledLink>
       </Footer>
     </PageContainer>
   );

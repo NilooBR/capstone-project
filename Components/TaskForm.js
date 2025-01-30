@@ -1,42 +1,25 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import styled from "styled-components";
-
-const DEFAULT_VALUES = {
-  title: "",
-  description: "",
-  status: "Pending",
-};
+import ConfirmationDialog from "./ConfirmationDialog";
 
 export default function TaskForm({
-  onSubmit,
-  initiatives,
-  taskToEdit = null,
   isEditMode = false,
+  task,
+  initiativeId,
+  onSubmit,
 }) {
   const router = useRouter();
-  const { id: initiativeId } = router.query;
 
-  const selectedInitiative = initiatives.find(
-    (initiative) => initiative.id === initiativeId
-  );
-
-  const selectedTasksArray = selectedInitiative?.tasks ?? [];
   const [formData, setFormData] = useState({
-    ...DEFAULT_VALUES,
-    ...taskToEdit,
+    title: task?.title || "",
+    description: task?.description || "",
+    status: task?.status || "Pending",
   });
 
   const [errors, setErrors] = useState({});
   const [isDialogVisible, setIsDialogVisible] = useState(false);
-
-  function validateForm() {
-    const { title, description } = formData;
-    return {
-      title: title.trim() ? null : "Title is required",
-      description: description.trim() ? null : "Description is required",
-    };
-  }
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -44,8 +27,16 @@ export default function TaskForm({
     setFormData((prev) => ({ ...prev, [name]: value }));
   }
 
+  function validateForm() {
+    const { title, description } = formData;
+    return {
+      title: title.trim() ? undefined : "Title is required",
+      description: description.trim() ? undefined : "Description is required",
+    };
+  }
+
   function handleSubmit(event) {
-    event.preventDefault();
+    if (event) event.preventDefault();
     const newErrors = validateForm();
     setErrors(newErrors);
 
@@ -53,41 +44,25 @@ export default function TaskForm({
       return;
     }
 
-    if (isEditMode) {
-      setIsDialogVisible(true);
-    } else {
-      saveChanges();
-    }
+    onSubmit(formData);
+    
   }
 
-  function saveChanges() {
-    const updatedTask = {
-      id: taskToEdit?.id || crypto.randomUUID(),
-      ...formData,
-    };
+  function handleCancel(event) {
+    event.preventDefault();
+    setIsDialogVisible(true);
+  }
 
-    const updatedTasks = isEditMode
-      ? selectedTasksArray.map((task) =>
-          task.id === updatedTask.id ? updatedTask : task
-        )
-      : [updatedTask, ...selectedTasksArray];
-
-    const updatedInitiative = {
-      ...selectedInitiative,
-      tasks: updatedTasks,
-    };
-
-    onSubmit(updatedInitiative);
-
-    router.push({
-      pathname: `/initiatives/${initiativeId}/tasks/${updatedTask.id}`,
-      query: { success: "true" },
-    });
+  function navigateAway() {
+    setIsDialogVisible(false);
+    router.push(
+      isEditMode ? `/initiatives/${initiativeId}/tasks/${task._id}` : "/"
+    );
   }
 
   return (
     <Form onSubmit={handleSubmit}>
-      <Heading>{isEditMode ? "Edit Task" : "Add task"}</Heading>
+      <Heading>{isEditMode ? "Edit Task" : "Add Task"}</Heading>
       <Label>
         Task Title
         <Input
@@ -120,27 +95,36 @@ export default function TaskForm({
           <option value="Completed">Completed</option>
         </StyledSelect>
       </Label>
-      {isDialogVisible && (
-        <DialogOverlay>
-          <ConfirmationDialog>
-            <p>You have unsaved changes. Would you like to save your edits?</p>
-            <DialogButton onClick={saveChanges}>Save</DialogButton>
-            <DialogButton
-              onClick={() => router.push(`/initiatives/${initiativeId}`)}
-            >
-              Cancel
-            </DialogButton>
-          </ConfirmationDialog>
-        </DialogOverlay>
-      )}
+
+      <ConfirmationDialog
+        isVisible={isDialogVisible}
+        message="You have unsaved changes. Would you like to save your edits?"
+        onSaveAndContinue={() => {
+          setIsDialogVisible(false);
+          handleSubmit();
+        }}
+        onDiscardChanges={() => {
+          setIsDialogVisible(false);
+          navigateAway();
+        }}
+        onCancel={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setIsDialogVisible(false);
+        }}
+      />
+
       <ButtonGroup>
-        <Button
-          type="button"
-          onClick={() => router.push(`/initiatives/${initiativeId}`)}
-        >
+        <StyledLink href="/" onClick={handleCancel}>
           Cancel
-        </Button>
-        <Button type="submit">{isEditMode ? "Save" : "Create"}</Button>
+        </StyledLink>
+        <StyledLink
+          href="#"
+          onClick={handleSubmit}
+          disabled={Object.values(errors).some((error) => error)}
+        >
+          {isEditMode ? "Save" : "Create"}
+        </StyledLink>
       </ButtonGroup>
     </Form>
   );
@@ -222,43 +206,22 @@ const ButtonGroup = styled.div`
   margin-top: auto;
 `;
 
-const Button = styled.button`
+const StyledLink = styled(Link)`
   padding: 10px 20px;
-  border: none;
   border-radius: 50px;
   background-color: var(--buttons);
   color: var(--contrasttext);
+  text-decoration: none;
+  text-align: center;
+  font-size: 12px;
   cursor: pointer;
-  border: none;
-  font-size: 10px;
 
   &:hover {
     background-color: var(--accents);
   }
-`;
 
-const DialogOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--highlightedcard);
-  color: var(--text);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ConfirmationDialog = styled.div`
-  background: var(--highlightedcard);
-  color: var(--text);
-  padding: 20px;
-  border-radius: 8px;
-  border: none;
-  text-align: center;
-`;
-
-const DialogButton = styled(Button)`
-  margin: 5px;
+  &[disabled] {
+    pointer-events: none;
+    opacity: 0.5;
+  }
 `;

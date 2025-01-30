@@ -1,8 +1,41 @@
-import { useState } from "react";
 import GlobalStyle from "../styles";
-import { initialData } from "@/lib/initialData";
 import styled from "styled-components";
 import { FaSun, FaMoon } from "react-icons/fa";
+import { SWRConfig } from "swr";
+import useLocalStorage from "use-local-storage";
+
+export default function App({ Component, pageProps }) {
+  const [theme, setTheme] = useLocalStorage("theme", "light");
+
+  function toggleTheme() {
+    setTheme(theme === "light" ? "dark" : "light");
+  }
+
+  return (
+    <SWRConfig
+      value={{
+        fetcher: async (...args) => {
+          const response = await fetch(...args);
+          if (!response.ok) {
+            throw new Error(`Request with ${JSON.stringify(args)} failed.`);
+          }
+          const result = await response.json();
+          return result.data ?? result;
+        },
+        revalidateOnFocus: false,
+        shouldRetryOnError: false,
+      }}
+    >
+      <GlobalStyle theme={theme} />
+      <StyledThemeButton onClick={toggleTheme}>
+        {theme === "light" ? <FaMoon /> : <FaSun />}
+      </StyledThemeButton>
+      <Component {...pageProps} />
+    </SWRConfig>
+  );
+}
+
+// Styled Components
 
 const StyledThemeButton = styled.button`
   display: flex;
@@ -14,7 +47,6 @@ const StyledThemeButton = styled.button`
   border-radius: 50px;
   background: var(--buttons);
   color: var(--toggle-icon-color);
-
   cursor: pointer;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease-in-out;
@@ -32,98 +64,3 @@ const StyledThemeButton = styled.button`
     outline: 1px solid var(--focus-outline-color);
   }
 `;
-
-export default function App({ Component, pageProps }) {
-  const [initiatives, setInitiatives] = useState(initialData);
-  const [theme, setTheme] = useState("light");
-
-  function handleCreateInitiative(newInitiative) {
-    setInitiatives((prev) => [...prev, newInitiative]);
-  }
-
-  function handleDeleteInitiative(id) {
-    const updatedInitiatives = initiatives.filter(
-      (initiative) => initiative.id !== id
-    );
-    setInitiatives(updatedInitiatives);
-  }
-
-  function handleToggleCompleted(id) {
-    const updatedInitiatives = initiatives.map((initiative) =>
-      initiative.id === id
-        ? { ...initiative, isCompleted: !initiative.isCompleted ?? true }
-        : initiative
-    );
-    setInitiatives(updatedInitiatives);
-  }
-
-  function handleEditInitiative(updatedInitiative) {
-    const updatedInitiatives = initiatives.map((initiative) =>
-      initiative.id === updatedInitiative.id ? updatedInitiative : initiative
-    );
-    setInitiatives(updatedInitiatives);
-  }
-
-  function handleDeleteTask(initiativeId, taskId) {
-    const updatedInitiatives = initiatives.map((initiative) =>
-      initiative.id === initiativeId
-        ? {
-            ...initiative,
-            tasks: initiative.tasks.filter((item) => item.id !== taskId),
-          }
-        : initiative
-    );
-    setInitiatives(updatedInitiatives);
-  }
-
-  function handleUpdateUploadedImages(initiativeId, taskId, newImages) {
-    const updatedInitiatives = initiatives.map((initiative) =>
-      initiative.id === initiativeId
-        ? {
-            ...initiative,
-            tasks: initiative.tasks.map((task) =>
-              task.id === taskId
-                ? {
-                    ...task,
-                    uploadedImages: [
-                      ...(task.uploadedImages || []),
-                      ...newImages,
-                    ],
-                  }
-                : task
-            ),
-          }
-        : initiative
-    );
-
-    setInitiatives(updatedInitiatives);
-  }
-
-  function handleUpdateInitiatives(newInitiatives) {
-    setInitiatives(newInitiatives);
-  }
-
-  function toggleTheme() {
-    setTheme((previousTheme) => (previousTheme === "light" ? "dark" : "light"));
-  }
-  return (
-    <>
-      <GlobalStyle theme={theme} />
-      <StyledThemeButton onClick={toggleTheme}>
-        {theme === "light" ? <FaMoon /> : <FaSun />}
-      </StyledThemeButton>
-
-      <Component
-        {...pageProps}
-        initiatives={initiatives}
-        onCreateInitiative={handleCreateInitiative}
-        onDeleteInitiative={handleDeleteInitiative}
-        onToggleCompleted={handleToggleCompleted}
-        onEditInitiative={handleEditInitiative}
-        onDeleteTask={handleDeleteTask}
-        onUpdateUploadedImages={handleUpdateUploadedImages}
-        onUpdateInitiatives={handleUpdateInitiatives}
-      />
-    </>
-  );
-}
