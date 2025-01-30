@@ -98,7 +98,8 @@ const ListContainer = styled.ul`
 
 const YourInitiatives = styled.h1`
   color: var(--title);
-  margin: 16px;
+  margin-top: 60px;
+  margin-left: 10px;
 `;
 
 const NoInitiativesMessage = styled.span`

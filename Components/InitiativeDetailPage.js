@@ -5,6 +5,7 @@ import CompletedInitiative from "./CompletedInitiative";
 import useSWR from "swr";
 import truncateText from "@/utility/truncateText";
 import { formatDateForDisplay } from "@/utility/dateUtils";
+import Header from "./Header";
 
 export default function InitiativeDetailPage({
   initiativeId,
@@ -58,100 +59,105 @@ export default function InitiativeDetailPage({
   }
 
   return (
-    <PageContainer>
-      <Content>
-        <Title>{title}</Title>
-        <Description>{description}</Description>
-        <Deadline>
-          <strong>Deadline:</strong> {formattedDeadline}
-        </Deadline>
-        <TagList>
-          {tags.length > 0 ? (
-            tags.map((tag) => <Tag key={tag}>{tag}</Tag>)
-          ) : (
-            <EmptyMessage>No tags available</EmptyMessage>
-          )}
-        </TagList>
-        {deleteButtonClicked && (
-          <DialogOverlay>
-            <ConfirmationDialog>
-              <p>Are you sure you want to delete this initiative?</p>
-              <ButtonGroup>
-                <ConfirmationDialogButton
-                  onClick={() => setDeleteButtonClicked(false)}
-                >
-                  Cancel
-                </ConfirmationDialogButton>
-                <ConfirmationDialogButton onClick={onDelete}>
-                  Yes, delete
-                </ConfirmationDialogButton>
-              </ButtonGroup>
-            </ConfirmationDialog>
-          </DialogOverlay>
-        )}
-        <CompletedContainer>
-          <button onClick={onToggleCompleted}>
-            {isCompleted ? (
-              <>
-                Completed <CompletedInitiative isCompleted={isCompleted} />
-              </>
+    <>
+      <Header></Header>
+      <PageContainer>
+        <Content>
+          <Title>{title}</Title>
+          <Description>{description}</Description>
+          <Deadline>
+            <strong>Deadline:</strong> {formattedDeadline}
+          </Deadline>
+          <TagList>
+            {tags.length > 0 ? (
+              tags.map((tag) => <Tag key={tag}>{tag}</Tag>)
             ) : (
-              <>Mark as completed</>
+              <EmptyMessage>No tags available</EmptyMessage>
             )}
-          </button>
-        </CompletedContainer>
-        <TasksGrid>
-          <StyledLinkTask
-            $variant="addTaskCard"
-            href={`/initiatives/${initiativeId}/tasks/createTask`}
-          >
-            <span>➕</span>
-            <h2>Add task</h2>
-          </StyledLinkTask>
-          {tasks.length > 0 ? (
-            tasks.map((task) => (
-              <StyledLinkTask
-                key={task._id}
-                href={`/initiatives/${initiativeId}/tasks/${task._id}`}
-              >
-                <TaskCard>
-                  <h2>{truncateText(task.title, 10)}</h2>
-                  <span style={{ color: getStatusColor(task.status) }}>
-                    {task.status}
-                  </span>
-                </TaskCard>
-              </StyledLinkTask>
-            ))
-          ) : (
-            <NoTasksMessage>
-              No tasks available yet <br />
-              Please add some!
-            </NoTasksMessage>
+          </TagList>
+          {deleteButtonClicked && (
+            <DialogOverlay>
+              <ConfirmationDialog>
+                <p>Are you sure you want to delete this initiative?</p>
+                <ButtonGroup>
+                  <ConfirmationDialogButton
+                    onClick={() => setDeleteButtonClicked(false)}
+                  >
+                    Cancel
+                  </ConfirmationDialogButton>
+                  <ConfirmationDialogButton onClick={onDelete}>
+                    Yes, delete
+                  </ConfirmationDialogButton>
+                </ButtonGroup>
+              </ConfirmationDialog>
+            </DialogOverlay>
           )}
-        </TasksGrid>
-        <AttachmentSection>
-          <h3>Images</h3>
-          {allUploadedImages.length > 0 ? (
-            <AttachmentList>
-              {allUploadedImages.map((file) => (
-                <li key={file.url}>
-                  <a href={file.url} target="_blank">
-                    {file.name}
-                  </a>
-                </li>
-              ))}
-            </AttachmentList>
-          ) : (
-            <NoImages>Add images to your tasks to view them here</NoImages>
-          )}
-        </AttachmentSection>
-      </Content>
-      <Footer>
-        <StyledLink href="/">Back</StyledLink>
-        <Button onClick={() => setDeleteButtonClicked(true)}>Delete</Button>
-        <StyledLink href={`/initiatives/${initiativeId}/edit`}>Edit</StyledLink>
-      </Footer>
-    </PageContainer>
+          <CompletedContainer>
+            <button onClick={onToggleCompleted}>
+              {isCompleted ? (
+                <>
+                  Completed <CompletedInitiative isCompleted={isCompleted} />
+                </>
+              ) : (
+                <>Mark as completed</>
+              )}
+            </button>
+          </CompletedContainer>
+          <TasksGrid>
+            <StyledLinkTask
+              $variant="addTaskCard"
+              href={`/initiatives/${initiativeId}/tasks/createTask`}
+            >
+              <span>➕</span>
+              <h2>Add task</h2>
+            </StyledLinkTask>
+            {tasks.length > 0 ? (
+              tasks.map((task) => (
+                <StyledLinkTask
+                  key={task._id}
+                  href={`/initiatives/${initiativeId}/tasks/${task._id}`}
+                >
+                  <TaskCard>
+                    <h2>{truncateText(task.title, 10)}</h2>
+                    <span style={{ color: getStatusColor(task.status) }}>
+                      {task.status}
+                    </span>
+                  </TaskCard>
+                </StyledLinkTask>
+              ))
+            ) : (
+              <NoTasksMessage>
+                No tasks available yet <br />
+                Please add some!
+              </NoTasksMessage>
+            )}
+          </TasksGrid>
+          <AttachmentSection>
+            <h3>Images</h3>
+            {allUploadedImages.length > 0 ? (
+              <AttachmentList>
+                {allUploadedImages.map((file) => (
+                  <li key={file.url}>
+                    <a href={file.url} target="_blank">
+                      {file.name}
+                    </a>
+                  </li>
+                ))}
+              </AttachmentList>
+            ) : (
+              <NoImages>Add images to your tasks to view them here</NoImages>
+            )}
+          </AttachmentSection>
+        </Content>
+        <Footer>
+          <StyledLink href="/">Back</StyledLink>
+          <Button onClick={() => setDeleteButtonClicked(true)}>Delete</Button>
+          <StyledLink href={`/initiatives/${initiativeId}/edit`}>
+            Edit
+          </StyledLink>
+        </Footer>
+      </PageContainer>
+    </>
   );
 }
 

@@ -1,16 +1,8 @@
+import Head from "next/head";
 import GlobalStyle from "../styles";
-import styled from "styled-components";
-import { FaSun, FaMoon } from "react-icons/fa";
 import { SWRConfig } from "swr";
-import useLocalStorage from "use-local-storage";
 
 export default function App({ Component, pageProps }) {
-  const [theme, setTheme] = useLocalStorage("theme", "light");
-
-  function toggleTheme() {
-    setTheme(theme === "light" ? "dark" : "light");
-  }
-
   return (
     <SWRConfig
       value={{
@@ -26,41 +18,11 @@ export default function App({ Component, pageProps }) {
         shouldRetryOnError: false,
       }}
     >
-      <GlobalStyle theme={theme} />
-      <StyledThemeButton onClick={toggleTheme}>
-        {theme === "light" ? <FaMoon /> : <FaSun />}
-      </StyledThemeButton>
+      <Head>
+        <title>Initiate It</title>
+      </Head>
+      <GlobalStyle />
       <Component {...pageProps} />
     </SWRConfig>
   );
 }
-
-// Styled Components
-
-const StyledThemeButton = styled.button`
-  display: flex;
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 50px;
-  background: var(--buttons);
-  color: var(--toggle-icon-color);
-  cursor: pointer;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease-in-out;
-  z-index: 100;
-
-  &:hover {
-    background: var(--accents);
-    color: var(--toggle-hover-color);
-    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
-    transform: scale(1.05);
-  }
-  &:focus {
-    transform: scale(0.95);
-    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
-    outline: 1px solid var(--focus-outline-color);
-  }
-`;

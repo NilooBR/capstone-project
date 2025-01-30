@@ -16,9 +16,11 @@ export default createGlobalStyle`
 
   :root {
     --accents: #24309e; // also to hover --buttons
-    --buttons:#010080;
+    --buttons: #010080;
     --tags: #010080;
     --text: #0f172b;
+    --header: #010080;
+    --headerIcon: #f2f0ef;
     --errortext: #90a1ba; // also for :focus area
     --title: #010080;
     --mainbackground: #white;
@@ -40,6 +42,8 @@ export default createGlobalStyle`
         --buttons: #3168c9;
         --tags: #3168c9;
         --text: #d1d5db;
+        --header: #01004d;
+        --headerIcon: #f2f0ef;
         --errortext: #ff6b6b; // also for :focus area
         --title: #e0f0ff;
         --mainbackground: #121212;
