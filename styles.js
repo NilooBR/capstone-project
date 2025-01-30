@@ -30,7 +30,9 @@ export default createGlobalStyle`
     --cardborder: #d1d5db;
     --toggle-icon-color: #f2f0ef ; 
     --toggle-hover-color: #f2f0ef;
-    --focus-outline-color: #d1d5db;  
+    --focus-outline-color: #d1d5db;
+    --actionButtons: #010080;
+    --actionButtonText: #f2f0ef;  
 
 }
 
@@ -54,6 +56,9 @@ export default createGlobalStyle`
         --toggle-icon-color: #d1d5db;
         --toggle-hover-color: #60a5fa;
         --focus-outline-color: #2563eb;
+        --actionButtons: #01004d;
+        --actionButtonText: #d1d5db;
+
       }
     `}
 `;

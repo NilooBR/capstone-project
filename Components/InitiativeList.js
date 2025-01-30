@@ -100,6 +100,8 @@ const YourInitiatives = styled.h1`
   color: var(--title);
   margin-top: 60px;
   margin-left: 10px;
+  font-size: 1.8rem;
+  padding: 20px 20px 0 0;
 `;
 
 const NoInitiativesMessage = styled.span`

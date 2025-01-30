@@ -4,6 +4,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 import useSWR from "swr";
+import PageActions from "@/Components/PageAction";
 
 export default function TaskDetailPage() {
   const router = useRouter();
@@ -195,15 +196,16 @@ export default function TaskDetailPage() {
           </DialogOverlay>
         )}
       </Content>
-      <Footer>
-        <StyledLink href={`/initiatives/${initiativeId}`}>Back</StyledLink>
-        <Button onClick={() => setDeleteButtonClicked(true)}>Delete</Button>
-        <StyledLink
-          href={`/initiatives/${initiativeId}/tasks/${taskId}/editTask`}
-        >
-          Edit
-        </StyledLink>
-      </Footer>
+      <PageActions
+        showBack
+        showDelete
+        showEdit
+        onBack={() => router.push(`/initiatives/${initiativeId}`)}
+        onDelete={() => setDeleteButtonClicked(true)}
+        onEdit={() =>
+          router.push(`/initiatives/${initiativeId}/tasks/${taskId}/editTask`)
+        }
+      />
     </PageContainer>
   );
 }
@@ -230,7 +232,9 @@ const Footer = styled.div`
 `;
 
 const Title = styled.h1`
-  margin: 20px 0;
+  margin-top: 60px;
+  margin-left: 10px;
+  font-size: 1.8rem;
   word-wrap: break-word;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -291,7 +295,7 @@ const ImagePreviewContainer = styled.div`
   flex-wrap: wrap;
   gap: 15px;
   margin-top: 20px;
-  background-color: var(--cardbackground);
+  background-color: transparent;
 
   button {
     position: absolute;
@@ -351,7 +355,7 @@ const DialogOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--mainbackground);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;

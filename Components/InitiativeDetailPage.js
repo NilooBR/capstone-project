@@ -5,6 +5,8 @@ import CompletedInitiative from "./CompletedInitiative";
 import useSWR from "swr";
 import truncateText from "@/utility/truncateText";
 import { formatDateForDisplay } from "@/utility/dateUtils";
+import PageActions from "./PageAction";
+import { useRouter } from "next/router";
 
 export default function InitiativeDetailPage({
   initiativeId,
@@ -18,6 +20,7 @@ export default function InitiativeDetailPage({
   } = useSWR(initiativeId ? `/api/initiatives/${initiativeId}` : null);
 
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
+  const router = useRouter();
 
   if (error) return <p>❌ Error loading: {error.message}</p>;
   if (isLoading) return <p>⏳ Fetching...</p>;
@@ -146,11 +149,14 @@ export default function InitiativeDetailPage({
           )}
         </AttachmentSection>
       </Content>
-      <Footer>
-        <StyledLink href="/">Back</StyledLink>
-        <Button onClick={() => setDeleteButtonClicked(true)}>Delete</Button>
-        <StyledLink href={`/initiatives/${initiativeId}/edit`}>Edit</StyledLink>
-      </Footer>
+      <PageActions
+        showBack
+        showDelete
+        showEdit
+        onBack={() => router.push("/")}
+        onDelete={() => setDeleteButtonClicked(true)}
+        onEdit={() => router.push(`/initiatives/${initiativeId}/edit`)}
+      />
     </PageContainer>
   );
 }
@@ -191,7 +197,8 @@ const Content = styled.div`
 `;
 
 const Title = styled.h1`
-  margin: 20px 0;
+  margin-top: 60px;
+  margin-left: 10px;
   font-size: 1.8rem;
   word-wrap: break-word;
   overflow-wrap: anywhere;
@@ -243,35 +250,12 @@ const CompletedContainer = styled.div`
   }
 `;
 
-const Footer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-`;
-
 const Button = styled.button`
   display: inline-block;
   padding: 10px 20px;
   text-align: center;
   border: none;
   border-radius: 50px;
-  background-color: var(--buttons);
-  color: var(--contrasttext);
-  cursor: pointer;
-  font-size: 12px;
-
-  &:hover {
-    background-color: var(--accents);
-  }
-`;
-
-const StyledLink = styled(Link)`
-  display: inline-block;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  border-radius: 50px;
-  border: none;
   background-color: var(--buttons);
   color: var(--contrasttext);
   cursor: pointer;
@@ -331,7 +315,7 @@ const DialogOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--mainbackground);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
