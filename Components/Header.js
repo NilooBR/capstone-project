@@ -1,17 +1,12 @@
-import useLocalStorage from "use-local-storage";
 import { FaSun, FaMoon, FaHome } from "react-icons/fa";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 
-export default function Header() {
+export default function Header({ toggleTheme, theme }) {
   const router = useRouter();
-  const [theme, setTheme] = useLocalStorage("theme", "light");
 
-  function toggleTheme() {
-    setTheme(theme === "light" ? "dark" : "light");
-  }
   return (
-    <HeaderContainer>
+    <HeaderContainer theme={theme}>
       <HomeButton onClick={() => router.push("/")}>
         <FaHome />
       </HomeButton>

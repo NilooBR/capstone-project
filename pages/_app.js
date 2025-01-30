@@ -1,8 +1,17 @@
+
+import useLocalStorage from "use-local-storage";
 import Head from "next/head";
 import GlobalStyle from "../styles";
 import { SWRConfig } from "swr";
+import Header from "@/Components/Header";
 
 export default function App({ Component, pageProps }) {
+  const [theme, setTheme] = useLocalStorage("theme", "light");
+
+  function toggleTheme() {
+    setTheme(theme === "light" ? "dark" : "light");
+  }
+
   return (
     <SWRConfig
       value={{
@@ -21,7 +30,8 @@ export default function App({ Component, pageProps }) {
       <Head>
         <title>Initiate It</title>
       </Head>
-      <GlobalStyle />
+      <GlobalStyle theme={theme} />
+      <Header toggleTheme={toggleTheme} theme={theme}></Header>
       <Component {...pageProps} />
     </SWRConfig>
   );
