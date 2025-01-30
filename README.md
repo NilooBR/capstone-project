@@ -1,19 +1,5 @@
-# New Next Project
+**This app offers:**
 
-### Local Development
-
-To work locally, please install the dependencies using `npm i` first.
-
-Run `npm run dev` to start a development server and open the displayed URL in a browser.
-
-Use `npm run test` to run the tests.
-
-### Scripts
-
-You can use the following commands:
-
-- `npm run dev` to start a development server
-- `npm run build` to build the project
-- `npm run start` to start a production server
-- `npm run test` to run the tests
-- `npm run lint` to run the linter
+- [ ] Empowerment: Users can customize their experience, making the app feel personal and uniquely theirs.
+- [ ] Creativity: It fosters individuality and innovation, perfectly aligning with a platform focused on initiatives.
+- [ ] Simplicity: It’s easy to navigate, memorable, and has a positive, motivational tone.
