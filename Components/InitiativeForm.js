@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format, parse, isValid } from "date-fns";
 import { de } from "date-fns/locale";
 import ConfirmationDialog from "./ConfirmationDialog";
-import { formatDateForDisplay, formatDeadlineForDatabase } from "@/utility/dateUtils";
+import {
+  formatDateForDisplay,
+  formatDeadlineForDatabase,
+} from "@/utility/dateUtils";
+import PageActions from "./PageAction";
 
 export default function InitiativeForm({
   isEditMode = false,
@@ -190,19 +193,13 @@ export default function InitiativeForm({
           setIsDialogVisible(false);
         }}
       />
-
-      <ButtonGroup>
-        <StyledLink href="/" onClick={handleCancel}>
-          Cancel
-        </StyledLink>
-        <StyledLink
-          href="#"
-          onClick={handleSubmit}
-          disabled={Object.values(errors).some((error) => error)}
-        >
-          {isEditMode ? "Save" : "Create"}
-        </StyledLink>
-      </ButtonGroup>
+      <PageActions
+        showCancel
+        showCreateOrSave
+        onCancel={handleCancel}
+        onCreateOrSave={handleSubmit}
+        createOrSaveLabel={isEditMode ? "Save" : "Create"}
+      />
     </Form>
   );
 }
@@ -222,6 +219,8 @@ const Form = styled.form`
 const Heading = styled.h1`
   color: var(--title);
   text-align: left;
+  margin-top: 60px;
+  margin-left: 10px;
 `;
 
 const Label = styled.label`
@@ -270,24 +269,4 @@ const StyledDatePicker = styled(DatePicker)`
 const Error = styled.p`
   color: var(--errortext);
   font-size: 0.8rem;
-`;
-
-const StyledLink = styled(Link)`
-  padding: 10px 20px;
-  border-radius: 50px;
-  background-color: var(--buttons);
-  color: var(--contrasttext);
-  text-decoration: none;
-  text-align: center;
-  font-size: 12px;
-  &:hover {
-    background-color: var(--accents);
-  }
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: auto;
 `;

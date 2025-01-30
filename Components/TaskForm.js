@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import styled from "styled-components";
 import ConfirmationDialog from "./ConfirmationDialog";
+import PageActions from "./PageAction";
 
 export default function TaskForm({
   isEditMode = false,
@@ -45,7 +45,6 @@ export default function TaskForm({
     }
 
     onSubmit(formData);
-    
   }
 
   function handleCancel(event) {
@@ -113,19 +112,13 @@ export default function TaskForm({
           setIsDialogVisible(false);
         }}
       />
-
-      <ButtonGroup>
-        <StyledLink href="/" onClick={handleCancel}>
-          Cancel
-        </StyledLink>
-        <StyledLink
-          href="#"
-          onClick={handleSubmit}
-          disabled={Object.values(errors).some((error) => error)}
-        >
-          {isEditMode ? "Save" : "Create"}
-        </StyledLink>
-      </ButtonGroup>
+      <PageActions
+        showCancel
+        showCreateOrSave
+        onCancel={handleCancel}
+        onCreateOrSave={handleSubmit}
+        createOrSaveLabel={isEditMode ? "Save" : "Create"}
+      />
     </Form>
   );
 }
@@ -145,6 +138,8 @@ const Form = styled.form`
 const Heading = styled.h1`
   color: var(--title);
   text-align: left;
+  margin-top: 60px;
+  margin-left: 10px;
 `;
 
 const Label = styled.label`
@@ -199,29 +194,3 @@ const Error = styled.p`
   font-size: 0.8rem;
 `;
 
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: auto;
-`;
-
-const StyledLink = styled(Link)`
-  padding: 10px 20px;
-  border-radius: 50px;
-  background-color: var(--buttons);
-  color: var(--contrasttext);
-  text-decoration: none;
-  text-align: center;
-  font-size: 12px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: var(--accents);
-  }
-
-  &[disabled] {
-    pointer-events: none;
-    opacity: 0.5;
-  }
-`;
