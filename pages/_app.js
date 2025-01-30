@@ -1,4 +1,3 @@
-
 import useLocalStorage from "use-local-storage";
 import Head from "next/head";
 import GlobalStyle from "../styles";
@@ -28,6 +27,7 @@ export default function App({ Component, pageProps }) {
       }}
     >
       <Head>
+        <link rel="icon" href="/favicon.ico" />
         <title>Initiate It</title>
       </Head>
       <GlobalStyle theme={theme} />
