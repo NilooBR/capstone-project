@@ -296,6 +296,8 @@ const ImagePreviewContainer = styled.div`
   gap: 15px;
   margin-top: 20px;
   background-color: transparent;
+  justify-content: center;
+  align-items: center;
 
   button {
     position: absolute;
@@ -317,9 +319,9 @@ const ImagePreviewContainer = styled.div`
 
 const ImageWrapper = styled.div`
   position: relative;
-  width: 150px;
-  height: 150px;
-  border: 1px solid grey;
+  width: 130px;
+  height: 130px;
+  border: 0.5px solid grey;
   border-radius: 8px;
   overflow: hidden;
   display: flex;

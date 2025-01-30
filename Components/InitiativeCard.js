@@ -54,7 +54,7 @@ export default function InitiativeCard({
       <TopLeftButton onClick={handleModalToggle}>...</TopLeftButton>
       <StyledLink href={`/initiatives/${initiativeId}`}>
         <StyledSpan>
-          {truncateText(initiative?.title || "Loading...", 20)}
+          {truncateText(initiative?.title || "Loading...", 35)}
           <CompletedInitiative isCompleted={initiative?.isCompleted} />{" "}
         </StyledSpan>
         <TagList>
@@ -129,6 +129,7 @@ const StyledLink = styled(Link)`
   width: 100%;
   padding-left: 10px;
   padding-right: 10px;
+  margin-top: 18px;
 `;
 
 const DateText = styled.p`

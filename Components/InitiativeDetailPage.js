@@ -7,6 +7,7 @@ import truncateText from "@/utility/truncateText";
 import { formatDateForDisplay } from "@/utility/dateUtils";
 import PageActions from "./PageAction";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 export default function InitiativeDetailPage({
   initiativeId,
@@ -118,7 +119,7 @@ export default function InitiativeDetailPage({
                 href={`/initiatives/${initiativeId}/tasks/${task._id}`}
               >
                 <TaskCard>
-                  <h2>{truncateText(task.title, 10)}</h2>
+                  <h2>{truncateText(task.title, 35)}</h2>
                   <span style={{ color: getStatusColor(task.status) }}>
                     {task.status}
                   </span>
@@ -132,22 +133,21 @@ export default function InitiativeDetailPage({
             </NoTasksMessage>
           )}
         </TasksGrid>
-        <AttachmentSection>
-          <h3>Images</h3>
-          {allUploadedImages.length > 0 ? (
-            <AttachmentList>
-              {allUploadedImages.map((file) => (
-                <li key={file.url}>
-                  <a href={file.url} target="_blank">
-                    {file.name}
-                  </a>
-                </li>
-              ))}
-            </AttachmentList>
-          ) : (
-            <NoImages>Add images to your tasks to view them here</NoImages>
-          )}
-        </AttachmentSection>
+        <ImagesTitle>Images:</ImagesTitle>
+        <ImagePreviewContainer>
+          {allUploadedImages.map((file) => (
+            <ImageWrapper key={file.id}>
+              <a href={file.url} target="_blank">
+                <Image
+                  src={file.url}
+                  alt={file.displayName}
+                  layout="fill"
+                  objectFit="contain"
+                />
+              </a>
+            </ImageWrapper>
+          ))}
+        </ImagePreviewContainer>
       </Content>
       <PageActions
         showBack
@@ -373,4 +373,29 @@ const AttachmentList = styled.ul`
   padding: 0;
   margin: 0;
   color: var(--text);
+`;
+
+const ImagePreviewContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+  background-color: transparent;
+`;
+
+const ImageWrapper = styled.div`
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border: 0.5px solid grey;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: transparent;
+`;
+
+const ImagesTitle = styled.h4`
+  margin-top: 20px;
+  margin-bottom: 20px;
 `;

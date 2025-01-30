@@ -34,7 +34,7 @@ const ActionContainer = styled.footer`
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background: transparent;
+  background: var(--mainbackground);
   bottom: 0;
   left: 0;
   z-index: 1000;
