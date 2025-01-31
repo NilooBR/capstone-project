@@ -18,9 +18,11 @@ export default function InitiativeDetailPage({
     data: initiative,
     error,
     isLoading,
+    mutate,
   } = useSWR(initiativeId ? `/api/initiatives/${initiativeId}` : null);
 
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
+  const [showCompleteDialog, setShowCompleteDialog] = useState(false);
   const router = useRouter();
 
   if (error) return <p>❌ Error loading: {error.message}</p>;
@@ -61,6 +63,38 @@ export default function InitiativeDetailPage({
     }
   }
 
+  const hasOpenTasks = tasks.some((task) => task.status !== "Completed");
+
+  async function updateInitiativeStatus(completed) {
+    try {
+      await fetch(`/api/initiatives/${initiativeId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isCompleted: completed }),
+      });
+      mutate();
+    } catch (error) {
+      console.error("Error updating initiative status:", error);
+    }
+  }
+
+  function markAllTasksAsCompleted() {
+    const updatedTasks = tasks.map((task) => ({
+      ...task,
+      status: "Completed",
+    }));
+    mutate({ ...initiative, tasks: updatedTasks }, false);
+  }
+
+  function handleMarkAsCompleted() {
+    if (hasOpenTasks) {
+      setShowCompleteDialog(true);
+    } else {
+      updateInitiativeStatus(true);
+      if (onToggleCompleted) onToggleCompleted(true);
+    }
+  }
+
   return (
     <PageContainer>
       <Content>
@@ -94,7 +128,7 @@ export default function InitiativeDetailPage({
           </DialogOverlay>
         )}
         <CompletedContainer>
-          <button onClick={onToggleCompleted}>
+          <button onClick={handleMarkAsCompleted}>
             {isCompleted ? (
               <>
                 Completed <CompletedInitiative isCompleted={isCompleted} />
@@ -104,6 +138,39 @@ export default function InitiativeDetailPage({
             )}
           </button>
         </CompletedContainer>
+        {showCompleteDialog && (
+          <DialogOverlay>
+            <ConfirmationDialog>
+              <p>
+                Do you want to mark all tasks as completed or only update the
+                initiative status?
+              </p>
+              <ButtonGroup>
+                <ConfirmationDialogButton
+                  onClick={() => setShowCompleteDialog(false)}
+                >
+                  Cancel
+                </ConfirmationDialogButton>
+                <ConfirmationDialogButton
+                  onClick={() => {
+                    updateInitiativeStatus(true);
+                    setShowCompleteDialog(false);
+                  }}
+                >
+                  Update Initiative only
+                </ConfirmationDialogButton>
+                <ConfirmationDialogButton
+                  onClick={() => {
+                    markAllTasksAsCompleted();
+                    setShowCompleteDialog(false);
+                  }}
+                >
+                  Complete all Tasks
+                </ConfirmationDialogButton>
+              </ButtonGroup>
+            </ConfirmationDialog>
+          </DialogOverlay>
+        )}
         <TasksGrid>
           <StyledLinkTask
             $variant="addTaskCard"
