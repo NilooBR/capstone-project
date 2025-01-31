@@ -8,6 +8,7 @@ import { formatDateForDisplay } from "@/utility/dateUtils";
 import PageActions from "./PageAction";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 export default function InitiativeDetailPage({
   initiativeId,
@@ -64,7 +65,10 @@ export default function InitiativeDetailPage({
   return (
     <PageContainer>
       <Content>
-        <Title>{title}</Title>
+        <TitleContainer>
+          <Title>{title}</Title>
+          <DeleteIcon onClick={() => setDeleteButtonClicked(true)}></DeleteIcon>
+        </TitleContainer>
         <Description>{description}</Description>
         <Deadline>
           <strong>Deadline:</strong> {formattedDeadline}
@@ -151,10 +155,8 @@ export default function InitiativeDetailPage({
       </Content>
       <PageActions
         showBack
-        showDelete
         showEdit
         onBack={() => router.push("/")}
-        onDelete={() => setDeleteButtonClicked(true)}
         onEdit={() => router.push(`/initiatives/${initiativeId}/edit`)}
       />
     </PageContainer>
@@ -194,6 +196,33 @@ const PageContainer = styled.div`
 const Content = styled.div`
   flex: 1;
   margin-bottom: 20px;
+`;
+
+const TitleContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+`;
+
+const DeleteIcon = styled(FaRegTrashAlt)`
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  background-color: transparent;
+  color: var(--buttons);
+  border: none;
+  font-size: 1.6rem;
+  margin-right: -5px;
+  margin-top: 40px;
+  outline: 0;
+
+  &:hover {
+    color: var(--accents);
+    transform: scale(1.05);
+  }
+  &:focus {
+    transform: scale(0.95);
+  }
 `;
 
 const Title = styled.h1`
