@@ -201,20 +201,24 @@ export default function InitiativeDetailPage({
           )}
         </TasksGrid>
         <ImagesTitle>Images:</ImagesTitle>
-        <ImagePreviewContainer>
-          {allUploadedImages.map((file) => (
-            <ImageWrapper key={file.id}>
-              <a href={file.url} target="_blank">
-                <Image
-                  src={file.url}
-                  alt={file.displayName}
-                  layout="fill"
-                  objectFit="contain"
-                />
-              </a>
-            </ImageWrapper>
-          ))}
-        </ImagePreviewContainer>
+        {allUploadedImages.length > 0 ? (
+          <ImagePreviewContainer>
+            {allUploadedImages.map((file) => (
+              <ImageWrapper key={file.id}>
+                <a href={file.url} target="_blank">
+                  <Image
+                    src={file.url}
+                    alt={file.displayName}
+                    layout="fill"
+                    objectFit="contain"
+                  />
+                </a>
+              </ImageWrapper>
+            ))}
+          </ImagePreviewContainer>
+        ) : (
+          <NoImages>Add images to your tasks to view them here</NoImages>
+        )}
       </Content>
       <PageActions
         showBack
