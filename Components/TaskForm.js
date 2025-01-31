@@ -97,7 +97,7 @@ export default function TaskForm({
 
       <ConfirmationDialog
         isVisible={isDialogVisible}
-        message="You have unsaved changes. Would you like to save your edits?"
+        message="You have unsaved changes. Would you like to save them?"
         onSaveAndContinue={() => {
           setIsDialogVisible(false);
           handleSubmit();
@@ -193,4 +193,3 @@ const Error = styled.p`
   color: var(--errortext);
   font-size: 0.8rem;
 `;
-

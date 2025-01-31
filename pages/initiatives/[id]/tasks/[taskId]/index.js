@@ -5,6 +5,7 @@ import styled from "styled-components";
 import Image from "next/image";
 import useSWR from "swr";
 import PageActions from "@/Components/PageAction";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 export default function TaskDetailPage() {
   const router = useRouter();
@@ -135,7 +136,10 @@ export default function TaskDetailPage() {
   return (
     <PageContainer>
       <Content>
-        <Title>{task.title}</Title>
+        <TitleContainer>
+          <Title>{task.title}</Title>
+          <DeleteIcon onClick={() => setDeleteButtonClicked(true)}></DeleteIcon>
+        </TitleContainer>
         <Description>{task.description}</Description>
         <Label>
           Status
@@ -189,7 +193,7 @@ export default function TaskDetailPage() {
                   Cancel
                 </ConfirmationDialogButton>
                 <ConfirmationDialogButton onClick={handleDeleteTask}>
-                  Yes, Delete
+                  Yes, delete
                 </ConfirmationDialogButton>
               </ButtonGroup>
             </ConfirmationDialog>
@@ -198,10 +202,8 @@ export default function TaskDetailPage() {
       </Content>
       <PageActions
         showBack
-        showDelete
         showEdit
         onBack={() => router.push(`/initiatives/${initiativeId}`)}
-        onDelete={() => setDeleteButtonClicked(true)}
         onEdit={() =>
           router.push(`/initiatives/${initiativeId}/tasks/${taskId}/editTask`)
         }
@@ -220,15 +222,31 @@ const PageContainer = styled.div`
   background-color: var(--mainbackground);
 `;
 
-const Content = styled.div`
-  flex: 1;
-  margin-bottom: 20px;
-`;
-
-const Footer = styled.div`
+const TitleContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  gap: 10px;
+  align-items: center;
+  width: 100%;
+`;
+
+const DeleteIcon = styled(FaRegTrashAlt)`
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  background-color: transparent;
+  color: var(--buttons);
+  border: none;
+  font-size: 1.6rem;
+  margin-right: -5px;
+  margin-top: 40px;
+  outline: 0;
+
+  &:hover {
+    color: var(--accents);
+    transform: scale(1.05);
+  }
+  &:focus {
+    transform: scale(0.95);
+  }
 `;
 
 const Title = styled.h1`
@@ -243,6 +261,17 @@ const Title = styled.h1`
   max-width: 100%;
   overflow: hidden;
   color: var(--title);
+`;
+
+const Content = styled.div`
+  flex: 1;
+  margin-bottom: 20px;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
 `;
 
 const Description = styled.article`

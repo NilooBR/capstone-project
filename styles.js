@@ -23,7 +23,7 @@ export default createGlobalStyle`
     --headerIcon: #f2f0ef;
     --errortext: #90a1ba; // also for :focus area
     --title: #010080;
-    --mainbackground: #white;
+    --mainbackground: white;
     --cardbackground: #f2f0ef;
     --contrasttext: #f2f0ef;
     --highlightedcard: #fafafa; // also for dialog boxes
@@ -58,7 +58,6 @@ export default createGlobalStyle`
         --focus-outline-color: #2563eb;
         --actionButtons: #01004d;
         --actionButtonText: #d1d5db;
-
       }
     `}
 `;

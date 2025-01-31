@@ -178,7 +178,7 @@ export default function InitiativeForm({
 
       <ConfirmationDialog
         isVisible={isDialogVisible}
-        message="You have unsaved changes. Would you like to save your edits?"
+        message="You have unsaved changes. Would you like to save them?"
         onSaveAndContinue={() => {
           setIsDialogVisible(false);
           handleSubmit();
