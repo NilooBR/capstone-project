@@ -17,7 +17,7 @@ export default function ConfirmationDialog({
         <ButtonGroup>
           <DialogButton onClick={onCancel}>Cancel</DialogButton>
           <DialogButton onClick={onDiscardChanges}>
-            Continue without Saving
+            Discard changes
           </DialogButton>
           <DialogButton onClick={onSaveAndContinue}>
             Save & Continue
