@@ -6,24 +6,42 @@ import useSWR from "swr";
 import { parse, isValid } from "date-fns";
 
 export default function InitiativeList() {
-  const {
-    data: initiatives,
-    error,
-    mutate,
-    isLoading,
-  } = useSWR("/api/initiatives");
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  const fetcher = async (url) => {
+    if (!token) throw new Error("No token found");
+
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Failed to fetch initiatives");
+    }
+
+    return res.json();
+  };
+
+  const { data, error, mutate, isLoading } = useSWR(
+    token ? "/api/initiatives" : null,
+    fetcher
+  );
 
   const parsedDate = (date) => {
     if (!date || typeof date !== "string") return new Date(0);
-
     const parsed = parse(date, "dd.MM.yyyy", new Date());
-
     return isValid(parsed) ? parsed : new Date(0);
   };
 
   const validInitiatives = useMemo(() => {
-    return Array.isArray(initiatives) ? initiatives : [];
-  }, [initiatives]);
+    return Array.isArray(data?.data) ? data.data : [];
+  }, [data]);
 
   const openInitiatives = useMemo(() => {
     return validInitiatives
@@ -38,8 +56,7 @@ export default function InitiativeList() {
   }, [validInitiatives]);
 
   if (isLoading) return <p>⏳ Fetching...</p>;
-  if (error) return <p>❌ Error loading: {error.message}</p>;
-  if (!initiatives) return <p>⏳ Loading...</p>;
+  if (error) return <p>❌ Error: {error.message}</p>;
 
   async function handleDelete(initiativeId) {
     await fetch(`/api/initiatives/${initiativeId}`, { method: "DELETE" });
@@ -54,32 +71,33 @@ export default function InitiativeList() {
           ➕<br />
           Create Initiative
         </StyledLink>
-        {openInitiatives.length === 0 ? (
+
+        {openInitiatives.length === 0 && completedInitiatives.length === 0 ? (
           <NoInitiativesMessage>
-            No open initiatives available. Please create some! 👆
+            No initiatives yet! Start by creating one above. 👆
           </NoInitiativesMessage>
         ) : (
-          openInitiatives.map((initiative) => (
-            <li key={initiative._id}>
-              <InitiativeCard
-                id={initiative._id}
-                isCompleted={initiative.isCompleted}
-                onDelete={() => handleDelete(initiative._id)}
-              />
-            </li>
-          ))
+          <>
+            {openInitiatives.map((initiative) => (
+              <li key={initiative._id}>
+                <InitiativeCard
+                  id={initiative._id}
+                  isCompleted={initiative.isCompleted}
+                  onDelete={() => handleDelete(initiative._id)}
+                />
+              </li>
+            ))}
+            {completedInitiatives.map((initiative) => (
+              <li key={initiative._id}>
+                <InitiativeCard
+                  id={initiative._id}
+                  isCompleted={initiative.isCompleted}
+                  onDelete={() => handleDelete(initiative._id)}
+                />
+              </li>
+            ))}
+          </>
         )}
-
-        {completedInitiatives.length > 0 &&
-          completedInitiatives.map((initiative) => (
-            <li key={initiative._id}>
-              <InitiativeCard
-                id={initiative._id}
-                isCompleted={initiative.isCompleted}
-                onDelete={() => handleDelete(initiative._id)}
-              />
-            </li>
-          ))}
       </ListContainer>
     </>
   );
@@ -93,7 +111,7 @@ const ListContainer = styled.ul`
   padding: 16px;
   grid-template-columns: 1fr 1fr;
   list-style: none;
-  background-color: "var(--mainbackground)";
+  background-color: var(--mainbackground);
 `;
 
 const YourInitiatives = styled.h1`

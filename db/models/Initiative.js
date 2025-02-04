@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Task from "./Task";
+import User from "./User";
 const { Schema } = mongoose;
 
 const InitiativeSchema = new Schema({
@@ -31,6 +32,11 @@ const InitiativeSchema = new Schema({
   isCompleted: {
     type: Boolean,
     default: false,
+  },
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
   },
 });
 
