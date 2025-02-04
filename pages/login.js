@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -57,7 +58,7 @@ export default function LoginPage() {
           <Button type="submit">Login</Button>
         </Form>
 
-        <ForgotPassword href="/signup">Create an account</ForgotPassword>
+        <SignupLink href="/signup">Create an account</SignupLink>
       </LoginBox>
     </Container>
   );
@@ -116,7 +117,7 @@ const Button = styled.button`
   }
 `;
 
-const ForgotPassword = styled.a`
+const SignupLink = styled(Link)`
   display: block;
   margin-top: 10px;
   color: var(--accents);

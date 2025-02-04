@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
+import Link from "next/link";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -118,7 +119,7 @@ const Button = styled.button`
   }
 `;
 
-const LoginLink = styled.a`
+const LoginLink = styled(Link)`
   display: block;
   margin-top: 10px;
   color: var(--accents);
