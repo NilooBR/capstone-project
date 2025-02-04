@@ -1,18 +1,21 @@
-import { FaSun, FaMoon, FaHome } from "react-icons/fa";
+import { FaSun, FaMoon, FaHome, FaSignOutAlt } from "react-icons/fa";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 
-export default function Header({ toggleTheme, theme }) {
+export default function Header({ toggleTheme, theme, onLogout }) {
   const router = useRouter();
 
   return (
     <HeaderContainer theme={theme}>
-      <HomeButton onClick={() => router.push("/")}>
+      <StyledButton onClick={() => router.push("/")}>
         <FaHome />
-      </HomeButton>
-      <ThemeButton onClick={toggleTheme}>
+      </StyledButton>
+      <StyledButton onClick={toggleTheme}>
         {theme === "light" ? <FaMoon /> : <FaSun />}
-      </ThemeButton>
+      </StyledButton>
+      <StyledButton onClick={onLogout}>
+        <FaSignOutAlt />
+      </StyledButton>
     </HeaderContainer>
   );
 }
@@ -47,12 +50,4 @@ const StyledButton = styled.button`
   &:focus {
     transform: scale(0.95);
   }
-`;
-
-const HomeButton = styled(StyledButton)`
-  margin-left: -12px;
-`;
-
-const ThemeButton = styled(StyledButton)`
-  margin-right: -12px;
 `;

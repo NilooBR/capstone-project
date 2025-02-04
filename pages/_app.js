@@ -15,6 +15,12 @@ export default function App({ Component, pageProps }) {
     setTheme(theme === "light" ? "dark" : "light");
   }
 
+  function handleLogout() {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+    router.push("/login");
+  }
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -54,7 +60,7 @@ export default function App({ Component, pageProps }) {
         <title>Initiate It</title>
       </Head>
       <GlobalStyle theme={theme} />
-      <Header toggleTheme={toggleTheme} theme={theme} />
+      <Header toggleTheme={toggleTheme} theme={theme} onLogout={handleLogout} />
       <Component {...pageProps} />
     </SWRConfig>
   );
