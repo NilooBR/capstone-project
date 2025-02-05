@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CompletedInitiative from "./CompletedInitiative";
 import useSWR from "swr";
 import truncateText from "@/utility/truncateText";
@@ -9,6 +9,8 @@ import PageActions from "./PageAction";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { format } from "date-fns";
+import { FaCalendarPlus, FaGoogle, FaApple } from "react-icons/fa";
 
 export default function InitiativeDetailPage({
   initiativeId,
@@ -24,7 +26,26 @@ export default function InitiativeDetailPage({
 
   const [deleteButtonClicked, setDeleteButtonClicked] = useState(false);
   const [showCompleteDialog, setShowCompleteDialog] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
   const router = useRouter();
+
+  useEffect(() => {
+    function handleOutsideClick(event) {
+      if (
+        showDropdown &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
+        setShowDropdown(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [showDropdown]);
 
   if (error) return <p>❌ Error loading: {error.message}</p>;
   if (isLoading) return <p>⏳ Fetching...</p>;
@@ -41,6 +62,50 @@ export default function InitiativeDetailPage({
   const formattedDeadline = deadline
     ? formatDateForDisplay(deadline)
     : "No deadline";
+
+  const formattedDeadlineForGoogle = deadline
+    ? format(new Date(deadline), "yyyyMMdd'T'HHmmss'Z'")
+    : null;
+
+  const googleCalendarURL = formattedDeadlineForGoogle
+    ? `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+        title
+      )}&details=${encodeURIComponent(
+        description
+      )}&dates=${formattedDeadlineForGoogle}/${formattedDeadlineForGoogle}&sf=true&output=xml`
+    : "#";
+
+  const generateICSFile = () => {
+    const startDate = deadline
+      ? format(new Date(deadline), "yyyyMMdd'T'HHmmss")
+      : null;
+    if (!startDate) return;
+
+    const icsContent = `BEGIN:VCALENDAR
+                        VERSION:2.0
+                        BEGIN:VEVENT
+                        SUMMARY:${title}
+                        DESCRIPTION:${description}
+                        DTSTART:${startDate}
+                        DTEND:${startDate}
+                        END:VEVENT
+                        END:VCALENDAR`;
+
+    const blob = new Blob([icsContent], { type: "text/calendar" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${title.replace(/\s+/g, "_")}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  function toggleDropdown() {
+    setShowDropdown(!showDropdown);
+  }
 
   const allUploadedImages = tasks
     .filter((task) => task.uploadedImages?.length > 0)
@@ -104,9 +169,26 @@ export default function InitiativeDetailPage({
           <DeleteIcon onClick={() => setDeleteButtonClicked(true)}></DeleteIcon>
         </TitleContainer>
         <Description>{description}</Description>
-        <Deadline>
-          <strong>Deadline:</strong> {formattedDeadline}
-        </Deadline>
+        <DeadlineContainer ref={dropdownRef}>
+          <Deadline>
+            <strong>Deadline:</strong> {formattedDeadline}
+          </Deadline>
+          {formattedDeadline && (
+            <CalendarButton onClick={toggleDropdown}>
+              <FaCalendarPlus />
+            </CalendarButton>
+          )}
+          {showDropdown && (
+            <DropdownMenu>
+              <DropdownItem href={googleCalendarURL} target="_blank">
+                <FaGoogle /> Google Calendar
+              </DropdownItem>
+              <DropdownItem onClick={generateICSFile}>
+                <FaApple /> Apple Calendar
+              </DropdownItem>
+            </DropdownMenu>
+          )}
+        </DeadlineContainer>
         <TagList>
           {tags.length > 0 ? (
             tags.map((tag) => <Tag key={tag}>{tag}</Tag>)
@@ -318,10 +400,53 @@ const Description = styled.article`
   color: var(--text);
 `;
 
+const DeadlineContainer = styled.div`
+  display: flex;
+  align-items: center;
+  position: relative;
+`;
+
 const Deadline = styled.p`
-  margin: 10px 0;
   font-size: 1rem;
   color: var(--text);
+`;
+
+const CalendarButton = styled.button`
+  border: none;
+  font-size: 1.5rem;
+  background-color: transparent;
+  color: var(--buttons);
+  cursor: pointer;
+  margin-left: 10px;
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: 30px;
+  left: 0;
+  background: var(--cardbackground);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  z-index: 1000;
+`;
+
+const DropdownItem = styled.a`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  color: var(--text);
+  cursor: pointer;
+  text-decoration: none;
+  width: 100%;
+  text-align: left;
 `;
 
 const EmptyMessage = styled.span`
@@ -461,18 +586,6 @@ const NoImages = styled.p`
   display: flex;
   align-items: center;
   justify-content: left;
-`;
-
-const AttachmentSection = styled.div`
-  margin-top: 20px;
-  color: var(--text);
-`;
-
-const AttachmentList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  color: var(--text);
 `;
 
 const ImagePreviewContainer = styled.div`
