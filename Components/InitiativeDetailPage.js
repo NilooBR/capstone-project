@@ -441,7 +441,7 @@ const DropdownItem = styled.a`
   padding: 10px 16px;
   border: none;
   background: transparent;
-  font-size: 16px;
+  font-size: 1rempx;
   color: var(--text);
   cursor: pointer;
   text-decoration: none;
